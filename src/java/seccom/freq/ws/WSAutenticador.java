@@ -15,8 +15,12 @@ import javax.servlet.http.HttpSession;
  *
  * Implementa serviço de autenticaçao.
  */
-@WebServlet(name = "Autenticador", urlPatterns = {"/Autenticador/login", "/Autenticador/logout"})
+@WebServlet(name = "WSAutenticador", urlPatterns = {"/WSAutenticador/login", "/WSAutenticador/logout"})
 public class WSAutenticador extends HttpServlet {
+
+    public static String respostaNaoLogado() {
+        return "{\"msg\":,\"NaoLogado\"}";
+    }
 
     // senha de autenticação do usuário
     final private String CODIGO_DE_ACESSO = "c";
@@ -39,10 +43,10 @@ public class WSAutenticador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String resposta = "";
             switch (request.getServletPath()) {
-                case "/Autenticador/login":
+                case "/WSAutenticador/login":
                     resposta = processeLogin(request);
                     break;
-                case "/Autenticador/logout":
+                case "/WSAutenticador/logout":
                     resposta = processeLogout(request);
                     break;
             }

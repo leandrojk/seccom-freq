@@ -34,6 +34,9 @@ public class WSSemana extends HttpServlet {
     }
 
     private String processe(HttpServletRequest request) {
+        if (!WSAutenticador.estaLogado(request))
+            return WSAutenticador.respostaNaoLogado();
+        
         String path = request.getServletPath();
 
         String servico = "/WSSemana/cadastrar";
