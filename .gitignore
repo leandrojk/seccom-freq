@@ -13,3 +13,6 @@ hs_err_pid*
 /build/
 /dist/
 /nbproject/private/
+
+# gerado pelo Derby
+*.log

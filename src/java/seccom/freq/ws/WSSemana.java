@@ -2,11 +2,18 @@ package seccom.freq.ws;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  *
@@ -15,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "WSSemana", urlPatterns = {"/WSSemana/cadastrar/*"})
 public class WSSemana extends HttpServlet {
 
+    @Resource(name="jdbc/SECCOMDB")
+    DataSource ds;
+    
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -71,7 +81,16 @@ public class WSSemana extends HttpServlet {
         } catch (NumberFormatException e) {
             return "erro na solicitaçao: o primeiro dado de ser um numero maior ou igual a 2000";
         }
-
+        try {
+            Connection con = ds.getConnection();
+            Statement stmt = con.createStatement();
+            String sql = "insert into SEMANA values(" + dados[0] + ",'" + dados[1] + "','" + dados[2] + "')";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return "{\"ok\":,\"true\"}";
 
     }

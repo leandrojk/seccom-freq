@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/seccom-freq"/>
+<Context path="/seccom-freq">
+  <Resource name="jdbc/SECCOMDB" auth="Container" type="javax.sql.DataSource"
+               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+               username="usuario1" password="senha1" driverClassName="org.apache.derby.jdbc.ClientDriver"
+               url="jdbc:derby://127.0.0.1:1300/BD_SECCOM_FREQ"/>  
+</Context>
