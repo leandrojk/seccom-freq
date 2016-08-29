@@ -1,12 +1,8 @@
 package seccom.freq.ws;
 
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,7 +41,7 @@ public class WSSemana extends HttpServlet {
 
     }
 
-    private String processe(HttpServletRequest request) {
+    private JsonObject processe(HttpServletRequest request) {
         if (!WSAutenticador.estaLogado(request)) {
             return WSAutenticador.respostaNaoLogado();
         }
@@ -53,19 +49,22 @@ public class WSSemana extends HttpServlet {
         String path = request.getServletPath();
 
         String servico = "/WSSemana/cadastrar";
-        String resposta = "erro";
+        JsonObject resposta = null;
         if (path.startsWith(servico)) {
             resposta = cadastre(request.getPathInfo().substring(1));
         }
         return resposta;
     }
 
-    private String cadastre(String dadosDaSemana) {
+    private JsonObject cadastre(String dadosDaSemana) {
+        JsonObject jo = new JsonObject();
+        jo.addProperty("msg", "MsgCadastrou");
         if (BDUtil.cadastreSemana(ds, new Semana(dadosDaSemana))) {
-            return "true";
+            jo.addProperty("resultado", Boolean.TRUE);
         } else {
-            return "false";
+            jo.addProperty("resultado", Boolean.FALSE);
         }
+        return jo;
     }
 
 }

@@ -1,5 +1,8 @@
 package seccom.freq.ws;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -18,8 +21,12 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "WSAutenticador", urlPatterns = {"/WSAutenticador/login", "/WSAutenticador/logout"})
 public class WSAutenticador extends HttpServlet {
 
-    public static String respostaNaoLogado() {
-        return "{\"msg\":,\"NaoLogado\"}";
+    Gson gson = new Gson();
+    
+    public static JsonObject respostaNaoLogado() {
+        JsonObject jo = new JsonObject();
+        jo.addProperty("msg", "NaoLogado");
+        return jo;
     }
 
     // senha de autenticação do usuário
