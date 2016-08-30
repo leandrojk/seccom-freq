@@ -52,18 +52,25 @@ public class BDUtil {
         return inseriu;
     }
 
-    public static Palestra cadastrePalestra(DataSource ds, Palestra) {
-        String sql = "insert into PALESTRA values(null,?,?,?,?,?,?)";
+    public static boolean cadastrePalestra(DataSource ds, Palestra palestra) {
+        String sql = "insert into PALESTRA (ANO, TITULO, PALESTRANTE, DIA, HORARIODEINICIO, HORARIODETERMINO)values(?,?,?,?,?,?)";
         boolean inseriu = true;
         Connection con = null;
         PreparedStatement ppstmt = null;
         try {
             con = ds.getConnection();
-            ppstmt = con.prepareStatement(sql);
-            ppstmt.setInt(1, semana.getAno());
-            ppstmt.setString(2, semana.getNome());
-            ppstmt.setString(3, semana.getTema());
+            ppstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ppstmt.setInt(1, palestra.getAno());
+            ppstmt.setString(2, palestra.getTitulo());
+            ppstmt.setString(3, palestra.getPalestrante());
+            ppstmt.setDate(4, palestra.getDia());
+            ppstmt.setTime(5, palestra.getHorarioDeInicio());
+            ppstmt.setTime(6, palestra.getHorarioDeTermino());
+            
             ppstmt.execute();
+            ResultSet rs =  ppstmt.getGeneratedKeys();
+            rs.next();
+            palestra.setId(rs.getInt(1));
         } catch (SQLException ex) {
             Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
             inseriu = false;
