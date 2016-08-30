@@ -7,16 +7,34 @@
     </head>
     <body>
         <div>SECCOM-freq</div>
-        
-        <form method="post" action="WSAutenticador/login">
-            <input type="password" name="codigo" placeholder="codigo de acesso" required="true">
+        <h1>Login</h1>
+        <form method="post" action="WSAutenticador/fazerLogin">
+            <input type="password" name="codigo" placeholder="codigo de acesso" required>
             <button>Acessar</button>
         </form>
-        <form method="post" action="WSAutenticador/logout">
+        <form method="post" action="WSAutenticador/fazerLogout">
             <button>Sair</button>
         </form>
+        <hr>
+        <h1>Semana</h1>
+        <h2>Cadastrar</h2>
+        <form method="post" action="WSSemana/cadastrar">
+            <div>
+                Ano : <input type="number" name="ano" required><br>
+                Nome : <input type="text" name="nome" required><br>
+                Tema : <input type="text"  name="tema" required> <br>
+                <button>Cadastrar</button>
+            </div>                
+        </form>
+        <h2>Listar Todas</h2>
+        <form method="get" action="WSSemana/encontrarTodas">
+            <button>Listar</button>
+        </form>
+        <h2>Pesquisar por Ano</h2>
+        <form method="get" action="WSSemana/encontrarPorAno">
+            Ano : <input type="number" name="ano" required>
+            <button>Pesquisar</button>
+        </form>
         
-        <br>
-        <a href="WSSemana/cadastrar/2016/XIII Semana da Computação/O novo mundo">Cadastrar semana</a>
     </body>
 </html>

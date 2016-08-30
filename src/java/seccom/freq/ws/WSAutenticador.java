@@ -2,7 +2,6 @@ package seccom.freq.ws;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -18,14 +17,18 @@ import javax.servlet.http.HttpSession;
  *
  * Implementa serviço de autenticaçao.
  */
-@WebServlet(name = "WSAutenticador", urlPatterns = {"/WSAutenticador/login", "/WSAutenticador/logout"})
+@WebServlet(name = "WSAutenticador", urlPatterns = {"/WSAutenticador/fazerLogin", "/WSAutenticador/fazerLogout"})
 public class WSAutenticador extends HttpServlet {
-
+    final int T = "/WSAutenticador/".length();
+    enum Servicos {
+        fazerLogin,
+        fazerLogout
+    }
     Gson gson = new Gson();
     
     public static JsonObject respostaNaoLogado() {
         JsonObject jo = new JsonObject();
-        jo.addProperty("msg", "NaoLogado");
+        jo.addProperty("Msg", "UsuarioNaoLogado");
         return jo;
     }
 
@@ -47,13 +50,14 @@ public class WSAutenticador extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
+        Servicos servicoDesejado = Servicos.valueOf(request.getServletPath().substring(T));
         try (PrintWriter out = response.getWriter()) {
-            String resposta = "";
-            switch (request.getServletPath()) {
-                case "/WSAutenticador/login":
+            JsonObject resposta = null;
+            switch (servicoDesejado) {
+                case fazerLogin:
                     resposta = processeLogin(request);
                     break;
-                case "/WSAutenticador/logout":
+                case fazerLogout:
                     resposta = processeLogout(request);
                     break;
             }
@@ -62,27 +66,33 @@ public class WSAutenticador extends HttpServlet {
         }
     }
 
-    private String processeLogin(HttpServletRequest request) {
+    private JsonObject processeLogin(HttpServletRequest request) {
         String codigo = request.getParameter("codigo");
 
         if (codigo.equals(CODIGO_DE_ACESSO)) {
             request.getSession().setAttribute(ATTR_LOGADO, true);
-            return "true";  // JSON true
+            JsonObject jo = new JsonObject();
+            jo.addProperty("Msg", "LoginAceito");
+            return jo;
         } else {
             HttpSession sessao = request.getSession(false);
             if (sessao != null) {
                 sessao.invalidate();
             }
-            return "false"; // JSON false
+            JsonObject jo = new JsonObject();
+            jo.addProperty("Msg", "LoginNaoAceito");
+            return jo;
         }
     }
 
-    private String processeLogout(HttpServletRequest request) {
+    private JsonObject processeLogout(HttpServletRequest request) {
         HttpSession sessao = request.getSession(false);
         if (sessao != null) {
             sessao.invalidate();
         }
-        return "true"; // JSON true
+            JsonObject jo = new JsonObject();
+            jo.addProperty("Msg", "LogoutConcluido");
+            return jo;
     }
 
     public static boolean estaLogado(HttpServletRequest request) {
