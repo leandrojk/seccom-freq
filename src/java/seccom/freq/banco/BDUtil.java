@@ -1,5 +1,6 @@
 package seccom.freq.banco;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import seccom.freq.modelo.Estudante;
 import seccom.freq.modelo.Palestra;
 import seccom.freq.modelo.Semana;
 import seccom.freq.ws.WSSemana;
@@ -66,9 +68,9 @@ public class BDUtil {
             ppstmt.setDate(4, palestra.getDia());
             ppstmt.setTime(5, palestra.getHorarioDeInicio());
             ppstmt.setTime(6, palestra.getHorarioDeTermino());
-            
+
             ppstmt.execute();
-            ResultSet rs =  ppstmt.getGeneratedKeys();
+            ResultSet rs = ppstmt.getGeneratedKeys();
             rs.next();
             palestra.setId(rs.getInt(1));
         } catch (SQLException ex) {
@@ -102,15 +104,16 @@ public class BDUtil {
             stmt = con.createStatement();
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                semanas.add(new Semana(rs.getInt(1), rs.getString(2), rs.getString(3)));                
+                semanas.add(new Semana(rs.getInt(1), rs.getString(2), rs.getString(3)));
             }
         } catch (SQLException ex) {
             Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
             //TODO tratar erro;
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
+                }
                 if (stmt != null) {
                     stmt.close();
                 }
@@ -126,8 +129,7 @@ public class BDUtil {
 
         return semanas;
     }
-    
-    
+
     public static Semana encontreSemanaPorAno(DataSource ds, int ano) {
         String sql = "select * from SEMANA where ano = ?";
         Semana semana = null;
@@ -140,15 +142,16 @@ public class BDUtil {
             ppstmt.setInt(1, ano);
             rs = ppstmt.executeQuery();
             if (rs.next()) {
-                semana = new Semana(rs.getInt(1), rs.getString(2), rs.getString(3));                
+                semana = new Semana(rs.getInt(1), rs.getString(2), rs.getString(3));
             }
         } catch (SQLException ex) {
             Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
             //TODO tratar erro;
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
+                }
                 if (ppstmt != null) {
                     ppstmt.close();
                 }
@@ -177,15 +180,16 @@ public class BDUtil {
             ppstmt.setInt(1, ano);
             rs = ppstmt.executeQuery();
             while (rs.next()) {
-                palestras.add(new Palestra(rs.getInt("ID"), rs.getInt("ANO"), rs.getString("TITULO"),rs.getString("PALESTRANTE"), rs.getDate("DIA"), rs.getTime("HORARIODEINICIO"), rs.getTime("HORARIODETERMINO")));
+                palestras.add(new Palestra(rs.getInt("ID"), rs.getInt("ANO"), rs.getString("TITULO"), rs.getString("PALESTRANTE"), rs.getDate("DIA"), rs.getTime("HORARIODEINICIO"), rs.getTime("HORARIODETERMINO")));
             }
         } catch (SQLException ex) {
             Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
             //TODO tratar erro;
         } finally {
             try {
-                if (rs != null)
+                if (rs != null) {
                     rs.close();
+                }
                 if (ppstmt != null) {
                     ppstmt.close();
                 }
@@ -200,6 +204,118 @@ public class BDUtil {
         }
 
         return palestras;
+    }
+
+    public static List<Estudante> cadastreEstudantes(DataSource ds, List<Estudante> estudantes) {
+        String sql = "insert into ESTUDANTE values(?,?)";
+        List<Estudante> estudantesJaCadastrados = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ppstmt = null;
+        try {
+            con = ds.getConnection();
+            ppstmt = con.prepareStatement(sql);
+            for (Estudante e : estudantes) {
+                ppstmt.setInt(1, e.getMatricula());
+                ppstmt.setString(2, e.getNome());
+                try {
+                    ppstmt.execute();
+                } catch (SQLException ex) {
+                    estudantesJaCadastrados.add(e);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } finally {
+            try {
+                if (ppstmt != null) {
+                    ppstmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                
+            }
+
+        }
+        return estudantesJaCadastrados;
+    }
+
+        public static List<Estudante> encontreTodosOsEstudantes(DataSource ds) {
+        String sql = "select * from ESTUDANTE order by nome";
+        List<Estudante> estudantes = new ArrayList<>();
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            con = ds.getConnection();
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                estudantes.add(new Estudante(rs.getInt("MATRICULA"), rs.getString("NOME")));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+            //TODO tratar erro;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO tratar erro
+            }
+
+        }
+
+        return estudantes;
+    }
+
+        public static Estudante encontreEstudantePorMatricula(DataSource ds, int matricula) {
+        String sql = "select * from ESTUDANTE where matricula = ?";
+        Estudante estudante = null;
+        Connection con = null;
+        PreparedStatement ppstmt = null;
+        ResultSet rs = null;
+        try {
+            con = ds.getConnection();
+            ppstmt = con.prepareStatement(sql);
+            ppstmt.setInt(1, matricula);
+            rs = ppstmt.executeQuery();
+            if (rs.next()) {
+                estudante = new Estudante(rs.getInt("MATRICULA"), rs.getString("NOME"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+            //TODO tratar erro;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ppstmt != null) {
+                    ppstmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO tratar erro
+            }
+
+        }
+
+        return estudante;
     }
 
 }

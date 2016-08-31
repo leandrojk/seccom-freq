@@ -43,7 +43,7 @@
                 Título : <input type="text" name="titulo" required><br>
                 Palestrante : <input type="text"  name="palestrante" required> <br>
                 Dia : <input type="text"  name="dia" placeholder="dd/mm/aaaa" required> <br>
-                Horario de Inicio : <input type="text"  name="horariodeinicio"  placeholder="hh:mm"required> <br>
+                Horario de Inicio : <input type="text"  name="horariodeinicio"  placeholder="hh:mm" required> <br>
                 Horario de Termino : <input type="text"  name="horariodetermino" placeholder="hh:mm" required> <br>                 
                
             <button>Cadastrar</button>
@@ -52,6 +52,27 @@
         <h2>Pesquisar por Ano</h2>
         <form method="get" action="WSPalestra/encontrarPorAno">
             Ano da SECCOM : <input type="number" name="ano" required><br>
+            <button>Pesquisar</button>
+        </form>
+        
+        <hr>
+        <h1>Estudante</h1>
+        <h2>Cadastrar em Massa</h2>
+        <form method="post" action="WSEstudante/cadastrar">
+            Dados :
+            <textarea cols="60" rows="30" name="estudantes" required></textarea>
+            <button>Cadastrar</button>
+        </form>
+        
+        <h2>Listar Todos</h2>
+        <form method="get" action="WSEstudante/encontrarTodos">
+            <button>Listar</button>
+        </form>
+        
+        <h2>Pesquisar por Matricula</h2>
+        
+        <form method="get" action="WSEstudante/encontrarPorMatricula">
+            Matricula : <input type="number" name="matricula" required> <br>
             <button>Pesquisar</button>
         </form>
     </body>

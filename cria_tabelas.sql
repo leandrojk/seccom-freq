@@ -1,5 +1,7 @@
 connect 'jdbc:derby://localhost:1300/BD_SECCOM_FREQ;user=usuario1;password=senha1';
 
+drop table PRESENCA;
+drop table ESTUDANTE;
 drop table PALESTRA;
 drop table SEMANA;
 
@@ -20,4 +22,18 @@ create table PALESTRA(
   HORARIODETERMINO time not null,
   primary key (ID),
   constraint ano_fk  foreign key (ANO) references SEMANA(ANO)
+);
+
+create table ESTUDANTE(
+    MATRICULA int not null,
+    NOME varchar(100) not null,
+    primary key (MATRICULA)
+);
+
+create table PRESENCA(
+    ESTUDANTE_MATRICULA int not null,
+    PALESTRA_ID int not null,
+    primary key (ESTUDANTE_MATRICULA, PALESTRA_ID),
+    constraint matricula_fk foreign key (ESTUDANTE_MATRICULA) references ESTUDANTE(MATRICULA),
+    constraint palestra_fk foreign key (PALESTRA_ID) references PALESTRA(ID)
 );
