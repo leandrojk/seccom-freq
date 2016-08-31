@@ -75,5 +75,24 @@
             Matricula : <input type="number" name="matricula" required> <br>
             <button>Pesquisar</button>
         </form>
+        <hr>
+        
+        <h1>Presença</h1>
+        <h2>Cadastrar</h2>
+        
+        <form method="post" action="WSPresenca/cadastrar">
+            Matricula : <input type="number" name="matricula" required> <br>
+            Palestra : <input type="number" name="palestra" required>
+            <button>Cadastrar</button>
+            
+        </form>
+        <h2>Pesquisar Por Palestra</h2>
+
+        <form method="get" action="WSPresenca/encontrarPorPalestra">
+            Palestra : <input type="number" name="palestra" required>
+            <button>Pesquisar</button>
+            
+        </form>
+
     </body>
 </html>

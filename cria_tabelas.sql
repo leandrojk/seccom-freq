@@ -14,14 +14,14 @@ create table SEMANA(
 
 create table PALESTRA(
   ID int not null generated always as identity,
-  ANO int not null,
+  SEMANA_ANO int not null,
   TITULO varchar(200) not null,
   PALESTRANTE varchar(200) not null,
   DIA date not null,
   HORARIODEINICIO time not null,
   HORARIODETERMINO time not null,
   primary key (ID),
-  constraint ano_fk  foreign key (ANO) references SEMANA(ANO)
+  constraint ano_fk  foreign key (SEMANA_ANO) references SEMANA(ANO)
 );
 
 create table ESTUDANTE(

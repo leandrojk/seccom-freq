@@ -8,7 +8,7 @@ import java.sql.Time;
  */
 public class Palestra {
     int id;
-    int ano;
+    int semanaAno;
     String titulo;
     String palestrante;
     Date dia;
@@ -16,9 +16,9 @@ public class Palestra {
     Time horarioDeTermino;
     
 
-    public Palestra(int id, int ano, String titulo, String palestrante, Date dia, Time horarioDeInicio, Time horarioDeTermino) {
+    public Palestra(int id, int semanaAno, String titulo, String palestrante, Date dia, Time horarioDeInicio, Time horarioDeTermino) {
         this.id = id;
-        this.ano = ano;
+        this.semanaAno = semanaAno;
         this.titulo = titulo;
         this.palestrante = palestrante;
         this.dia = dia;
@@ -34,8 +34,8 @@ public class Palestra {
         return id;
     }
 
-    public int getAno() {
-        return ano;
+    public int getSemanaAno() {
+        return semanaAno;
     }
 
     public String getTitulo() {
