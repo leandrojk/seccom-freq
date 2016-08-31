@@ -165,4 +165,41 @@ public class BDUtil {
         return semana;
     }
 
+    public static List<Palestra> encontrePalestrasPorAno(DataSource ds, int ano) {
+        String sql = "select * from PALESTRA where ano = ? order by dia, horariodeinicio";
+        List<Palestra> palestras = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ppstmt = null;
+        ResultSet rs = null;
+        try {
+            con = ds.getConnection();
+            ppstmt = con.prepareStatement(sql);
+            ppstmt.setInt(1, ano);
+            rs = ppstmt.executeQuery();
+            while (rs.next()) {
+                palestras.add(new Palestra(rs.getInt("ID"), rs.getInt("ANO"), rs.getString("TITULO"),rs.getString("PALESTRANTE"), rs.getDate("DIA"), rs.getTime("HORARIODEINICIO"), rs.getTime("HORARIODETERMINO")));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+            //TODO tratar erro;
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (ppstmt != null) {
+                    ppstmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO tratar erro
+            }
+
+        }
+
+        return palestras;
+    }
+
 }

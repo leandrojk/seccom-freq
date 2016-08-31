@@ -1,6 +1,7 @@
 package seccom.freq.ws;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +9,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -24,7 +26,7 @@ import seccom.freq.modelo.Palestra;
  *
  * @author leandro
  */
-@WebServlet(name = "WSPalestra", urlPatterns = {"/WSPalestra/cadastrar"})
+@WebServlet(name = "WSPalestra", urlPatterns = {"/WSPalestra/cadastrar", "/WSPalestra/encontrarPorAno"})
 public class WSPalestra extends HttpServlet {
 
     final int T = "/WSPalestra/".length();
@@ -48,6 +50,15 @@ public class WSPalestra extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(processeGet(request));
+        }
+    }
+
     private JsonObject processePost(HttpServletRequest request) {
         if (!WSAutenticador.estaLogado(request)) {
             return WSAutenticador.respostaNaoLogado();
@@ -56,10 +67,25 @@ public class WSPalestra extends HttpServlet {
         WSPalestra.Servicos servicoDesejado = WSPalestra.Servicos.valueOf(request.getServletPath().substring(T));
 
         switch (servicoDesejado) {
-            case cadastrar: {
+            case cadastrar: 
                 resposta = cadastre(request);
                 break;
-            }
+        }
+
+        return resposta;
+    }
+
+        private JsonObject processeGet(HttpServletRequest request) {
+        if (!WSAutenticador.estaLogado(request)) {
+            return WSAutenticador.respostaNaoLogado();
+        }
+        JsonObject resposta = null;
+        WSPalestra.Servicos servicoDesejado = WSPalestra.Servicos.valueOf(request.getServletPath().substring(T));
+
+        switch (servicoDesejado) {
+            case encontrarPorAno :
+                resposta = encontrePorAno(request);
+                break;
         }
 
         return resposta;
@@ -72,10 +98,7 @@ public class WSPalestra extends HttpServlet {
         String sDia = request.getParameter("dia");
         String sHorarioDeInicio = request.getParameter("horariodeinicio");
         String sHorarioDeTermino = request.getParameter("horariodetermino");
-        
-//        DateFormat dfDia = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("br"));
-//        DateFormat dfHora = DateFormat.getTimeInstance(DateFormat.SHORT, new Locale("br"));
-        
+                
         SimpleDateFormat dfDia = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat dfHora = new SimpleDateFormat("H:mm");
         JsonObject jo = new JsonObject();
@@ -97,4 +120,16 @@ public class WSPalestra extends HttpServlet {
         return jo;
     }
 
+    private JsonObject encontrePorAno(HttpServletRequest request) {
+        int ano = Integer.parseInt(request.getParameter("ano"));
+        List<Palestra> palestras = BDUtil.encontrePalestrasPorAno(ds,ano);
+        JsonObject jo = new JsonObject();
+        JsonArray ja = new JsonArray();
+                
+        jo.addProperty("Msg", "PalestrasEncontradas");
+        for (Palestra p : palestras)
+            ja.add(gson.toJsonTree(p));
+        jo.add("palestras", ja);
+        return jo;
+    }
 }
