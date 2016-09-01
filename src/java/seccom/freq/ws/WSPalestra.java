@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import seccom.freq.banco.BDUtil;
 import seccom.freq.modelo.Palestra;
+import seccom.freq.util.UtilGSON;
 
 /**
  *
@@ -128,7 +129,7 @@ public class WSPalestra extends HttpServlet {
                 
         jo.addProperty("Msg", "PalestrasEncontradas");
         for (Palestra p : palestras)
-            ja.add(gson.toJsonTree(p));
+            ja.add(UtilGSON.toJSON(p));
         jo.add("palestras", ja);
         return jo;
     }
