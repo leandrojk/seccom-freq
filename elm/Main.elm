@@ -1,8 +1,9 @@
 import Html exposing (Html, div, text)
-import Html.App as X
+import Html.Attributes exposing (class)
+import Html.App as App
 
 main =
-  X.beginnerProgram {model = model, view = view, update = update}
+  App.beginnerProgram {model = model, view = view, update = update}
 
 -- Model
 
@@ -26,4 +27,12 @@ update msg model =
 view : Model -> Html Msg
 
 view model =
-  div [] [text "paralamas"]
+  div
+    [class "container"]
+    [div
+      [class "columns"]
+      [div
+        [class "column is-info"]
+        [text "Sistema"]
+      ]
+    ]
