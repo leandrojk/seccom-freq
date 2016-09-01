@@ -16,3 +16,6 @@ hs_err_pid*
 
 # gerado pelo Derby
 *.log
+
+# elm
+/elm/elm-stuff/
