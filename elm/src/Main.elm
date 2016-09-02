@@ -12,7 +12,7 @@ main =
 type alias Model  =
   {
     login : Login.Model
-}
+  }
 
 model : Model
 model =

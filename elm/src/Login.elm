@@ -12,9 +12,9 @@ type alias Model =
   classeDoBotao : String
   }
 
-init : Model
+init : (Model, Cmd Msg)
 init =
-  Model "vaca" "button is-primary"
+  (Model "" "button is-primary", Cmd.none)
 
 -- UPDATE
 
@@ -22,15 +22,15 @@ type Msg
   = ArmazeneSenha String
   | EnvieSenha
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 
 update msg model =
   case msg of
     ArmazeneSenha senha ->
-      { model | senhaDigitada = senha }
+      ({ model | senhaDigitada = senha }, Cmd.none)
 
     EnvieSenha ->
-      { model | classeDoBotao = "button is-primary is-loading" }
+      ({ model | classeDoBotao = "button is-primary is-loading" }, Cmd.none)
 
 -- VIEW
 
