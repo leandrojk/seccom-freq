@@ -30,7 +30,7 @@ update msg model =
       { model | senhaDigitada = senha }
 
     EnvieSenha ->
-      { model | classeDoBotao = "button is-danger" }
+      { model | classeDoBotao = "button is-primary is-loading" }
 
 -- VIEW
 
@@ -40,6 +40,5 @@ view model =
   div []
     [ h3 [class "title"] [text "Login"]
     , input [ type' "text", placeholder "Código", onInput ArmazeneSenha ] []
---    , button [ class model.classeDoBotao, onClick EnvieSenha ] [text  model.classeDoBotao]
-    , h3 [] [text model.senhaDigitada]
+    , button [ class model.classeDoBotao, onClick EnvieSenha ] [text  model.classeDoBotao]
     ]

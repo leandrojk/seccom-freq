@@ -26,7 +26,9 @@ type Msg = Login Login.Msg
 
 update : Msg -> Model -> Model
 update msg model =
-  model
+  case msg of
+    Login msg ->
+      { model | login = (Login.update msg model.login) }
 
 
 -- View

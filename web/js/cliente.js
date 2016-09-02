@@ -7907,7 +7907,7 @@ var _user$project$Login$update = F2(
 		} else {
 			return _elm_lang$core$Native_Utils.update(
 				model,
-				{classeDoBotao: 'button is-danger'});
+				{classeDoBotao: 'button is-primary is-loading'});
 		}
 	});
 var _user$project$Login$Model = F2(
@@ -7947,19 +7947,27 @@ var _user$project$Login$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				A2(
-				_elm_lang$html$Html$h3,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
+				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.senhaDigitada)
+						_elm_lang$html$Html_Attributes$class(model.classeDoBotao),
+						_elm_lang$html$Html_Events$onClick(_user$project$Login$EnvieSenha)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.classeDoBotao)
 					]))
 			]));
 };
 
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		return model;
+		var _p0 = msg;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				login: A2(_user$project$Login$update, _p0._0, model.login)
+			});
 	});
 var _user$project$Main$model = {login: _user$project$Login$init};
 var _user$project$Main$Model = function (a) {
