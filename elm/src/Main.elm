@@ -2,20 +2,27 @@ import Html exposing (Html, div, text, h1)
 import Html.Attributes exposing (class)
 import Html.App as App
 
+import Login
+
 main =
   App.beginnerProgram {model = model, view = view, update = update}
 
 -- Model
 
-type alias Model  = Int
+type alias Model  =
+  {
+    login : Login.Model
+}
 
 model : Model
 model =
-  0
+  {
+    login = Login.init
+  }
 
 -- Update
 
-type Msg = I | D
+type Msg = Login Login.Msg
 
 update : Msg -> Model -> Model
 update msg model =
@@ -29,4 +36,4 @@ view : Model -> Html Msg
 view model =
   div
     [class "box"]
-    [text "Barbante"]
+    [App.map Login (Login.view model.login)]
