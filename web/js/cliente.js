@@ -7901,20 +7901,28 @@ var _user$project$Login$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		if (_p0.ctor === 'ArmazeneSenha') {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{senhaDigitada: _p0._0});
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{senhaDigitada: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
 		} else {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{classeDoBotao: 'button is-primary is-loading'});
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{classeDoBotao: 'button is-primary is-loading'}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
 		}
 	});
 var _user$project$Login$Model = F2(
 	function (a, b) {
 		return {senhaDigitada: a, classeDoBotao: b};
 	});
-var _user$project$Login$init = A2(_user$project$Login$Model, 'vaca', 'button is-primary');
+var _user$project$Login$init = A2(_user$project$Login$Model, '', 'button is-primary');
 var _user$project$Login$EnvieSenha = {ctor: 'EnvieSenha'};
 var _user$project$Login$ArmazeneSenha = function (a) {
 	return {ctor: 'ArmazeneSenha', _0: a};
@@ -7960,22 +7968,34 @@ var _user$project$Login$view = function (model) {
 			]));
 };
 
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				login: A2(_user$project$Login$update, _p0._0, model.login)
-			});
-	});
-var _user$project$Main$model = {login: _user$project$Login$init};
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
 var _user$project$Main$Model = function (a) {
 	return {login: a};
 };
-var _user$project$Main$Login = function (a) {
-	return {ctor: 'Login', _0: a};
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Main$Model(_user$project$Login$init),
+	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$Main$LoginMsg = function (a) {
+	return {ctor: 'LoginMsg', _0: a};
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		var _p1 = A2(_user$project$Login$update, _p0._0, model.login);
+		var loginAtualizado = _p1._0;
+		var loginCmd = _p1._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{login: loginAtualizado}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
+		};
+	});
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -7987,13 +8007,13 @@ var _user$project$Main$view = function (model) {
 			[
 				A2(
 				_elm_lang$html$Html_App$map,
-				_user$project$Main$Login,
+				_user$project$Main$LoginMsg,
 				_user$project$Login$view(model.login))
 			]));
 };
 var _user$project$Main$main = {
-	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: _user$project$Main$model, view: _user$project$Main$view, update: _user$project$Main$update})
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})
 };
 
 var Elm = {};

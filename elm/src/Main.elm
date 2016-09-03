@@ -5,7 +5,7 @@ import Html.App as App
 import Login
 
 main =
-  App.beginnerProgram {model = model, view = view, update = update}
+  App.program {init = init, view = view, update = update, subscriptions = subscriptions}
 
 -- Model
 
@@ -14,21 +14,31 @@ type alias Model  =
     login : Login.Model
   }
 
-model : Model
-model =
-  {
-    login = Login.init
-  }
+init : (Model, Cmd Msg)
+
+init =
+  (Model Login.init , Cmd.none)
+
+
+-- Subscriptions
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
+
 
 -- Update
 
-type Msg = Login Login.Msg
+type Msg = LoginMsg Login.Msg
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Login msg ->
-      { model | login = (Login.update msg model.login) }
+    LoginMsg msg ->
+      let
+        (loginAtualizado, loginCmd) = Login.update msg model.login
+      in
+        ({ model | login = loginAtualizado }, Cmd.map LoginMsg loginCmd)
 
 
 -- View
@@ -38,4 +48,4 @@ view : Model -> Html Msg
 view model =
   div
     [class "box"]
-    [App.map Login (Login.view model.login)]
+    [App.map LoginMsg (Login.view model.login)]

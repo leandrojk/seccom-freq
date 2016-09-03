@@ -12,9 +12,9 @@ type alias Model =
   classeDoBotao : String
   }
 
-init : (Model, Cmd Msg)
+init : Model
 init =
-  (Model "" "button is-primary", Cmd.none)
+  Model "" "button is-primary"
 
 -- UPDATE
 
