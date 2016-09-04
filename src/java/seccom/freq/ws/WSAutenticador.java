@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 /**
  *
@@ -67,8 +68,11 @@ public class WSAutenticador extends HttpServlet {
     }
 
     private JsonObject processeLogin(HttpServletRequest request) {
+        
         String codigo = request.getParameter("codigo");
-
+        
+        System.out.println(codigo);
+        
         if (codigo.equals(CODIGO_DE_ACESSO)) {
             request.getSession().setAttribute(ATTR_LOGADO, true);
             JsonObject jo = new JsonObject();
