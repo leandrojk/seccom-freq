@@ -3,6 +3,7 @@ import Html.Attributes exposing (class)
 import Html.App as App
 
 import Login
+import Menu
 
 main =
   App.program {init = init, view = view, update = update, subscriptions = subscriptions}
@@ -11,7 +12,8 @@ main =
 
 type alias Model  =
   {
-    login : Login.Model
+    login : Login.Model,
+    menu : Menu.Model
   }
 
 --
@@ -19,7 +21,7 @@ type alias Model  =
 --
 init : (Model, Cmd Msg)
 init =
-  (Model Login.init , Cmd.none)
+  (Model Login.init Menu.init, Cmd.none)
 
 
 -- Subscriptions
@@ -33,7 +35,9 @@ subscriptions model =
 
 -- UPDATE
 
-type Msg = LoginMsg Login.Msg
+type Msg =
+  LoginMsg Login.Msg
+  | MenuMsg Menu.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -44,12 +48,19 @@ update msg model =
       in
         ({ model | login = loginAtualizado }, Cmd.map LoginMsg loginCmd)
 
+    MenuMsg msg ->
+      let
+        (menuAtualizado, menuCmd) = Menu.update msg model.menu
+      in
+      ({model | menu = menuAtualizado}, Cmd.map MenuMsg menuCmd)
+
+
 
 -- View
 
 view : Model -> Html Msg
 view model =
-  div [] [mostrarCabecalho, mostrarLogin model.login]
+  div [] [mostrarCabecalho, mostrarLogin model.login, mostrarMenu model.login.logado model.menu]
 
 mostrarCabecalho : Html Msg
 mostrarCabecalho =
@@ -63,3 +74,14 @@ mostrarLogin login =
   div
     [class "box"]
     [App.map LoginMsg (Login.view login)]
+
+
+mostrarMenu : Bool -> Menu.Model -> Html Msg
+mostrarMenu logado menu =
+  case logado of
+    True ->  div
+              [class "box"]
+              [App.map MenuMsg (Menu.view menu)]
+
+    False -> div [] []
+    

@@ -8897,6 +8897,24 @@ var _user$project$Login$view = function (model) {
 	}
 };
 
+var _user$project$Menu$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('menu')
+			]));
+};
+var _user$project$Menu$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Menu$Model = {};
+var _user$project$Menu$init = _user$project$Menu$Model;
+var _user$project$Menu$A = {ctor: 'A'};
+
 var _user$project$Main$mostrarCabecalho = A2(
 	_elm_lang$html$Html$div,
 	_elm_lang$core$Native_List.fromArray(
@@ -8919,30 +8937,73 @@ var _user$project$Main$mostrarCabecalho = A2(
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$Model = function (a) {
-	return {login: a};
-};
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {login: a, menu: b};
+	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: _user$project$Main$Model(_user$project$Login$init),
+	_0: A2(_user$project$Main$Model, _user$project$Login$init, _user$project$Menu$init),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$Main$MenuMsg = function (a) {
+	return {ctor: 'MenuMsg', _0: a};
+};
+var _user$project$Main$mostrarMenu = F2(
+	function (logado, menu) {
+		var _p0 = logado;
+		if (_p0 === true) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('box')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Main$MenuMsg,
+						_user$project$Menu$view(menu))
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		}
+	});
 var _user$project$Main$LoginMsg = function (a) {
 	return {ctor: 'LoginMsg', _0: a};
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		var _p1 = A2(_user$project$Login$update, _p0._0, model.login);
-		var loginAtualizado = _p1._0;
-		var loginCmd = _p1._1;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{login: loginAtualizado}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
-		};
+		var _p1 = msg;
+		if (_p1.ctor === 'LoginMsg') {
+			var _p2 = A2(_user$project$Login$update, _p1._0, model.login);
+			var loginAtualizado = _p2._0;
+			var loginCmd = _p2._1;
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{login: loginAtualizado}),
+				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
+			};
+		} else {
+			var _p3 = A2(_user$project$Menu$update, _p1._0, model.menu);
+			var menuAtualizado = _p3._0;
+			var menuCmd = _p3._1;
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{menu: menuAtualizado}),
+				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$MenuMsg, menuCmd)
+			};
+		}
 	});
 var _user$project$Main$mostrarLogin = function (login) {
 	return A2(
@@ -8967,7 +9028,8 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_user$project$Main$mostrarCabecalho,
-				_user$project$Main$mostrarLogin(model.login)
+				_user$project$Main$mostrarLogin(model.login),
+				A2(_user$project$Main$mostrarMenu, model.login.logado, model.menu)
 			]));
 };
 var _user$project$Main$main = {
