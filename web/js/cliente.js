@@ -8718,16 +8718,40 @@ var _user$project$Login$analisarResposta = F2(
 			model,
 			{logado: logado, classeDoBotao: cb, aviso: aviso});
 	});
+var _user$project$Login$analisarRespostaLogout = F2(
+	function (resposta, model) {
+		var aviso = '';
+		var cb = 'button is-primary';
+		var logado = false;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{logado: logado, classeDoBotao: cb, aviso: aviso});
+	});
 var _user$project$Login$Model = F4(
 	function (a, b, c, d) {
 		return {senhaDigitada: a, classeDoBotao: b, logado: c, aviso: d};
 	});
 var _user$project$Login$init = A4(_user$project$Login$Model, '', 'button is-primary', false, '');
+var _user$project$Login$RespostaLogoutOk = function (a) {
+	return {ctor: 'RespostaLogoutOk', _0: a};
+};
 var _user$project$Login$RespostaErro = function (a) {
 	return {ctor: 'RespostaErro', _0: a};
 };
-var _user$project$Login$RespostaOk = function (a) {
-	return {ctor: 'RespostaOk', _0: a};
+var _user$project$Login$fazerLogout = function () {
+	var url = A2(
+		_evancz$elm_http$Http$url,
+		'WSAutenticador/fazerLogout',
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Login$RespostaErro,
+		_user$project$Login$RespostaLogoutOk,
+		A3(_evancz$elm_http$Http$post, _user$project$Login$decodeMsg, url, _evancz$elm_http$Http$empty));
+}();
+var _user$project$Login$RespostaLoginOk = function (a) {
+	return {ctor: 'RespostaLoginOk', _0: a};
 };
 var _user$project$Login$enviarSenha = function (senha) {
 	var url = A2(
@@ -8740,7 +8764,7 @@ var _user$project$Login$enviarSenha = function (senha) {
 	return A3(
 		_elm_lang$core$Task$perform,
 		_user$project$Login$RespostaErro,
-		_user$project$Login$RespostaOk,
+		_user$project$Login$RespostaLoginOk,
 		A3(_evancz$elm_http$Http$post, _user$project$Login$decodeMsg, url, _evancz$elm_http$Http$empty));
 };
 var _user$project$Login$update = F2(
@@ -8752,7 +8776,7 @@ var _user$project$Login$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{senhaDigitada: _p0._0}),
+						{senhaDigitada: _p0._0, aviso: ''}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'EnvieSenha':
@@ -8763,13 +8787,13 @@ var _user$project$Login$update = F2(
 						{classeDoBotao: 'button is-primary is-loading'}),
 					_1: _user$project$Login$enviarSenha(model.senhaDigitada)
 				};
-			case 'RespostaOk':
+			case 'RespostaLoginOk':
 				return {
 					ctor: '_Tuple2',
 					_0: A2(_user$project$Login$analisarResposta, _p0._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'RespostaErro':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -8777,8 +8801,17 @@ var _user$project$Login$update = F2(
 						{classeDoBotao: 'button is-primary'}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'FacaLogout':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Login$fazerLogout};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_user$project$Login$analisarRespostaLogout, _p0._0, model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
+var _user$project$Login$FacaLogout = {ctor: 'FacaLogout'};
 var _user$project$Login$EnvieSenha = {ctor: 'EnvieSenha'};
 var _user$project$Login$ArmazeneSenha = function (a) {
 	return {ctor: 'ArmazeneSenha', _0: a};
@@ -8791,7 +8824,29 @@ var _user$project$Login$view = function (model) {
 			_elm_lang$core$Native_List.fromArray(
 				[]),
 			_elm_lang$core$Native_List.fromArray(
-				[]));
+				[
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('title')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Logout')
+						])),
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class(model.classeDoBotao),
+							_elm_lang$html$Html_Events$onClick(_user$project$Login$FacaLogout)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Sair')
+						]))
+				]));
 	} else {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -8842,6 +8897,25 @@ var _user$project$Login$view = function (model) {
 	}
 };
 
+var _user$project$Main$mostrarCabecalho = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('box')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('title')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('SECCOM - CTC - UFSC - Controle de Frequência')
+				]))
+		]));
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
@@ -8870,7 +8944,7 @@ var _user$project$Main$update = F2(
 			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
 		};
 	});
-var _user$project$Main$view = function (model) {
+var _user$project$Main$mostrarLogin = function (login) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -8882,7 +8956,18 @@ var _user$project$Main$view = function (model) {
 				A2(
 				_elm_lang$html$Html_App$map,
 				_user$project$Main$LoginMsg,
-				_user$project$Login$view(model.login))
+				_user$project$Login$view(login))
+			]));
+};
+var _user$project$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Main$mostrarCabecalho,
+				_user$project$Main$mostrarLogin(model.login)
 			]));
 };
 var _user$project$Main$main = {

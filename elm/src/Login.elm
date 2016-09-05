@@ -19,9 +19,14 @@ type alias Model =
   aviso : String
   }
 
+--
+--
+--
 init : Model
 init =
   Model "" "button is-primary" False ""
+
+
 
 -- UPDATE
 
@@ -29,21 +34,23 @@ type Msg
   = ArmazeneSenha String
   | EnvieSenha
   | FacaLogout
-  | RespostaOk String
+  | RespostaLoginOk String
   | RespostaErro Http.Error
   | RespostaLogoutOk String
 
+--
+--
+--
 update : Msg -> Model -> (Model, Cmd Msg)
-
 update msg model =
   case msg of
     ArmazeneSenha senha ->
-      ({ model | senhaDigitada = senha }, Cmd.none)
+      ({ model | senhaDigitada = senha, aviso = "" }, Cmd.none)
 
     EnvieSenha ->
       ({ model | classeDoBotao = "button is-primary is-loading" }, enviarSenha model.senhaDigitada)
 
-    RespostaOk resposta ->
+    RespostaLoginOk resposta ->
       (analisarResposta resposta model, Cmd.none)
 
     RespostaErro erro ->
@@ -55,7 +62,21 @@ update msg model =
     RespostaLogoutOk resposta ->
       (analisarRespostaLogout resposta model, Cmd.none)
 
+--
+--
+--
+analisarRespostaLogout : String -> Model -> Model
+analisarRespostaLogout resposta model =
+  let
+    logado = False
+    cb = "button is-primary"
+    aviso = ""
+  in
+    {model | logado = logado, classeDoBotao = cb, aviso = aviso }
 
+--
+--
+--
 analisarResposta : String -> Model -> Model
 analisarResposta resposta model =
   let
@@ -65,32 +86,40 @@ analisarResposta resposta model =
   in
     {model | logado = logado, classeDoBotao = cb, aviso = aviso }
 
+--
+--
+--
 enviarSenha : String -> Cmd Msg
-
 enviarSenha senha =
   let
     url = Http.url "WSAutenticador/fazerLogin" [("codigo", senha)]
---    corpo =  Http.multipart [Http.stringData "codigo" senha]
   in
-    Task.perform RespostaErro RespostaOk (Http.post decodeMsg url Http.empty )
+    Task.perform RespostaErro RespostaLoginOk (Http.post decodeMsg url Http.empty )
 
+
+--
+--
+--
 decodeMsg : Json.Decoder String
-
 decodeMsg =
   Json.at ["Msg"] Json.string
 
 
+--
+--
+--
 fazerLogout : Cmd Msg
-
 fazerLogout =
   let
-    url = Http.url "WSAutenticador/fazerLogout"
+    url = Http.url "WSAutenticador/fazerLogout" []
   in
-    Task.perform RespostaErro RespostaLogoutOk (Http.post decodeMsg url Http.empty )
+    Task.perform RespostaErro RespostaLogoutOk (Http.post decodeMsg url Http.empty)
+
+
+--
 -- VIEW
-
+--
 view : Model -> Html Msg
-
 view model =
   case model.logado of
     True -> div []
