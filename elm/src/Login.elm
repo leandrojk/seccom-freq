@@ -15,20 +15,23 @@ type alias Model =
   {
   senhaDigitada : String,
   classeDoBotao : String,
-  msgResposta : String
+  logado : Bool,
+  aviso : String
   }
 
 init : Model
 init =
-  Model "" "button is-primary" ""
+  Model "" "button is-primary" False ""
 
 -- UPDATE
 
 type Msg
   = ArmazeneSenha String
   | EnvieSenha
+  | FacaLogout
   | RespostaOk String
   | RespostaErro Http.Error
+  | RespostaLogoutOk String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 
@@ -41,11 +44,26 @@ update msg model =
       ({ model | classeDoBotao = "button is-primary is-loading" }, enviarSenha model.senhaDigitada)
 
     RespostaOk resposta ->
-      ({model | msgResposta = resposta}, Cmd.none)
+      (analisarResposta resposta model, Cmd.none)
 
     RespostaErro erro ->
-      (model, Cmd.none)
+      ({model | classeDoBotao = "button is-primary"}, Cmd.none)
 
+    FacaLogout ->
+      (model, fazerLogout)
+
+    RespostaLogoutOk resposta ->
+      (analisarRespostaLogout resposta model, Cmd.none)
+
+
+analisarResposta : String -> Model -> Model
+analisarResposta resposta model =
+  let
+    logado = resposta == "LoginAceito"
+    cb = "button is-primary"
+    aviso = if (logado) then "" else "Código incorreto!"
+  in
+    {model | logado = logado, classeDoBotao = cb, aviso = aviso }
 
 enviarSenha : String -> Cmd Msg
 
@@ -61,14 +79,29 @@ decodeMsg : Json.Decoder String
 decodeMsg =
   Json.at ["Msg"] Json.string
 
+
+fazerLogout : Cmd Msg
+
+fazerLogout =
+  let
+    url = Http.url "WSAutenticador/fazerLogout"
+  in
+    Task.perform RespostaErro RespostaLogoutOk (Http.post decodeMsg url Http.empty )
 -- VIEW
 
 view : Model -> Html Msg
 
 view model =
-  div []
-    [ h3 [class "title"] [text "Login"]
-    , input [ type' "text", placeholder "Código", onInput ArmazeneSenha ] []
-    , button [ class model.classeDoBotao, onClick EnvieSenha ] [text  model.classeDoBotao]
-    , h3 [] [text model.msgResposta]
-    ]
+  case model.logado of
+    True -> div []
+      [
+      h3 [class "title"] [text "Logout"]
+      , button [class model.classeDoBotao, onClick FacaLogout] [text "Sair"]
+      ]
+
+    False -> div []
+        [ h3 [class "title"] [text "Login"]
+        , input [ type' "text", placeholder "Código", onInput ArmazeneSenha ] []
+        , button [ class model.classeDoBotao, onClick EnvieSenha ] [text  "Entrar"]
+        , h3 [] [text model.aviso]
+        ]

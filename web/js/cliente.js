@@ -8709,11 +8709,20 @@ var _user$project$Login$decodeMsg = A2(
 	_elm_lang$core$Native_List.fromArray(
 		['Msg']),
 	_elm_lang$core$Json_Decode$string);
-var _user$project$Login$Model = F3(
-	function (a, b, c) {
-		return {senhaDigitada: a, classeDoBotao: b, msgResposta: c};
+var _user$project$Login$analisarResposta = F2(
+	function (resposta, model) {
+		var cb = 'button is-primary';
+		var logado = _elm_lang$core$Native_Utils.eq(resposta, 'LoginAceito');
+		var aviso = logado ? '' : 'Código incorreto!';
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{logado: logado, classeDoBotao: cb, aviso: aviso});
 	});
-var _user$project$Login$init = A3(_user$project$Login$Model, '', 'button is-primary', '');
+var _user$project$Login$Model = F4(
+	function (a, b, c, d) {
+		return {senhaDigitada: a, classeDoBotao: b, logado: c, aviso: d};
+	});
+var _user$project$Login$init = A4(_user$project$Login$Model, '', 'button is-primary', false, '');
 var _user$project$Login$RespostaErro = function (a) {
 	return {ctor: 'RespostaErro', _0: a};
 };
@@ -8757,13 +8766,17 @@ var _user$project$Login$update = F2(
 			case 'RespostaOk':
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{msgResposta: _p0._0}),
+					_0: A2(_user$project$Login$analisarResposta, _p0._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{classeDoBotao: 'button is-primary'}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Login$EnvieSenha = {ctor: 'EnvieSenha'};
@@ -8771,52 +8784,62 @@ var _user$project$Login$ArmazeneSenha = function (a) {
 	return {ctor: 'ArmazeneSenha', _0: a};
 };
 var _user$project$Login$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$h3,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('title')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Login')
-					])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$placeholder('Código'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Login$ArmazeneSenha)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class(model.classeDoBotao),
-						_elm_lang$html$Html_Events$onClick(_user$project$Login$EnvieSenha)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.classeDoBotao)
-					])),
-				A2(
-				_elm_lang$html$Html$h3,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.msgResposta)
-					]))
-			]));
+	var _p1 = model.logado;
+	if (_p1 === true) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('title')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Login')
+						])),
+					A2(
+					_elm_lang$html$Html$input,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$type$('text'),
+							_elm_lang$html$Html_Attributes$placeholder('Código'),
+							_elm_lang$html$Html_Events$onInput(_user$project$Login$ArmazeneSenha)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class(model.classeDoBotao),
+							_elm_lang$html$Html_Events$onClick(_user$project$Login$EnvieSenha)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Entrar')
+						])),
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(model.aviso)
+						]))
+				]));
+	}
 };
 
 var _user$project$Main$subscriptions = function (model) {
