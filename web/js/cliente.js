@@ -8974,6 +8974,7 @@ var _user$project$Menu$view = function (model) {
 								_elm_lang$html$Html$button,
 								_elm_lang$core$Native_List.fromArray(
 									[
+										_elm_lang$html$Html_Attributes$class('button is-primary'),
 										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Semana)
 									]),
 								_elm_lang$core$Native_List.fromArray(
@@ -8993,6 +8994,7 @@ var _user$project$Menu$view = function (model) {
 								_elm_lang$html$Html$button,
 								_elm_lang$core$Native_List.fromArray(
 									[
+										_elm_lang$html$Html_Attributes$class('button is-primary'),
 										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Palestra)
 									]),
 								_elm_lang$core$Native_List.fromArray(
@@ -9004,6 +9006,48 @@ var _user$project$Menu$view = function (model) {
 			]));
 };
 
+var _user$project$Semana$decoderTodas = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['Msg']),
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Semana$Model = function (a) {
+	return {semanas: a};
+};
+var _user$project$Semana$init = _user$project$Semana$Model(
+	_elm_lang$core$Native_List.fromArray(
+		[]));
+var _user$project$Semana$Semana = F3(
+	function (a, b, c) {
+		return {ano: a, nome: b, tema: c};
+	});
+var _user$project$Semana$RespostaTodas = function (a) {
+	return {ctor: 'RespostaTodas', _0: a};
+};
+var _user$project$Semana$Erro = function (a) {
+	return {ctor: 'Erro', _0: a};
+};
+var _user$project$Semana$buscarSemanas = function () {
+	var url = 'WSSemana/encontrarTodas';
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Semana$Erro,
+		_user$project$Semana$RespostaTodas,
+		A2(_evancz$elm_http$Http$get, _user$project$Semana$decoderTodas, url));
+}();
+var _user$project$Semana$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'BusqueSemanas':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Semana$buscarSemanas};
+			case 'Erro':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Semana$BusqueSemanas = {ctor: 'BusqueSemanas'};
 var _user$project$Semana$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9013,16 +9057,29 @@ var _user$project$Semana$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text('a semana...')
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('title')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Semana')
+					])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('button is-primary'),
+						_elm_lang$html$Html_Events$onClick(_user$project$Semana$BusqueSemanas)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Mostrar Todas')
+					]))
 			]));
 };
-var _user$project$Semana$update = F2(
-	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Semana$Model = {};
-var _user$project$Semana$init = _user$project$Semana$Model;
-var _user$project$Semana$A = {ctor: 'A'};
 
 var _user$project$Palestra$view = function (model) {
 	return A2(
@@ -9044,25 +9101,6 @@ var _user$project$Palestra$Model = {};
 var _user$project$Palestra$init = _user$project$Palestra$Model;
 var _user$project$Palestra$A = {ctor: 'A'};
 
-var _user$project$Main$mostrarCabecalho = A2(
-	_elm_lang$html$Html$div,
-	_elm_lang$core$Native_List.fromArray(
-		[
-			_elm_lang$html$Html_Attributes$class('box')
-		]),
-	_elm_lang$core$Native_List.fromArray(
-		[
-			A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$class('title')
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text('SECCOM - CTC - UFSC - Controle de Frequência')
-				]))
-		]));
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
@@ -9225,6 +9263,16 @@ var _user$project$Main$mostrarLogin = function (login) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('title')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('SECCOM - CTC - UFSC - Controle de Frequência')
+					])),
+				A2(
 				_elm_lang$html$Html_App$map,
 				_user$project$Main$LoginMsg,
 				_user$project$Login$view(login))
@@ -9237,7 +9285,6 @@ var _user$project$Main$view = function (model) {
 			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Main$mostrarCabecalho,
 				_user$project$Main$mostrarLogin(model.login),
 				A2(_user$project$Main$mostrarMenu, model.login.logado, model.menu),
 				A2(

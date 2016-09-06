@@ -1,4 +1,4 @@
-module Menu exposing (Model, Msg, Opcao, init, update, view, isSemana, isPalestra)
+module Menu exposing (Model, Msg, init, update, view, isSemana, isPalestra)
 
 import Html exposing (Html, div, text, button)
 import Html.Attributes exposing (class)
@@ -56,7 +56,7 @@ view model =
       [
         div [class "columns"]
             [
-              div [class "column"] [button [onClick Semana] [text "Semana"]]
-              , div [class "column"] [button [onClick Palestra] [text "Palestra"]]
+              div [class "column"] [button [class "button is-primary", onClick Semana] [text "Semana"]]
+              , div [class "column"] [button [class "button is-primary", onClick Palestra] [text "Palestra"]]
             ]
       ]

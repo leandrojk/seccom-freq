@@ -79,25 +79,21 @@ view : Model -> Html Msg
 view model =
   div []
       [
-       mostrarCabecalho
-       , mostrarLogin model.login
+       mostrarLogin model.login
        , mostrarMenu model.login.logado model.menu
        , mostrarSemana (Menu.isSemana model.menu) model.semana
        , mostrarPalestra (Menu.isPalestra model.menu) model.palestra
        ]
 
-mostrarCabecalho : Html Msg
-mostrarCabecalho =
-  div [class "box"]
-    [
-      div [class "title"] [text "SECCOM - CTC - UFSC - Controle de Frequência"]
-    ]
 
 mostrarLogin : Login.Model -> Html Msg
 mostrarLogin login =
   div
     [class "box"]
-    [App.map LoginMsg (Login.view login)]
+    [
+    div [class "title"] [text "SECCOM - CTC - UFSC - Controle de Frequência"]
+    , App.map LoginMsg (Login.view login)
+    ]
 
 
 mostrarMenu : Bool -> Menu.Model -> Html Msg
