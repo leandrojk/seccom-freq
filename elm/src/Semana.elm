@@ -1,12 +1,12 @@
 module Semana exposing (Model, Msg, init, update, view)
 
 import Html exposing (Html, div, text, button, input)
-import Html.Attributes exposing (class, type', placeholder)
+import Html.Attributes exposing (class, type', placeholder, value)
 import Html.Events exposing (onClick, onInput)
 
 import Http
 import Task
-import Json.Decode as Json exposing(..)
+import Json.Decode as Json exposing((:=))
 
 import String
 
@@ -105,7 +105,7 @@ decoderTodas =
 
 decoderSemana : Json.Decoder Semana
 decoderSemana =
-  object3 Semana ("ano" := Json.int) ("nome" := Json.string) ("tema" := Json.string)
+  Json.object3 Semana ("ano" := Json.int) ("nome" := Json.string) ("tema" := Json.string)
 
 
 -- VIEW
@@ -117,18 +117,18 @@ view model =
     div [class "title"] [text "Semana"]
     , button [class "button is-primary", onClick BusqueSemanas] [text "Mostrar Todas"]
     , mostrarSemanas model.semanas
-    , formSemana
+    , formSemana model.novaSemana
     ]
 
 mostrarSemanas : List Semana -> Html Msg
 mostrarSemanas semanas =
   div [class "box"] (List.map (\semana -> div [] [text ((toString semana.ano)  ++ " - " ++ semana.nome ++ " - " ++ semana.tema)]) semanas)
 
-formSemana : Html Msg
-formSemana =
+formSemana : Semana -> Html Msg
+formSemana novaSemana =
   div []
-  [ input [type' "number", placeholder "ano", onInput ArmazeneAno] []
-  , input [type' "text", placeholder "nome", onInput ArmazeneNome] []
-  , input [type' "text", placeholder "tema", onInput ArmazeneTema] []
+  [ input [type' "number", placeholder "ano", onInput ArmazeneAno, value (toString novaSemana.ano)] []
+  , input [type' "text", placeholder "nome", onInput ArmazeneNome, value novaSemana.nome] []
+  , input [type' "text", placeholder "tema", onInput ArmazeneTema, value novaSemana.tema] []
   , button [class "button is-primary", onClick  CadastreSemana] [text "Cadastrar"]
   ]

@@ -9075,54 +9075,60 @@ var _user$project$Semana$ArmazeneNome = function (a) {
 var _user$project$Semana$ArmazeneAno = function (a) {
 	return {ctor: 'ArmazeneAno', _0: a};
 };
-var _user$project$Semana$formSemana = A2(
-	_elm_lang$html$Html$div,
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[
-			A2(
-			_elm_lang$html$Html$input,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$type$('number'),
-					_elm_lang$html$Html_Attributes$placeholder('ano'),
-					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneAno)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[])),
-			A2(
-			_elm_lang$html$Html$input,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$type$('text'),
-					_elm_lang$html$Html_Attributes$placeholder('nome'),
-					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneNome)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[])),
-			A2(
-			_elm_lang$html$Html$input,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$type$('text'),
-					_elm_lang$html$Html_Attributes$placeholder('tema'),
-					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneTema)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[])),
-			A2(
-			_elm_lang$html$Html$button,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$class('button is-primary'),
-					_elm_lang$html$Html_Events$onClick(_user$project$Semana$CadastreSemana)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text('Cadastrar')
-				]))
-		]));
+var _user$project$Semana$formSemana = function (novaSemana) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('number'),
+						_elm_lang$html$Html_Attributes$placeholder('ano'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneAno),
+						_elm_lang$html$Html_Attributes$value(
+						_elm_lang$core$Basics$toString(novaSemana.ano))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('nome'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneNome),
+						_elm_lang$html$Html_Attributes$value(novaSemana.nome)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('tema'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneTema),
+						_elm_lang$html$Html_Attributes$value(novaSemana.tema)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('button is-primary'),
+						_elm_lang$html$Html_Events$onClick(_user$project$Semana$CadastreSemana)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Cadastrar')
+					]))
+			]));
+};
 var _user$project$Semana$RespostaTodas = function (a) {
 	return {ctor: 'RespostaTodas', _0: a};
 };
@@ -9260,7 +9266,7 @@ var _user$project$Semana$view = function (model) {
 						_elm_lang$html$Html$text('Mostrar Todas')
 					])),
 				_user$project$Semana$mostrarSemanas(model.semanas),
-				_user$project$Semana$formSemana
+				_user$project$Semana$formSemana(model.novaSemana)
 			]));
 };
 
