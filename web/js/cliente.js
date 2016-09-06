@@ -8897,23 +8897,152 @@ var _user$project$Login$view = function (model) {
 	}
 };
 
+var _user$project$Menu$opcaoAtual = F2(
+	function (model, opcao) {
+		var _p0 = model.opcaoAtual;
+		if (_p0.ctor === 'Nothing') {
+			return false;
+		} else {
+			return _elm_lang$core$Native_Utils.eq(_p0._0, opcao);
+		}
+	});
+var _user$project$Menu$Model = function (a) {
+	return {opcaoAtual: a};
+};
+var _user$project$Menu$init = _user$project$Menu$Model(_elm_lang$core$Maybe$Nothing);
+var _user$project$Menu$OpcaoPalestra = {ctor: 'OpcaoPalestra'};
+var _user$project$Menu$isPalestra = function (model) {
+	return A2(_user$project$Menu$opcaoAtual, model, _user$project$Menu$OpcaoPalestra);
+};
+var _user$project$Menu$OpcaoSemana = {ctor: 'OpcaoSemana'};
+var _user$project$Menu$isSemana = function (model) {
+	return A2(_user$project$Menu$opcaoAtual, model, _user$project$Menu$OpcaoSemana);
+};
+var _user$project$Menu$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		if (_p1.ctor === 'Semana') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoSemana)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoPalestra)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+var _user$project$Menu$Palestra = {ctor: 'Palestra'};
+var _user$project$Menu$Semana = {ctor: 'Semana'};
 var _user$project$Menu$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text('menu')
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('columns')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('column')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$button,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Semana)
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Semana')
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('column')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$button,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Palestra)
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Palestra')
+									]))
+							]))
+					]))
 			]));
 };
-var _user$project$Menu$update = F2(
+
+var _user$project$Semana$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('a semana...')
+			]));
+};
+var _user$project$Semana$update = F2(
 	function (msg, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Menu$Model = {};
-var _user$project$Menu$init = _user$project$Menu$Model;
-var _user$project$Menu$A = {ctor: 'A'};
+var _user$project$Semana$Model = {};
+var _user$project$Semana$init = _user$project$Semana$Model;
+var _user$project$Semana$A = {ctor: 'A'};
+
+var _user$project$Palestra$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('a palestra...')
+			]));
+};
+var _user$project$Palestra$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Palestra$Model = {};
+var _user$project$Palestra$init = _user$project$Palestra$Model;
+var _user$project$Palestra$A = {ctor: 'A'};
 
 var _user$project$Main$mostrarCabecalho = A2(
 	_elm_lang$html$Html$div,
@@ -8937,22 +9066,80 @@ var _user$project$Main$mostrarCabecalho = A2(
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {login: a, menu: b};
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {login: a, menu: b, semana: c, palestra: d};
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A2(_user$project$Main$Model, _user$project$Login$init, _user$project$Menu$init),
+	_0: A4(_user$project$Main$Model, _user$project$Login$init, _user$project$Menu$init, _user$project$Semana$init, _user$project$Palestra$init),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$Main$PalestraMsg = function (a) {
+	return {ctor: 'PalestraMsg', _0: a};
+};
+var _user$project$Main$mostrarPalestra = F2(
+	function (exibir, model) {
+		var _p0 = exibir;
+		if (_p0 === true) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('box')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Main$PalestraMsg,
+						_user$project$Palestra$view(model))
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		}
+	});
+var _user$project$Main$SemanaMsg = function (a) {
+	return {ctor: 'SemanaMsg', _0: a};
+};
+var _user$project$Main$mostrarSemana = F2(
+	function (exibir, model) {
+		var _p1 = exibir;
+		if (_p1 === true) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('box')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Main$SemanaMsg,
+						_user$project$Semana$view(model))
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		}
+	});
 var _user$project$Main$MenuMsg = function (a) {
 	return {ctor: 'MenuMsg', _0: a};
 };
 var _user$project$Main$mostrarMenu = F2(
 	function (logado, menu) {
-		var _p0 = logado;
-		if (_p0 === true) {
+		var _p2 = logado;
+		if (_p2 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -8980,29 +9167,52 @@ var _user$project$Main$LoginMsg = function (a) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'LoginMsg') {
-			var _p2 = A2(_user$project$Login$update, _p1._0, model.login);
-			var loginAtualizado = _p2._0;
-			var loginCmd = _p2._1;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{login: loginAtualizado}),
-				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
-			};
-		} else {
-			var _p3 = A2(_user$project$Menu$update, _p1._0, model.menu);
-			var menuAtualizado = _p3._0;
-			var menuCmd = _p3._1;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{menu: menuAtualizado}),
-				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$MenuMsg, menuCmd)
-			};
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'LoginMsg':
+				var _p4 = A2(_user$project$Login$update, _p3._0, model.login);
+				var loginAtualizado = _p4._0;
+				var loginCmd = _p4._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{login: loginAtualizado, menu: _user$project$Menu$init}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
+				};
+			case 'MenuMsg':
+				var _p5 = A2(_user$project$Menu$update, _p3._0, model.menu);
+				var menuAtualizado = _p5._0;
+				var menuCmd = _p5._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{menu: menuAtualizado}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$MenuMsg, menuCmd)
+				};
+			case 'SemanaMsg':
+				var _p6 = A2(_user$project$Semana$update, _p3._0, model.semana);
+				var semanaAtualizada = _p6._0;
+				var semanaCmd = _p6._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{semana: semanaAtualizada}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SemanaMsg, semanaCmd)
+				};
+			default:
+				var _p7 = A2(_user$project$Palestra$update, _p3._0, model.palestra);
+				var palestraAtualizada = _p7._0;
+				var palestraCmd = _p7._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{palestra: palestraAtualizada}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PalestraMsg, palestraCmd)
+				};
 		}
 	});
 var _user$project$Main$mostrarLogin = function (login) {
@@ -9029,7 +9239,15 @@ var _user$project$Main$view = function (model) {
 			[
 				_user$project$Main$mostrarCabecalho,
 				_user$project$Main$mostrarLogin(model.login),
-				A2(_user$project$Main$mostrarMenu, model.login.logado, model.menu)
+				A2(_user$project$Main$mostrarMenu, model.login.logado, model.menu),
+				A2(
+				_user$project$Main$mostrarSemana,
+				_user$project$Menu$isSemana(model.menu),
+				model.semana),
+				A2(
+				_user$project$Main$mostrarPalestra,
+				_user$project$Menu$isPalestra(model.menu),
+				model.palestra)
 			]));
 };
 var _user$project$Main$main = {
