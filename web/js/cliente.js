@@ -9006,21 +9006,123 @@ var _user$project$Menu$view = function (model) {
 			]));
 };
 
-var _user$project$Semana$decoderTodas = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['Msg']),
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Semana$Model = function (a) {
-	return {semanas: a};
+var _user$project$Semana$mostrarSemanas = function (semanas) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		A2(
+			_elm_lang$core$List$map,
+			function (semana) {
+				return A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(semana.ano),
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									' - ',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										semana.nome,
+										A2(_elm_lang$core$Basics_ops['++'], ' - ', semana.tema)))))
+						]));
+			},
+			semanas));
 };
-var _user$project$Semana$init = _user$project$Semana$Model(
+var _user$project$Semana$Model = F3(
+	function (a, b, c) {
+		return {semanas: a, novaSemana: b, mensagem: c};
+	});
+var _user$project$Semana$init = A3(
+	_user$project$Semana$Model,
 	_elm_lang$core$Native_List.fromArray(
-		[]));
+		[]),
+	{ano: 0, nome: '', tema: ''},
+	'');
 var _user$project$Semana$Semana = F3(
 	function (a, b, c) {
 		return {ano: a, nome: b, tema: c};
 	});
+var _user$project$Semana$decoderSemana = A4(
+	_elm_lang$core$Json_Decode$object3,
+	_user$project$Semana$Semana,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'ano', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'tema', _elm_lang$core$Json_Decode$string));
+var _user$project$Semana$decoderTodas = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['semanas']),
+	_elm_lang$core$Json_Decode$list(_user$project$Semana$decoderSemana));
+var _user$project$Semana$RespostaCadastrar = function (a) {
+	return {ctor: 'RespostaCadastrar', _0: a};
+};
+var _user$project$Semana$CadastreSemana = {ctor: 'CadastreSemana'};
+var _user$project$Semana$ArmazeneTema = function (a) {
+	return {ctor: 'ArmazeneTema', _0: a};
+};
+var _user$project$Semana$ArmazeneNome = function (a) {
+	return {ctor: 'ArmazeneNome', _0: a};
+};
+var _user$project$Semana$ArmazeneAno = function (a) {
+	return {ctor: 'ArmazeneAno', _0: a};
+};
+var _user$project$Semana$formSemana = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$html$Html$input,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$type$('number'),
+					_elm_lang$html$Html_Attributes$placeholder('ano'),
+					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneAno)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[])),
+			A2(
+			_elm_lang$html$Html$input,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$type$('text'),
+					_elm_lang$html$Html_Attributes$placeholder('nome'),
+					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneNome)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[])),
+			A2(
+			_elm_lang$html$Html$input,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$type$('text'),
+					_elm_lang$html$Html_Attributes$placeholder('tema'),
+					_elm_lang$html$Html_Events$onInput(_user$project$Semana$ArmazeneTema)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[])),
+			A2(
+			_elm_lang$html$Html$button,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('button is-primary'),
+					_elm_lang$html$Html_Events$onClick(_user$project$Semana$CadastreSemana)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('Cadastrar')
+				]))
+		]));
 var _user$project$Semana$RespostaTodas = function (a) {
 	return {ctor: 'RespostaTodas', _0: a};
 };
@@ -9035,6 +9137,30 @@ var _user$project$Semana$buscarSemanas = function () {
 		_user$project$Semana$RespostaTodas,
 		A2(_evancz$elm_http$Http$get, _user$project$Semana$decoderTodas, url));
 }();
+var _user$project$Semana$cadastrarSemana = function (semana) {
+	var url = A2(
+		_evancz$elm_http$Http$url,
+		'WSSemana/cadastrar',
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: 'ano',
+				_1: _elm_lang$core$Basics$toString(semana.ano)
+			},
+				{ctor: '_Tuple2', _0: 'nome', _1: semana.nome},
+				{ctor: '_Tuple2', _0: 'tema', _1: semana.tema}
+			]));
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Semana$Erro,
+		_user$project$Semana$RespostaCadastrar,
+		A3(
+			_evancz$elm_http$Http$post,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+			url,
+			_evancz$elm_http$Http$empty));
+};
 var _user$project$Semana$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -9043,8 +9169,63 @@ var _user$project$Semana$update = F2(
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Semana$buscarSemanas};
 			case 'Erro':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'RespostaTodas':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{semanas: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ArmazeneAno':
+				var ano = A2(
+					_elm_lang$core$Result$withDefault,
+					0,
+					_elm_lang$core$String$toInt(_p0._0));
+				var novaSemana = {ano: ano, nome: model.novaSemana.nome, tema: model.novaSemana.tema};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{novaSemana: novaSemana}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ArmazeneNome':
+				var novaSemana = {ano: model.novaSemana.ano, nome: _p0._0, tema: model.novaSemana.tema};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{novaSemana: novaSemana}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ArmazeneTema':
+				var novaSemana = {ano: model.novaSemana.ano, nome: model.novaSemana.nome, tema: _p0._0};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{novaSemana: novaSemana}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CadastreSemana':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Semana$cadastrarSemana(model.novaSemana)
+				};
 			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				var semanasAtualizada = A2(_elm_lang$core$List_ops['::'], model.novaSemana, model.semanas);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							semanas: semanasAtualizada,
+							novaSemana: {ano: 0, nome: '', tema: ''}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Semana$BusqueSemanas = {ctor: 'BusqueSemanas'};
@@ -9077,7 +9258,9 @@ var _user$project$Semana$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text('Mostrar Todas')
-					]))
+					])),
+				_user$project$Semana$mostrarSemanas(model.semanas),
+				_user$project$Semana$formSemana
 			]));
 };
 
