@@ -9287,7 +9287,15 @@ var _user$project$Semana$update = F2(
 					_1: _user$project$Semana$buscarSemanas
 				};
 			case 'Erro':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							mensagem: _elm_lang$core$Basics$toString(_p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'RespostaTodas':
 				var mensagem = '';
 				return {
@@ -9408,35 +9416,330 @@ var _user$project$Palestra$update = F2(
 	});
 var _user$project$Palestra$Model = {};
 var _user$project$Palestra$init = _user$project$Palestra$Model;
-var _user$project$Palestra$Palestra = {};
+var _user$project$Palestra$Palestra = F7(
+	function (a, b, c, d, e, f, g) {
+		return {id: a, semanaAno: b, titulo: c, palestrante: d, dia: e, horarioDeInicio: f, horarioDeTermino: g};
+	});
+var _user$project$Palestra$decoderPalestra = A8(
+	_elm_lang$core$Json_Decode$object7,
+	_user$project$Palestra$Palestra,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'semanaAno', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'titulo', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'palestrante', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'dia', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeInicio', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeTermino', _elm_lang$core$Json_Decode$string));
+var _user$project$Palestra$decoderTodas = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['palestras']),
+	_elm_lang$core$Json_Decode$list(_user$project$Palestra$decoderPalestra));
 var _user$project$Palestra$A = {ctor: 'A'};
 
+var _user$project$Presenca$mostrarMensagem = function (maybeMsg) {
+	var _p0 = maybeMsg;
+	if (_p0.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$span,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('notification is-info')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(_p0._0)
+				]));
+	}
+};
+var _user$project$Presenca$mostrarPalestras = function (palestras) {
+	var montarLinha = function (palestra) {
+		return A2(
+			_elm_lang$html$Html$tr,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$td,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(palestra.id))
+						])),
+					A2(
+					_elm_lang$html$Html$td,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(palestra.titulo)
+						])),
+					A2(
+					_elm_lang$html$Html$td,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(palestra.palestrante)
+						])),
+					A2(
+					_elm_lang$html$Html$td,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('o dia e o horário')
+						]))
+				]));
+	};
+	var linhas = A2(_elm_lang$core$List$map, montarLinha, palestras);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$table,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$tr,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Id')
+									])),
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Título')
+									])),
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Palestrante')
+									])),
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Dia e Horário')
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$tbody,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						linhas)
+					]))
+			]));
+};
+var _user$project$Presenca$escolherPalestra = function (palestras) {
+	var _p1 = _elm_lang$core$List$isEmpty(palestras);
+	if (_p1 === true) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_user$project$Presenca$mostrarPalestras(palestras)
+				]));
+	}
+};
+var _user$project$Presenca$obterPalestras = function (respostaJson) {
+	var msg = A2(
+		_elm_lang$core$Result$withDefault,
+		'erro',
+		A2(
+			_elm_lang$core$Json_Decode$decodeString,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+			respostaJson));
+	var q = A7(_user$project$Palestra$Palestra, 200, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
+	var p = A7(_user$project$Palestra$Palestra, 77, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
+	var palestras = _elm_lang$core$Native_Utils.eq(msg, 'PalestrasEncontradas') ? A2(
+		_elm_lang$core$Result$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[p]),
+		A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Palestra$decoderTodas, respostaJson)) : _elm_lang$core$Native_List.fromArray(
+		[q]);
+	return _elm_lang$core$Native_List.fromArray(
+		[p, q]);
+};
+var _user$project$Presenca$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {sAno: a, palestras: b, estudantes: c, matricula: d, idPalestra: e, mensagem: f};
+	});
+var _user$project$Presenca$init = A6(
+	_user$project$Presenca$Model,
+	'',
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing);
+var _user$project$Presenca$HttpRespostaEncontrarPalestras = function (a) {
+	return {ctor: 'HttpRespostaEncontrarPalestras', _0: a};
+};
+var _user$project$Presenca$HttpErro = function (a) {
+	return {ctor: 'HttpErro', _0: a};
+};
+var _user$project$Presenca$buscarPalestras = function (sAno) {
+	var url = A2(
+		_evancz$elm_http$Http$url,
+		'WSPalestra/encontrarPorAno',
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 'ano', _1: sAno}
+			]));
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Presenca$HttpErro,
+		_user$project$Presenca$HttpRespostaEncontrarPalestras,
+		A2(_evancz$elm_http$Http$get, _user$project$Palestra$decoderTodas, url));
+};
+var _user$project$Presenca$update = F2(
+	function (msg, model) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'Ano':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{sAno: _p2._0, mensagem: _elm_lang$core$Maybe$Nothing}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'BusquePalestras':
+				var msg = _elm_lang$core$Maybe$Just('Buscando palestras...');
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							palestras: _elm_lang$core$Native_List.fromArray(
+								[]),
+							mensagem: msg
+						}),
+					_1: _user$project$Presenca$buscarPalestras(model.sAno)
+				};
+			case 'HttpErro':
+				var msg = _elm_lang$core$Maybe$Just(
+					_elm_lang$core$Basics$toString(_p2._0));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{mensagem: msg}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var _p3 = _p2._0;
+				var msg = _elm_lang$core$List$isEmpty(_p3) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{palestras: _p3, mensagem: msg}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Presenca$BusquePalestras = {ctor: 'BusquePalestras'};
+var _user$project$Presenca$Ano = function (a) {
+	return {ctor: 'Ano', _0: a};
+};
 var _user$project$Presenca$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text('presenca...')
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('title')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Registro de Presença')
+					])),
+				_user$project$Presenca$mostrarMensagem(model.mensagem),
+				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Ano da Semana')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('number'),
+						_elm_lang$html$Html_Attributes$placeholder('ano'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Presenca$Ano)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('button is-primary'),
+						_elm_lang$html$Html_Events$onClick(_user$project$Presenca$BusquePalestras)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Buscar Palestras')
+					])),
+				_user$project$Presenca$escolherPalestra(model.palestras)
 			]));
 };
-var _user$project$Presenca$update = F2(
-	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Presenca$Model = F3(
-	function (a, b, c) {
-		return {ano: a, palestras: b, estudantes: c};
-	});
-var _user$project$Presenca$init = A3(
-	_user$project$Presenca$Model,
-	0,
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[]));
-var _user$project$Presenca$A = {ctor: 'A'};
 
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;

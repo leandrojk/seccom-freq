@@ -54,7 +54,7 @@ update msg model =
         ({model | semanas = semanas, mensagem = mensagem}, buscarSemanas)
 
     Erro e ->
-      (model, Cmd.none)
+      ({model | mensagem = (toString e)}, Cmd.none)
 
     RespostaTodas semanas ->
       let
