@@ -1,4 +1,4 @@
-module Menu exposing (Model, Msg, init, update, view, isSemana, isPalestra)
+module Menu exposing (Model, Msg, init, update, view, isSemana, isPalestra, isPresenca)
 
 import Html exposing (Html, div, text, button)
 import Html.Attributes exposing (class)
@@ -15,7 +15,7 @@ init : Model
 init =
   Model Nothing
 
-type Opcao = OpcaoSemana | OpcaoPalestra
+type Opcao = OpcaoSemana | OpcaoPalestra | OpcaoPresenca
 
 isSemana : Model -> Bool
 isSemana model =
@@ -24,6 +24,10 @@ isSemana model =
 isPalestra : Model -> Bool
 isPalestra model =
   opcaoAtual model OpcaoPalestra
+
+isPresenca : Model -> Bool
+isPresenca model =
+  opcaoAtual model OpcaoPresenca
 
 opcaoAtual : Model -> Opcao -> Bool
 opcaoAtual model opcao =
@@ -35,7 +39,7 @@ opcaoAtual model opcao =
 
 -- UPDATE
 
-type Msg = Semana | Palestra
+type Msg = Semana | Palestra | Presenca
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -46,7 +50,8 @@ update msg model =
     Palestra ->
       ({model | opcaoAtual = Just OpcaoPalestra}, Cmd.none)
 
-
+    Presenca ->
+      ({model | opcaoAtual = Just OpcaoPresenca}, Cmd.none)
 -- VIEW
 
 view : Model -> Html Msg
@@ -55,8 +60,8 @@ view model =
   div [class "box"]
       [
         div [class "columns"]
-            [
-              div [class "column"] [button [class "button is-primary", onClick Semana] [text "Semana"]]
-              , div [class "column"] [button [class "button is-primary", onClick Palestra] [text "Palestra"]]
+            [ div [class "column"] [button [class "button is-primary", onClick Presenca] [text "Presença"]]
+--          , div [class "column"] [button [class "button is-primary", onClick Semana] [text "Semana"]]
+--          , div [class "column"] [button [class "button is-primary", onClick Palestra] [text "Palestra"]]
             ]
       ]

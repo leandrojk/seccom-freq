@@ -1,6 +1,6 @@
 module Semana exposing (Model, Msg, init, update, view)
 
-import Html exposing (Html, div, text, button, input)
+import Html exposing (Html, div, text, button, input, table, tbody, th, tr, td, span)
 import Html.Attributes exposing (class, type', placeholder, value)
 import Html.Events exposing (onClick, onInput)
 
@@ -47,13 +47,20 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     BusqueSemanas ->
-      (model, buscarSemanas)
+      let
+        semanas = []
+        mensagem = "Buscando semanas..."
+      in
+        ({model | semanas = semanas, mensagem = mensagem}, buscarSemanas)
 
     Erro e ->
       (model, Cmd.none)
 
     RespostaTodas semanas ->
-      ({model | semanas = semanas}, Cmd.none)
+      let
+        mensagem = ""
+      in
+        ({model | semanas = semanas, mensagem = mensagem}, Cmd.none)
 
     ArmazeneAno sAno ->
       let
@@ -75,13 +82,17 @@ update msg model =
       ({model | novaSemana = novaSemana}, Cmd.none)
 
     CadastreSemana ->
-        (model, cadastrarSemana model.novaSemana)
+      let
+        mensagem = "Cadastrando semana..."
+      in
+        ({model | mensagem = mensagem}, cadastrarSemana model.novaSemana)
 
     RespostaCadastrar msg ->
       let
         semanasAtualizada = model.novaSemana :: model.semanas
+        mensagem = ""
       in
-        ({model | semanas = semanasAtualizada, novaSemana = {ano = 0, nome = "", tema = ""}},Cmd.none)
+        ({model | semanas = semanasAtualizada, novaSemana = {ano = 0, nome = "", tema = ""}, mensagem = mensagem},Cmd.none)
 
 
 buscarSemanas : Cmd Msg
@@ -115,20 +126,35 @@ view model =
     [class "box"]
     [
     div [class "title"] [text "Semana"]
+    , mostrarMensagem model.mensagem
     , button [class "button is-primary", onClick BusqueSemanas] [text "Mostrar Todas"]
     , mostrarSemanas model.semanas
     , formSemana model.novaSemana
     ]
 
+mostrarMensagem : String -> Html Msg
+mostrarMensagem texto =
+  if String.length texto == 0 then div [][]
+    else div [class "notification is-info"] [text texto]
+
 mostrarSemanas : List Semana -> Html Msg
 mostrarSemanas semanas =
-  div [class "box"] (List.map (\semana -> div [] [text ((toString semana.ano)  ++ " - " ++ semana.nome ++ " - " ++ semana.tema)]) semanas)
+  let
+    linhas = List.map (\semana -> tr [] [td [] [text (toString semana.ano)], td [] [text semana.nome], td [] [text semana.tema]]) semanas
+  in
+  div [class "box"]
+    [table []
+      [ tr [] [th [] [text "Ano"], th [] [text "Nome"], th [] [text "Tema"]]
+      , tbody [] linhas
+      ]
+    ]
+
 
 formSemana : Semana -> Html Msg
 formSemana novaSemana =
   div []
-  [ input [type' "number", placeholder "ano", onInput ArmazeneAno, value (toString novaSemana.ano)] []
-  , input [type' "text", placeholder "nome", onInput ArmazeneNome, value novaSemana.nome] []
-  , input [type' "text", placeholder "tema", onInput ArmazeneTema, value novaSemana.tema] []
+  [ span [] [text "Ano : "], input [type' "number", placeholder "ano", onInput ArmazeneAno, value (toString novaSemana.ano)] []
+  , span [] [text "Nome : "], input [type' "text", placeholder "nome", onInput ArmazeneNome, value novaSemana.nome] []
+  , span [] [text "Tema : "], input [type' "text", placeholder "tema", onInput ArmazeneTema, value novaSemana.tema] []
   , button [class "button is-primary", onClick  CadastreSemana] [text "Cadastrar"]
   ]

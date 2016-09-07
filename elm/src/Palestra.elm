@@ -1,4 +1,4 @@
-module Palestra exposing (Model, Msg, init, update, view)
+module Palestra exposing (Model, Msg, Palestra, init, update, view)
 
 import Html exposing (Html, div, text, button)
 import Html.Attributes exposing (class)
@@ -12,6 +12,10 @@ type alias Model =
 
   }
 
+type alias Palestra =
+  {}
+
+  
 init : Model
 init =
   Model

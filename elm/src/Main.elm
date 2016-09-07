@@ -6,6 +6,7 @@ import Login
 import Menu
 import Semana
 import Palestra
+import Presenca
 
 main =
   App.program {init = init, view = view, update = update, subscriptions = subscriptions}
@@ -17,7 +18,8 @@ type alias Model  =
     login : Login.Model,
     menu : Menu.Model,
     semana : Semana.Model,
-    palestra : Palestra.Model
+    palestra : Palestra.Model,
+    presenca : Presenca.Model
   }
 
 --
@@ -25,7 +27,7 @@ type alias Model  =
 --
 init : (Model, Cmd Msg)
 init =
-  (Model Login.init Menu.init Semana.init Palestra.init, Cmd.none)
+  (Model Login.init Menu.init Semana.init Palestra.init Presenca.init, Cmd.none)
 
 
 -- Subscriptions
@@ -44,6 +46,7 @@ type Msg =
   | MenuMsg Menu.Msg
   | SemanaMsg Semana.Msg
   | PalestraMsg Palestra.Msg
+  | PresencaMsg Presenca.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -72,6 +75,11 @@ update msg model =
       in
         ({model | palestra = palestraAtualizada}, Cmd.map PalestraMsg palestraCmd)
 
+    PresencaMsg msg ->
+      let
+        (presencaAtualizada, presencaCmd) = Presenca.update msg model.presenca
+      in
+        ({model | presenca = presencaAtualizada}, Cmd.map PresencaMsg presencaCmd)
 
 -- View
 
@@ -83,6 +91,7 @@ view model =
        , mostrarMenu model.login.logado model.menu
        , mostrarSemana (Menu.isSemana model.menu) model.semana
        , mostrarPalestra (Menu.isPalestra model.menu) model.palestra
+       , mostrarPresenca (Menu.isPresenca model.menu) model.presenca
        ]
 
 
@@ -119,5 +128,13 @@ mostrarPalestra exibir model =
   case exibir of
     True ->
       div [class "box"] [App.map PalestraMsg (Palestra.view model)]
+
+    False -> div [] []
+
+mostrarPresenca : Bool -> Presenca.Model -> Html Msg
+mostrarPresenca exibir model =
+  case exibir of
+    True ->
+      div [class "box"] [App.map PresencaMsg (Presenca.view model)]
 
     False -> div [] []

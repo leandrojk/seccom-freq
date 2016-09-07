@@ -8704,6 +8704,11 @@ var _evancz$elm_http$Http$post = F3(
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
 
+var _user$project$Estudante$Estudante = F2(
+	function (a, b) {
+		return {matricula: a, nome: b};
+	});
+
 var _user$project$Login$decodeMsg = A2(
 	_elm_lang$core$Json_Decode$at,
 	_elm_lang$core$Native_List.fromArray(
@@ -8910,6 +8915,10 @@ var _user$project$Menu$Model = function (a) {
 	return {opcaoAtual: a};
 };
 var _user$project$Menu$init = _user$project$Menu$Model(_elm_lang$core$Maybe$Nothing);
+var _user$project$Menu$OpcaoPresenca = {ctor: 'OpcaoPresenca'};
+var _user$project$Menu$isPresenca = function (model) {
+	return A2(_user$project$Menu$opcaoAtual, model, _user$project$Menu$OpcaoPresenca);
+};
 var _user$project$Menu$OpcaoPalestra = {ctor: 'OpcaoPalestra'};
 var _user$project$Menu$isPalestra = function (model) {
 	return A2(_user$project$Menu$opcaoAtual, model, _user$project$Menu$OpcaoPalestra);
@@ -8921,30 +8930,40 @@ var _user$project$Menu$isSemana = function (model) {
 var _user$project$Menu$update = F2(
 	function (msg, model) {
 		var _p1 = msg;
-		if (_p1.ctor === 'Semana') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoSemana)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoPalestra)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		switch (_p1.ctor) {
+			case 'Semana':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoSemana)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Palestra':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoPalestra)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							opcaoAtual: _elm_lang$core$Maybe$Just(_user$project$Menu$OpcaoPresenca)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
-var _user$project$Menu$Palestra = {ctor: 'Palestra'};
-var _user$project$Menu$Semana = {ctor: 'Semana'};
+var _user$project$Menu$Presenca = {ctor: 'Presenca'};
 var _user$project$Menu$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8975,67 +8994,128 @@ var _user$project$Menu$view = function (model) {
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html_Attributes$class('button is-primary'),
-										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Semana)
+										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Presenca)
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('Semana')
-									]))
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('column')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$button,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Attributes$class('button is-primary'),
-										_elm_lang$html$Html_Events$onClick(_user$project$Menu$Palestra)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Palestra')
+										_elm_lang$html$Html$text('Presença')
 									]))
 							]))
 					]))
 			]));
 };
+var _user$project$Menu$Palestra = {ctor: 'Palestra'};
+var _user$project$Menu$Semana = {ctor: 'Semana'};
 
 var _user$project$Semana$mostrarSemanas = function (semanas) {
+	var linhas = A2(
+		_elm_lang$core$List$map,
+		function (semana) {
+			return A2(
+				_elm_lang$html$Html$tr,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$td,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(semana.ano))
+							])),
+						A2(
+						_elm_lang$html$Html$td,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(semana.nome)
+							])),
+						A2(
+						_elm_lang$html$Html$td,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(semana.tema)
+							]))
+					]));
+		},
+		semanas);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Attributes$class('box')
 			]),
-		A2(
-			_elm_lang$core$List$map,
-			function (semana) {
-				return A2(
-					_elm_lang$html$Html$div,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(semana.ano),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$table,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$tr,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
 								A2(
-									_elm_lang$core$Basics_ops['++'],
-									' - ',
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										semana.nome,
-										A2(_elm_lang$core$Basics_ops['++'], ' - ', semana.tema)))))
-						]));
-			},
-			semanas));
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Ano')
+									])),
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Nome')
+									])),
+								A2(
+								_elm_lang$html$Html$th,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Tema')
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$tbody,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						linhas)
+					]))
+			]));
+};
+var _user$project$Semana$mostrarMensagem = function (texto) {
+	return _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$String$length(texto),
+		0) ? A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[])) : A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('notification is-info')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(texto)
+			]));
 };
 var _user$project$Semana$Model = F3(
 	function (a, b, c) {
@@ -9083,6 +9163,14 @@ var _user$project$Semana$formSemana = function (novaSemana) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Ano : ')
+					])),
+				A2(
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -9095,6 +9183,14 @@ var _user$project$Semana$formSemana = function (novaSemana) {
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Nome : ')
+					])),
+				A2(
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -9105,6 +9201,14 @@ var _user$project$Semana$formSemana = function (novaSemana) {
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
+				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Tema : ')
+					])),
 				A2(
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
@@ -9172,15 +9276,25 @@ var _user$project$Semana$update = F2(
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'BusqueSemanas':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$Semana$buscarSemanas};
-			case 'Erro':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'RespostaTodas':
+				var mensagem = 'Buscando semanas...';
+				var semanas = _elm_lang$core$Native_List.fromArray(
+					[]);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{semanas: _p0._0}),
+						{semanas: semanas, mensagem: mensagem}),
+					_1: _user$project$Semana$buscarSemanas
+				};
+			case 'Erro':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'RespostaTodas':
+				var mensagem = '';
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{semanas: _p0._0, mensagem: mensagem}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ArmazeneAno':
@@ -9215,12 +9329,16 @@ var _user$project$Semana$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'CadastreSemana':
+				var mensagem = 'Cadastrando semana...';
 				return {
 					ctor: '_Tuple2',
-					_0: model,
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{mensagem: mensagem}),
 					_1: _user$project$Semana$cadastrarSemana(model.novaSemana)
 				};
 			default:
+				var mensagem = '';
 				var semanasAtualizada = A2(_elm_lang$core$List_ops['::'], model.novaSemana, model.semanas);
 				return {
 					ctor: '_Tuple2',
@@ -9228,7 +9346,8 @@ var _user$project$Semana$update = F2(
 						model,
 						{
 							semanas: semanasAtualizada,
-							novaSemana: {ano: 0, nome: '', tema: ''}
+							novaSemana: {ano: 0, nome: '', tema: ''},
+							mensagem: mensagem
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9254,6 +9373,7 @@ var _user$project$Semana$view = function (model) {
 					[
 						_elm_lang$html$Html$text('Semana')
 					])),
+				_user$project$Semana$mostrarMensagem(model.mensagem),
 				A2(
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
@@ -9288,27 +9408,84 @@ var _user$project$Palestra$update = F2(
 	});
 var _user$project$Palestra$Model = {};
 var _user$project$Palestra$init = _user$project$Palestra$Model;
+var _user$project$Palestra$Palestra = {};
 var _user$project$Palestra$A = {ctor: 'A'};
+
+var _user$project$Presenca$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('presenca...')
+			]));
+};
+var _user$project$Presenca$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Presenca$Model = F3(
+	function (a, b, c) {
+		return {ano: a, palestras: b, estudantes: c};
+	});
+var _user$project$Presenca$init = A3(
+	_user$project$Presenca$Model,
+	0,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[]));
+var _user$project$Presenca$A = {ctor: 'A'};
 
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {login: a, menu: b, semana: c, palestra: d};
+var _user$project$Main$Model = F5(
+	function (a, b, c, d, e) {
+		return {login: a, menu: b, semana: c, palestra: d, presenca: e};
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A4(_user$project$Main$Model, _user$project$Login$init, _user$project$Menu$init, _user$project$Semana$init, _user$project$Palestra$init),
+	_0: A5(_user$project$Main$Model, _user$project$Login$init, _user$project$Menu$init, _user$project$Semana$init, _user$project$Palestra$init, _user$project$Presenca$init),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$Main$PresencaMsg = function (a) {
+	return {ctor: 'PresencaMsg', _0: a};
+};
+var _user$project$Main$mostrarPresenca = F2(
+	function (exibir, model) {
+		var _p0 = exibir;
+		if (_p0 === true) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('box')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html_App$map,
+						_user$project$Main$PresencaMsg,
+						_user$project$Presenca$view(model))
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		}
+	});
 var _user$project$Main$PalestraMsg = function (a) {
 	return {ctor: 'PalestraMsg', _0: a};
 };
 var _user$project$Main$mostrarPalestra = F2(
 	function (exibir, model) {
-		var _p0 = exibir;
-		if (_p0 === true) {
+		var _p1 = exibir;
+		if (_p1 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -9336,8 +9513,8 @@ var _user$project$Main$SemanaMsg = function (a) {
 };
 var _user$project$Main$mostrarSemana = F2(
 	function (exibir, model) {
-		var _p1 = exibir;
-		if (_p1 === true) {
+		var _p2 = exibir;
+		if (_p2 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -9365,8 +9542,8 @@ var _user$project$Main$MenuMsg = function (a) {
 };
 var _user$project$Main$mostrarMenu = F2(
 	function (logado, menu) {
-		var _p2 = logado;
-		if (_p2 === true) {
+		var _p3 = logado;
+		if (_p3 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -9394,12 +9571,12 @@ var _user$project$Main$LoginMsg = function (a) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'LoginMsg':
-				var _p4 = A2(_user$project$Login$update, _p3._0, model.login);
-				var loginAtualizado = _p4._0;
-				var loginCmd = _p4._1;
+				var _p5 = A2(_user$project$Login$update, _p4._0, model.login);
+				var loginAtualizado = _p5._0;
+				var loginCmd = _p5._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9408,9 +9585,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
 				};
 			case 'MenuMsg':
-				var _p5 = A2(_user$project$Menu$update, _p3._0, model.menu);
-				var menuAtualizado = _p5._0;
-				var menuCmd = _p5._1;
+				var _p6 = A2(_user$project$Menu$update, _p4._0, model.menu);
+				var menuAtualizado = _p6._0;
+				var menuCmd = _p6._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9419,9 +9596,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$MenuMsg, menuCmd)
 				};
 			case 'SemanaMsg':
-				var _p6 = A2(_user$project$Semana$update, _p3._0, model.semana);
-				var semanaAtualizada = _p6._0;
-				var semanaCmd = _p6._1;
+				var _p7 = A2(_user$project$Semana$update, _p4._0, model.semana);
+				var semanaAtualizada = _p7._0;
+				var semanaCmd = _p7._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9429,16 +9606,27 @@ var _user$project$Main$update = F2(
 						{semana: semanaAtualizada}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SemanaMsg, semanaCmd)
 				};
-			default:
-				var _p7 = A2(_user$project$Palestra$update, _p3._0, model.palestra);
-				var palestraAtualizada = _p7._0;
-				var palestraCmd = _p7._1;
+			case 'PalestraMsg':
+				var _p8 = A2(_user$project$Palestra$update, _p4._0, model.palestra);
+				var palestraAtualizada = _p8._0;
+				var palestraCmd = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{palestra: palestraAtualizada}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PalestraMsg, palestraCmd)
+				};
+			default:
+				var _p9 = A2(_user$project$Presenca$update, _p4._0, model.presenca);
+				var presencaAtualizada = _p9._0;
+				var presencaCmd = _p9._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{presenca: presencaAtualizada}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PresencaMsg, presencaCmd)
 				};
 		}
 	});
@@ -9483,7 +9671,11 @@ var _user$project$Main$view = function (model) {
 				A2(
 				_user$project$Main$mostrarPalestra,
 				_user$project$Menu$isPalestra(model.menu),
-				model.palestra)
+				model.palestra),
+				A2(
+				_user$project$Main$mostrarPresenca,
+				_user$project$Menu$isPresenca(model.menu),
+				model.presenca)
 			]));
 };
 var _user$project$Main$main = {
