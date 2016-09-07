@@ -9459,7 +9459,104 @@ var _user$project$Presenca$mostrarMensagem = function (maybeMsg) {
 				]));
 	}
 };
+var _user$project$Presenca$escolherAluno = F2(
+	function (palestras, mbSIdPalestra) {
+		var _p1 = mbSIdPalestra;
+		if (_p1.ctor === 'Nothing') {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('nao tem palestra selecionada')
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(_p1._0)
+					]));
+		}
+	});
+var _user$project$Presenca$obterPalestras = function (respostaJson) {
+	var msg = A2(
+		_elm_lang$core$Result$withDefault,
+		'erro',
+		A2(
+			_elm_lang$core$Json_Decode$decodeString,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+			respostaJson));
+	var q = A7(_user$project$Palestra$Palestra, 200, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
+	var p = A7(_user$project$Palestra$Palestra, 77, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
+	var palestras = _elm_lang$core$Native_Utils.eq(msg, 'PalestrasEncontradas') ? A2(
+		_elm_lang$core$Result$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[p]),
+		A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Palestra$decoderTodas, respostaJson)) : _elm_lang$core$Native_List.fromArray(
+		[q]);
+	return _elm_lang$core$Native_List.fromArray(
+		[p, q]);
+};
+var _user$project$Presenca$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {sAno: a, palestras: b, estudantes: c, sMatricula: d, sIdPalestra: e, mensagem: f};
+	});
+var _user$project$Presenca$init = A6(
+	_user$project$Presenca$Model,
+	'',
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing);
+var _user$project$Presenca$PalestraEscolhida = function (a) {
+	return {ctor: 'PalestraEscolhida', _0: a};
+};
 var _user$project$Presenca$mostrarPalestras = function (palestras) {
+	var mostrarRadio = function (palestra) {
+		return A2(
+			_elm_lang$html$Html$input,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$type$('radio'),
+					_elm_lang$html$Html_Attributes$name('id'),
+					_elm_lang$html$Html_Attributes$value(
+					_elm_lang$core$Basics$toString(palestra.id)),
+					_elm_lang$html$Html_Events$onClick(
+					_user$project$Presenca$PalestraEscolhida(
+						_elm_lang$core$Basics$toString(palestra.id)))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	};
+	var mostrarDiaEHorario = function (palestra) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('Dia : '),
+					_elm_lang$html$Html$text(palestra.dia),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					_elm_lang$html$Html$text('Horário : '),
+					_elm_lang$html$Html$text(palestra.horarioDeInicio),
+					_elm_lang$html$Html$text(' -- '),
+					_elm_lang$html$Html$text(palestra.horarioDeTermino),
+					_elm_lang$html$Html$text(' hs')
+				]));
+	};
 	var montarLinha = function (palestra) {
 		return A2(
 			_elm_lang$html$Html$tr,
@@ -9473,6 +9570,8 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
+							mostrarRadio(palestra),
+							_elm_lang$html$Html$text('  '),
 							_elm_lang$html$Html$text(
 							_elm_lang$core$Basics$toString(palestra.id))
 						])),
@@ -9498,7 +9597,7 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('o dia e o horário')
+							mostrarDiaEHorario(palestra)
 						]))
 				]));
 	};
@@ -9529,7 +9628,7 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 									[]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('Id')
+										_elm_lang$html$Html$text('Selecione')
 									])),
 								A2(
 								_elm_lang$html$Html$th,
@@ -9565,8 +9664,8 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 			]));
 };
 var _user$project$Presenca$escolherPalestra = function (palestras) {
-	var _p1 = _elm_lang$core$List$isEmpty(palestras);
-	if (_p1 === true) {
+	var _p2 = _elm_lang$core$List$isEmpty(palestras);
+	if (_p2 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9584,39 +9683,6 @@ var _user$project$Presenca$escolherPalestra = function (palestras) {
 				]));
 	}
 };
-var _user$project$Presenca$obterPalestras = function (respostaJson) {
-	var msg = A2(
-		_elm_lang$core$Result$withDefault,
-		'erro',
-		A2(
-			_elm_lang$core$Json_Decode$decodeString,
-			A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
-			respostaJson));
-	var q = A7(_user$project$Palestra$Palestra, 200, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
-	var p = A7(_user$project$Palestra$Palestra, 77, 1999, 'ttt', 'palestrante', 'dia', 'data i', 'data t');
-	var palestras = _elm_lang$core$Native_Utils.eq(msg, 'PalestrasEncontradas') ? A2(
-		_elm_lang$core$Result$withDefault,
-		_elm_lang$core$Native_List.fromArray(
-			[p]),
-		A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Palestra$decoderTodas, respostaJson)) : _elm_lang$core$Native_List.fromArray(
-		[q]);
-	return _elm_lang$core$Native_List.fromArray(
-		[p, q]);
-};
-var _user$project$Presenca$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {sAno: a, palestras: b, estudantes: c, matricula: d, idPalestra: e, mensagem: f};
-	});
-var _user$project$Presenca$init = A6(
-	_user$project$Presenca$Model,
-	'',
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Maybe$Nothing,
-	_elm_lang$core$Maybe$Nothing,
-	_elm_lang$core$Maybe$Nothing);
 var _user$project$Presenca$HttpRespostaEncontrarPalestras = function (a) {
 	return {ctor: 'HttpRespostaEncontrarPalestras', _0: a};
 };
@@ -9639,14 +9705,24 @@ var _user$project$Presenca$buscarPalestras = function (sAno) {
 };
 var _user$project$Presenca$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'Ano':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{sAno: _p2._0, mensagem: _elm_lang$core$Maybe$Nothing}),
+						{sAno: _p3._0, mensagem: _elm_lang$core$Maybe$Nothing}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'PalestraEscolhida':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							sIdPalestra: _elm_lang$core$Maybe$Just(_p3._0)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'BusquePalestras':
@@ -9664,7 +9740,7 @@ var _user$project$Presenca$update = F2(
 				};
 			case 'HttpErro':
 				var msg = _elm_lang$core$Maybe$Just(
-					_elm_lang$core$Basics$toString(_p2._0));
+					_elm_lang$core$Basics$toString(_p3._0));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9673,13 +9749,13 @@ var _user$project$Presenca$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				var _p3 = _p2._0;
-				var msg = _elm_lang$core$List$isEmpty(_p3) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
+				var _p4 = _p3._0;
+				var msg = _elm_lang$core$List$isEmpty(_p4) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{palestras: _p3, mensagem: msg}),
+						{palestras: _p4, mensagem: msg}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -9737,7 +9813,8 @@ var _user$project$Presenca$view = function (model) {
 					[
 						_elm_lang$html$Html$text('Buscar Palestras')
 					])),
-				_user$project$Presenca$escolherPalestra(model.palestras)
+				_user$project$Presenca$escolherPalestra(model.palestras),
+				A2(_user$project$Presenca$escolherAluno, model.palestras, model.sIdPalestra)
 			]));
 };
 

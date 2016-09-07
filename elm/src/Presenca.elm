@@ -20,8 +20,8 @@ type alias Model =
     sAno : String,
     palestras : List Palestra,
     estudantes : List  Estudante,
-    matricula : Maybe Int,
-    idPalestra : Maybe Int,
+    sMatricula : Maybe String,
+    sIdPalestra : Maybe String,
     mensagem : Maybe String
   }
 
@@ -38,12 +38,16 @@ type Msg =
   | BusquePalestras
   | HttpErro Http.Error
   | HttpRespostaEncontrarPalestras (List Palestra)
+  | PalestraEscolhida String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Ano sAno ->
       ({model | sAno = sAno, mensagem = Nothing }, Cmd.none)
+
+    PalestraEscolhida sIdPalestra ->
+      ({model | sIdPalestra = Just sIdPalestra}, Cmd.none)
 
     BusquePalestras ->
       let
@@ -97,6 +101,7 @@ view model =
     , input [type' "number", placeholder "ano", onInput Ano] []
     , button [class "button is-primary", onClick BusquePalestras] [text "Buscar Palestras"]
     , escolherPalestra model.palestras
+    , escolherAluno model.palestras model.sIdPalestra
     ]
 
 escolherPalestra : List Palestra -> Html Msg
@@ -113,15 +118,65 @@ escolherPalestra palestras =
 mostrarPalestras : List Palestra -> Html Msg
 mostrarPalestras palestras =
   let
-    montarLinha = \palestra -> tr [] [td [] [text (toString palestra.id)], td [] [text palestra.titulo], td [] [text palestra.palestrante], td [] [text "o dia e o horário"]]
+    mostrarDiaEHorario =
+      \palestra ->
+        div
+          []
+          [ text "Dia : "
+          , text palestra.dia
+          , br [] []
+          , text "Horário : "
+          , text palestra.horarioDeInicio
+          , text " -- "
+          , text palestra.horarioDeTermino
+          , text " hs"]
+
+    mostrarRadio =
+      \palestra ->
+        input
+          [ type' "radio"
+          , name "id"
+          , value (toString palestra.id)
+          , onClick  (PalestraEscolhida (toString palestra.id))
+          ]
+          []
+
+
+
+    montarLinha =
+      \palestra ->
+        tr
+          []
+          [ td [] [ (mostrarRadio palestra), text "  ", text (toString palestra.id) ]
+          , td [] [ text palestra.titulo ]
+          , td [] [ text palestra.palestrante ]
+          , td [] [ (mostrarDiaEHorario palestra) ]
+          ]
+
     linhas = List.map montarLinha palestras
+
   in
-  div [class "box"]
-    [ table []
-        [ tr [] [th [] [text "Id"], th [] [text "Título"], th [] [text "Palestrante"], th [] [text "Dia e Horário"]]
+  div
+    [ class "box" ]
+    [ table
+        []
+        [ tr
+            []
+            [ th [] [text "Selecione"]
+            , th [] [text "Título"]
+            , th [] [text "Palestrante"]
+            , th [] [text "Dia e Horário"]
+            ]
         , tbody [] linhas
         ]
     ]
+
+escolherAluno : List Palestra -> Maybe String -> Html Msg
+escolherAluno palestras mbSIdPalestra =
+  case mbSIdPalestra of
+    Nothing -> div [] [text "nao tem palestra selecionada"]
+
+    Just sIdPalestra -> div [] [text sIdPalestra]
 
 mostrarMensagem : Maybe String -> Html Msg
 mostrarMensagem maybeMsg =
