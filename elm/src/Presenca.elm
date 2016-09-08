@@ -21,7 +21,7 @@ type alias Model =
     palestras : List Palestra,
     estudantes : List  Estudante,
     sMatricula : Maybe String,
-    sIdPalestra : Maybe String,
+    idPalestra : Maybe Int,
     mensagem : Maybe String
   }
 
@@ -35,25 +35,37 @@ init =
 
 type Msg =
   Ano String
+  | Matricula String
   | BusquePalestras
   | HttpErro Http.Error
   | HttpRespostaEncontrarPalestras (List Palestra)
-  | PalestraEscolhida String
+  | PalestraEscolhida Int
+  | PesquiseEstudante
+  | HttpRespostaPesquisarEstudante Json.Value
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Ano sAno ->
-      ({model | sAno = sAno, mensagem = Nothing }, Cmd.none)
+      ({init | sAno = sAno}, Cmd.none)
 
-    PalestraEscolhida sIdPalestra ->
-      ({model | sIdPalestra = Just sIdPalestra}, Cmd.none)
+    Matricula sMatricula ->
+      ({model | sMatricula = Just sMatricula}, Cmd.none)
+
+    PalestraEscolhida idPalestra ->
+      ({model | idPalestra = Just idPalestra}, Cmd.none)
 
     BusquePalestras ->
       let
         msg = Just "Buscando palestras..."
       in
-      ({model | palestras = [], mensagem = msg}, buscarPalestras model.sAno)
+        ({model | palestras = [], mensagem = msg}, buscarPalestras model.sAno)
+
+    PesquiseEstudante ->
+      let
+        msg = Just "Buscando estudante..."
+      in
+        ({model | mensagem = msg}, pesquisarEstudante model.sMatricula)
 
     HttpErro erro ->
       let
@@ -67,6 +79,16 @@ update msg model =
       in
         ({model | palestras = palestras, mensagem = msg}, Cmd.none)
 
+    HttpRespostaPesquisarEstudante json ->
+      let
+        mbEstudante = obterEstudante json
+      in
+        case mbEstudante of
+          Nothing ->
+            ({model | mensagem = Just "Estudante não cadastrado!"}, Cmd.none)
+
+          Just estudante ->
+            ({model | mensagem = Just estudante.nome}, Cmd.none)
 
 buscarPalestras : String -> Cmd Msg
 buscarPalestras sAno =
@@ -76,6 +98,46 @@ buscarPalestras sAno =
 --    Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get Json.string url)
     Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get Palestra.decoderTodas url)
 
+pesquisarEstudante : Maybe String -> Cmd Msg
+pesquisarEstudante mbSMatricula =
+  case mbSMatricula of
+    Nothing -> Cmd.none
+
+    Just sMatricula ->
+      let
+        url = Http.url "WSEstudante/encontrarPorMatricula" [("matricula", sMatricula)]
+      in
+        Task.perform HttpErro HttpRespostaPesquisarEstudante (Http.get Json.value url)
+
+
+obterEstudante : Json.Value -> Maybe Estudante
+obterEstudante json =
+  let
+--    result = Json.decodeValue decoderMsgEstudante json
+    result = Result.Ok (Just (Estudante 1010 "Fulano Fulano"))
+  in
+    case result of
+      Err e -> Nothing
+
+      Ok mbEstudante -> mbEstudante
+
+
+--decoderMsgEstudante : Json.Decoder (Maybe Estudante)
+--decoderMsgEstudante =
+--  Json.andThen ("Msg" := Json.string) dme
+
+--dme : String -> Json.Decoder (Maybe Estudante)
+--dme msg =
+--  case msg of
+--    "EstudanteNaoEncontrado" -> Nothing
+
+--    "EstudanteEncontrado" ->
+--      let
+--       estudante = Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)
+--      in
+--        Just estudante
+
+--    _ -> Nothing
 
 
 obterPalestras : String -> List Palestra
@@ -101,7 +163,7 @@ view model =
     , input [type' "number", placeholder "ano", onInput Ano] []
     , button [class "button is-primary", onClick BusquePalestras] [text "Buscar Palestras"]
     , escolherPalestra model.palestras
-    , escolherAluno model.palestras model.sIdPalestra
+    , escolherAluno model.palestras model.idPalestra
     ]
 
 escolherPalestra : List Palestra -> Html Msg
@@ -137,7 +199,7 @@ mostrarPalestras palestras =
           [ type' "radio"
           , name "id"
           , value (toString palestra.id)
-          , onClick  (PalestraEscolhida (toString palestra.id))
+          , onClick  (PalestraEscolhida palestra.id)
           ]
           []
 
@@ -171,12 +233,20 @@ mostrarPalestras palestras =
         ]
     ]
 
-escolherAluno : List Palestra -> Maybe String -> Html Msg
-escolherAluno palestras mbSIdPalestra =
-  case mbSIdPalestra of
-    Nothing -> div [] [text "nao tem palestra selecionada"]
+escolherAluno : List Palestra -> Maybe Int -> Html Msg
+escolherAluno palestras mbIdPalestra =
+  case mbIdPalestra of
+    Nothing -> div [] []
 
-    Just sIdPalestra -> div [] [text sIdPalestra]
+    Just idPalestra ->
+      div
+       [ class "box" ]
+       [ div [class "title"] [text "Definir Estudante"]
+       , span [] [text "Matrícula : "]
+       , input [type' "number", onInput Matricula] []
+       , button [class "button is-primary", onClick PesquiseEstudante] [text "Buscar Estudante"]
+       ]
+
 
 mostrarMensagem : Maybe String -> Html Msg
 mostrarMensagem maybeMsg =
