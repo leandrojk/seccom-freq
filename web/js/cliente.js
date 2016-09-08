@@ -9478,15 +9478,35 @@ var _user$project$Presenca$obterPalestras = function (respostaJson) {
 	return _elm_lang$core$Native_List.fromArray(
 		[p, q]);
 };
+var _user$project$Presenca$dme = function (msg) {
+	var _p1 = msg;
+	switch (_p1) {
+		case 'EstudanteNaoEncontrado':
+			return _elm_lang$core$Json_Decode$maybe(
+				_elm_lang$core$Json_Decode$fail('aluno não cadastrado'));
+		case 'EstudanteEncontrado':
+			return _elm_lang$core$Json_Decode$maybe(
+				A3(
+					_elm_lang$core$Json_Decode$object2,
+					_user$project$Estudante$Estudante,
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'matriculaXX', _elm_lang$core$Json_Decode$int),
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string)));
+		default:
+			return _elm_lang$core$Json_Decode$maybe(
+				_elm_lang$core$Json_Decode$fail('parâmetro Msg não reconhecido'));
+	}
+};
+var _user$project$Presenca$decoderMsgEstudante = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+	_user$project$Presenca$dme);
 var _user$project$Presenca$obterEstudante = function (json) {
-	var result = _elm_lang$core$Result$Ok(
-		_elm_lang$core$Maybe$Just(
-			A2(_user$project$Estudante$Estudante, 1010, 'Fulano Fulano')));
-	var _p1 = result;
-	if (_p1.ctor === 'Err') {
+	var result = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Presenca$decoderMsgEstudante, json);
+	var _p2 = result;
+	if (_p2.ctor === 'Err') {
 		return _elm_lang$core$Maybe$Nothing;
 	} else {
-		return _p1._0;
+		return _p2._0;
 	}
 };
 var _user$project$Presenca$Model = F6(
@@ -9602,6 +9622,16 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('title')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Escolher Palestra')
+					])),
+				A2(
 				_elm_lang$html$Html$table,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
@@ -9655,8 +9685,8 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 			]));
 };
 var _user$project$Presenca$escolherPalestra = function (palestras) {
-	var _p2 = _elm_lang$core$List$isEmpty(palestras);
-	if (_p2 === true) {
+	var _p3 = _elm_lang$core$List$isEmpty(palestras);
+	if (_p3 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9695,8 +9725,8 @@ var _user$project$Presenca$buscarPalestras = function (sAno) {
 		A2(_evancz$elm_http$Http$get, _user$project$Palestra$decoderTodas, url));
 };
 var _user$project$Presenca$pesquisarEstudante = function (mbSMatricula) {
-	var _p3 = mbSMatricula;
-	if (_p3.ctor === 'Nothing') {
+	var _p4 = mbSMatricula;
+	if (_p4.ctor === 'Nothing') {
 		return _elm_lang$core$Platform_Cmd$none;
 	} else {
 		var url = A2(
@@ -9704,7 +9734,7 @@ var _user$project$Presenca$pesquisarEstudante = function (mbSMatricula) {
 			'WSEstudante/encontrarPorMatricula',
 			_elm_lang$core$Native_List.fromArray(
 				[
-					{ctor: '_Tuple2', _0: 'matricula', _1: _p3._0}
+					{ctor: '_Tuple2', _0: 'matricula', _1: _p4._0}
 				]));
 		return A3(
 			_elm_lang$core$Task$perform,
@@ -9715,14 +9745,14 @@ var _user$project$Presenca$pesquisarEstudante = function (mbSMatricula) {
 };
 var _user$project$Presenca$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
+		var _p5 = msg;
+		switch (_p5.ctor) {
 			case 'Ano':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						_user$project$Presenca$init,
-						{sAno: _p4._0}),
+						{sAno: _p5._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Matricula':
@@ -9731,7 +9761,7 @@ var _user$project$Presenca$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							sMatricula: _elm_lang$core$Maybe$Just(_p4._0)
+							sMatricula: _elm_lang$core$Maybe$Just(_p5._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9741,7 +9771,7 @@ var _user$project$Presenca$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							idPalestra: _elm_lang$core$Maybe$Just(_p4._0)
+							idPalestra: _elm_lang$core$Maybe$Just(_p5._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9769,7 +9799,7 @@ var _user$project$Presenca$update = F2(
 				};
 			case 'HttpErro':
 				var msg = _elm_lang$core$Maybe$Just(
-					_elm_lang$core$Basics$toString(_p4._0));
+					_elm_lang$core$Basics$toString(_p5._0));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9778,19 +9808,19 @@ var _user$project$Presenca$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HttpRespostaEncontrarPalestras':
-				var _p5 = _p4._0;
-				var msg = _elm_lang$core$List$isEmpty(_p5) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
+				var _p6 = _p5._0;
+				var msg = _elm_lang$core$List$isEmpty(_p6) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{palestras: _p5, mensagem: msg}),
+						{palestras: _p6, mensagem: msg}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				var mbEstudante = _user$project$Presenca$obterEstudante(_p4._0);
-				var _p6 = mbEstudante;
-				if (_p6.ctor === 'Nothing') {
+				var mbEstudante = _user$project$Presenca$obterEstudante(_p5._0);
+				var _p7 = mbEstudante;
+				if (_p7.ctor === 'Nothing') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -9806,7 +9836,7 @@ var _user$project$Presenca$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								mensagem: _elm_lang$core$Maybe$Just(_p6._0.nome)
+								mensagem: _elm_lang$core$Maybe$Just(_p7._0.nome)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -9819,8 +9849,8 @@ var _user$project$Presenca$Matricula = function (a) {
 };
 var _user$project$Presenca$escolherAluno = F2(
 	function (palestras, mbIdPalestra) {
-		var _p7 = mbIdPalestra;
-		if (_p7.ctor === 'Nothing') {
+		var _p8 = mbIdPalestra;
+		if (_p8.ctor === 'Nothing') {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(

@@ -113,8 +113,8 @@ pesquisarEstudante mbSMatricula =
 obterEstudante : Json.Value -> Maybe Estudante
 obterEstudante json =
   let
---    result = Json.decodeValue decoderMsgEstudante json
-    result = Result.Ok (Just (Estudante 1010 "Fulano Fulano"))
+    result = Json.decodeValue decoderMsgEstudante json
+--    result = Result.Ok (Just (Estudante 1010 "Fulano Fulano"))
   in
     case result of
       Err e -> Nothing
@@ -122,22 +122,20 @@ obterEstudante json =
       Ok mbEstudante -> mbEstudante
 
 
---decoderMsgEstudante : Json.Decoder (Maybe Estudante)
---decoderMsgEstudante =
---  Json.andThen ("Msg" := Json.string) dme
+decoderMsgEstudante : Json.Decoder (Maybe Estudante)
+decoderMsgEstudante =
+  ("Msg" := Json.string) `Json.andThen`  dme
 
---dme : String -> Json.Decoder (Maybe Estudante)
---dme msg =
---  case msg of
---    "EstudanteNaoEncontrado" -> Nothing
+dme : String -> Json.Decoder (Maybe Estudante)
+dme msg =
+  case msg of
+    "EstudanteNaoEncontrado" -> Json.maybe (Json.fail "aluno não cadastrado")
 
---    "EstudanteEncontrado" ->
---      let
---       estudante = Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)
---      in
---        Just estudante
+    "EstudanteEncontrado" ->
+      -- FIXME por que não esta funcionando?
+       Json.maybe (Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string))
 
---    _ -> Nothing
+    _ -> Json.maybe(Json.fail "parâmetro Msg não reconhecido")
 
 
 obterPalestras : String -> List Palestra
@@ -220,7 +218,8 @@ mostrarPalestras palestras =
   in
   div
     [ class "box" ]
-    [ table
+    [ div [class "title"] [text "Escolher Palestra"]
+    , table
         []
         [ tr
             []
