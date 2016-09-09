@@ -9437,8 +9437,8 @@ var _user$project$Palestra$decoderTodas = A2(
 	_elm_lang$core$Json_Decode$list(_user$project$Palestra$decoderPalestra));
 var _user$project$Palestra$A = {ctor: 'A'};
 
-var _user$project$Presenca$mostrarMensagem = function (maybeMsg) {
-	var _p0 = maybeMsg;
+var _user$project$Presenca$mostrarMensagem = function (maybeMensagem) {
+	var _p0 = maybeMensagem;
 	if (_p0.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$span,
@@ -9447,15 +9447,17 @@ var _user$project$Presenca$mostrarMensagem = function (maybeMsg) {
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	} else {
+		var _p1 = _p0._0;
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html_Attributes$class('notification is-info')
+					_elm_lang$html$Html_Attributes$class(
+					A2(_elm_lang$core$Basics_ops['++'], 'notification ', _p1.tipo))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html$text(_p0._0)
+					_elm_lang$html$Html$text(_p1.msg)
 				]));
 	}
 };
@@ -9478,9 +9480,24 @@ var _user$project$Presenca$obterPalestras = function (respostaJson) {
 	return _elm_lang$core$Native_List.fromArray(
 		[p, q]);
 };
+var _user$project$Presenca$drrp = function (msg) {
+	var _p2 = msg;
+	switch (_p2) {
+		case 'PresencaCadastrada':
+			return _elm_lang$core$Json_Decode$succeed(true);
+		case 'PresencaJaCadastrada':
+			return _elm_lang$core$Json_Decode$succeed(false);
+		default:
+			return _elm_lang$core$Json_Decode$succeed(false);
+	}
+};
+var _user$project$Presenca$decoderRespostaRegistrarPresenca = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+	_user$project$Presenca$drrp);
 var _user$project$Presenca$dme = function (msg) {
-	var _p1 = msg;
-	switch (_p1) {
+	var _p3 = msg;
+	switch (_p3) {
 		case 'EstudanteNaoEncontrado':
 			return _elm_lang$core$Json_Decode$maybe(
 				_elm_lang$core$Json_Decode$fail('aluno não cadastrado'));
@@ -9505,27 +9522,145 @@ var _user$project$Presenca$decoderMsgEstudante = A2(
 	_user$project$Presenca$dme);
 var _user$project$Presenca$obterEstudante = function (json) {
 	var result = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Presenca$decoderMsgEstudante, json);
-	var _p2 = result;
-	if (_p2.ctor === 'Err') {
+	var _p4 = result;
+	if (_p4.ctor === 'Err') {
 		return _elm_lang$core$Maybe$Nothing;
 	} else {
-		return _p2._0;
+		return _p4._0;
 	}
 };
-var _user$project$Presenca$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {sAno: a, palestras: b, estudantes: c, sMatricula: d, idPalestra: e, mensagem: f};
+var _user$project$Presenca$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {sAno: a, palestras: b, palestra: c, estudante: d, sMatricula: e, idPalestra: f, mensagem: g};
 	});
-var _user$project$Presenca$init = A6(
+var _user$project$Presenca$init = A7(
 	_user$project$Presenca$Model,
 	'',
 	_elm_lang$core$Native_List.fromArray(
 		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[]),
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing);
+var _user$project$Presenca$Mensagem = F2(
+	function (a, b) {
+		return {msg: a, tipo: b};
+	});
+var _user$project$Presenca$HttpRespostaRegistrarPresenca = function (a) {
+	return {ctor: 'HttpRespostaRegistrarPresenca', _0: a};
+};
+var _user$project$Presenca$RegistrePresenca = F2(
+	function (a, b) {
+		return {ctor: 'RegistrePresenca', _0: a, _1: b};
+	});
+var _user$project$Presenca$registrarPresenca = function (_p5) {
+	var _p6 = _p5;
+	var _p7 = {ctor: '_Tuple2', _0: _p6._0, _1: _p6._1};
+	if (((_p7.ctor === '_Tuple2') && (_p7._0.ctor === 'Just')) && (_p7._1.ctor === 'Just')) {
+		var _p9 = _p7._0._0;
+		var _p8 = _p7._1._0;
+		var mostrarPalestra = function (palestra) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$span,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('subtitle')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Palestra : ')
+							])),
+						A2(
+						_elm_lang$html$Html$span,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(palestra.dia),
+								_elm_lang$html$Html$text(' - '),
+								_elm_lang$html$Html$text(palestra.horarioDeInicio),
+								_elm_lang$html$Html$text('  '),
+								_elm_lang$html$Html$text(palestra.titulo),
+								_elm_lang$html$Html$text(' - '),
+								_elm_lang$html$Html$text(palestra.palestrante)
+							]))
+					]));
+		};
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('box')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('title')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Registrar Presença')
+						])),
+					mostrarPalestra(_p9),
+					A2(
+					_elm_lang$html$Html$span,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('subtitle')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Estudante : ')
+						])),
+					A2(
+					_elm_lang$html$Html$span,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(_p8.matricula)),
+							_elm_lang$html$Html$text(' -- '),
+							_elm_lang$html$Html$text(_p8.nome)
+						])),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('button is-primary'),
+							_elm_lang$html$Html_Events$onClick(
+							A2(_user$project$Presenca$RegistrePresenca, _p9.id, _p8.matricula))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Registrar')
+						]))
+				]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	}
+};
 var _user$project$Presenca$HttpRespostaPesquisarEstudante = function (a) {
 	return {ctor: 'HttpRespostaPesquisarEstudante', _0: a};
 };
@@ -9688,8 +9823,8 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 			]));
 };
 var _user$project$Presenca$escolherPalestra = function (palestras) {
-	var _p3 = _elm_lang$core$List$isEmpty(palestras);
-	if (_p3 === true) {
+	var _p10 = _elm_lang$core$List$isEmpty(palestras);
+	if (_p10 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9728,8 +9863,8 @@ var _user$project$Presenca$buscarPalestras = function (sAno) {
 		A2(_evancz$elm_http$Http$get, _user$project$Palestra$decoderTodas, url));
 };
 var _user$project$Presenca$pesquisarEstudante = function (mbSMatricula) {
-	var _p4 = mbSMatricula;
-	if (_p4.ctor === 'Nothing') {
+	var _p11 = mbSMatricula;
+	if (_p11.ctor === 'Nothing') {
 		return _elm_lang$core$Platform_Cmd$none;
 	} else {
 		var url = A2(
@@ -9737,25 +9872,25 @@ var _user$project$Presenca$pesquisarEstudante = function (mbSMatricula) {
 			'WSEstudante/encontrarPorMatricula',
 			_elm_lang$core$Native_List.fromArray(
 				[
-					{ctor: '_Tuple2', _0: 'matricula', _1: _p4._0}
+					{ctor: '_Tuple2', _0: 'matricula', _1: _p11._0}
 				]));
 		return A3(
 			_elm_lang$core$Task$perform,
 			_user$project$Presenca$HttpErro,
 			_user$project$Presenca$HttpRespostaPesquisarEstudante,
-			A2(_evancz$elm_http$Http$get, _elm_lang$core$Json_Decode$value, url));
+			A2(_evancz$elm_http$Http$get, _user$project$Presenca$decoderMsgEstudante, url));
 	}
 };
 var _user$project$Presenca$update = F2(
 	function (msg, model) {
-		var _p5 = msg;
-		switch (_p5.ctor) {
+		var _p12 = msg;
+		switch (_p12.ctor) {
 			case 'Ano':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						_user$project$Presenca$init,
-						{sAno: _p5._0}),
+						{sAno: _p12._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Matricula':
@@ -9764,22 +9899,32 @@ var _user$project$Presenca$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							sMatricula: _elm_lang$core$Maybe$Just(_p5._0)
+							sMatricula: _elm_lang$core$Maybe$Just(_p12._0),
+							mensagem: _elm_lang$core$Maybe$Nothing,
+							estudante: _elm_lang$core$Maybe$Nothing
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'PalestraEscolhida':
+				var _p13 = _p12._0;
+				var f = function (palestra) {
+					return _elm_lang$core$Native_Utils.eq(palestra.id, _p13);
+				};
+				var maybePalestra = _elm_lang$core$List$head(
+					A2(_elm_lang$core$List$filter, f, model.palestras));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							idPalestra: _elm_lang$core$Maybe$Just(_p5._0)
+							idPalestra: _elm_lang$core$Maybe$Just(_p13),
+							palestra: maybePalestra
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'BusquePalestras':
-				var msg = _elm_lang$core$Maybe$Just('Buscando palestras...');
+				var msg = _elm_lang$core$Maybe$Just(
+					A2(_user$project$Presenca$Mensagem, 'Buscando palestras...', 'is-info'));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9792,7 +9937,8 @@ var _user$project$Presenca$update = F2(
 					_1: _user$project$Presenca$buscarPalestras(model.sAno)
 				};
 			case 'PesquiseEstudante':
-				var msg = _elm_lang$core$Maybe$Just('Buscando estudante...');
+				var msg = _elm_lang$core$Maybe$Just(
+					A2(_user$project$Presenca$Mensagem, 'Buscando estudante...', 'is-info'));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9802,7 +9948,10 @@ var _user$project$Presenca$update = F2(
 				};
 			case 'HttpErro':
 				var msg = _elm_lang$core$Maybe$Just(
-					_elm_lang$core$Basics$toString(_p5._0));
+					A2(
+						_user$project$Presenca$Mensagem,
+						_elm_lang$core$Basics$toString(_p12._0),
+						'is-danger'));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9811,25 +9960,34 @@ var _user$project$Presenca$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HttpRespostaEncontrarPalestras':
-				var _p6 = _p5._0;
-				var msg = _elm_lang$core$List$isEmpty(_p6) ? _elm_lang$core$Maybe$Just('Não há palestras cadastradas') : _elm_lang$core$Maybe$Nothing;
+				var _p15 = _p12._0;
+				var msg = function () {
+					var _p14 = _elm_lang$core$List$isEmpty(_p15);
+					if (_p14 === true) {
+						return _elm_lang$core$Maybe$Just(
+							A2(_user$project$Presenca$Mensagem, 'Não há palestras cadastradas', 'is-warning'));
+					} else {
+						return _elm_lang$core$Maybe$Nothing;
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{palestras: _p6, mensagem: msg}),
+						{palestras: _p15, mensagem: msg}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
-				var mbEstudante = _user$project$Presenca$obterEstudante(_p5._0);
-				var _p7 = mbEstudante;
-				if (_p7.ctor === 'Nothing') {
+			case 'HttpRespostaPesquisarEstudante':
+				var _p17 = _p12._0;
+				var _p16 = _p17;
+				if (_p16.ctor === 'Nothing') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								mensagem: _elm_lang$core$Maybe$Just('Estudante não cadastrado!')
+								mensagem: _elm_lang$core$Maybe$Just(
+									A2(_user$project$Presenca$Mensagem, 'Estudante não cadastrado!', 'is-warning'))
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -9838,12 +9996,54 @@ var _user$project$Presenca$update = F2(
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{
-								mensagem: _elm_lang$core$Maybe$Just(_p7._0.nome)
-							}),
+							{estudante: _p17, mensagem: _elm_lang$core$Maybe$Nothing}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
+			case 'RegistrePresenca':
+				var sid = _elm_lang$core$Basics$toString(_p12._0);
+				var sm = _elm_lang$core$Basics$toString(_p12._1);
+				var url = A2(
+					_evancz$elm_http$Http$url,
+					'WSPresenca/cadastrar',
+					_elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: 'matricula', _1: sm},
+							{ctor: '_Tuple2', _0: 'palestra', _1: sid}
+						]));
+				var comando = A3(
+					_elm_lang$core$Task$perform,
+					_user$project$Presenca$HttpErro,
+					_user$project$Presenca$HttpRespostaRegistrarPresenca,
+					A3(_evancz$elm_http$Http$post, _user$project$Presenca$decoderRespostaRegistrarPresenca, url, _evancz$elm_http$Http$empty));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							mensagem: _elm_lang$core$Maybe$Just(
+								A2(_user$project$Presenca$Mensagem, 'registrando...', 'is-info'))
+						}),
+					_1: comando
+				};
+			default:
+				var msg = function () {
+					var _p18 = _p12._0;
+					if (_p18 === true) {
+						return _elm_lang$core$Maybe$Just(
+							A2(_user$project$Presenca$Mensagem, 'Presença registrada com sucesso', 'is-success'));
+					} else {
+						return _elm_lang$core$Maybe$Just(
+							A2(_user$project$Presenca$Mensagem, 'Presença já havia sido registrada', 'is-warning'));
+					}
+				}();
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{mensagem: msg}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Presenca$BusquePalestras = {ctor: 'BusquePalestras'};
@@ -9852,8 +10052,8 @@ var _user$project$Presenca$Matricula = function (a) {
 };
 var _user$project$Presenca$escolherAluno = F2(
 	function (palestras, mbIdPalestra) {
-		var _p8 = mbIdPalestra;
-		if (_p8.ctor === 'Nothing') {
+		var _p19 = mbIdPalestra;
+		if (_p19.ctor === 'Nothing') {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -9963,7 +10163,9 @@ var _user$project$Presenca$view = function (model) {
 						_elm_lang$html$Html$text('Buscar Palestras')
 					])),
 				_user$project$Presenca$escolherPalestra(model.palestras),
-				A2(_user$project$Presenca$escolherAluno, model.palestras, model.idPalestra)
+				A2(_user$project$Presenca$escolherAluno, model.palestras, model.idPalestra),
+				_user$project$Presenca$registrarPresenca(
+				{ctor: '_Tuple2', _0: model.palestra, _1: model.estudante})
 			]));
 };
 

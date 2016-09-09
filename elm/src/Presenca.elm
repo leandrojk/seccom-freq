@@ -19,16 +19,22 @@ type alias Model =
   {
     sAno : String,
     palestras : List Palestra,
-    estudantes : List  Estudante,
+    palestra : Maybe Palestra,
+    estudante : Maybe  Estudante,
     sMatricula : Maybe String,
     idPalestra : Maybe Int,
-    mensagem : Maybe String
+    mensagem : Maybe Mensagem
+
   }
 
+type alias Mensagem =
+  { msg : String
+  , tipo : String  -- tipos válidos para o CSS
+  }
 
 init : Model
 init =
-  Model "" [] [] Nothing Nothing Nothing
+  Model "" [] Nothing Nothing Nothing Nothing Nothing
 
 
 -- UPDATE
@@ -41,7 +47,9 @@ type Msg =
   | HttpRespostaEncontrarPalestras (List Palestra)
   | PalestraEscolhida Int
   | PesquiseEstudante
-  | HttpRespostaPesquisarEstudante Json.Value
+  | HttpRespostaPesquisarEstudante (Maybe Estudante)
+  | RegistrePresenca Int Int
+  | HttpRespostaRegistrarPresenca Bool
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -50,52 +58,74 @@ update msg model =
       ({init | sAno = sAno}, Cmd.none)
 
     Matricula sMatricula ->
-      ({model | sMatricula = Just sMatricula}, Cmd.none)
+      ({model | sMatricula = Just sMatricula, mensagem = Nothing, estudante = Nothing}, Cmd.none)
 
     PalestraEscolhida idPalestra ->
-      ({model | idPalestra = Just idPalestra}, Cmd.none)
+      let
+        f = \palestra -> palestra.id == idPalestra
+        maybePalestra = List.head (List.filter f model.palestras)
+      in
+      ({model | idPalestra = Just idPalestra, palestra = maybePalestra}, Cmd.none)
 
     BusquePalestras ->
       let
-        msg = Just "Buscando palestras..."
+        msg = Just (Mensagem "Buscando palestras..." "is-info")
       in
         ({model | palestras = [], mensagem = msg}, buscarPalestras model.sAno)
 
     PesquiseEstudante ->
       let
-        msg = Just "Buscando estudante..."
+        msg = Just (Mensagem "Buscando estudante..." "is-info")
       in
         ({model | mensagem = msg}, pesquisarEstudante model.sMatricula)
 
     HttpErro erro ->
       let
-        msg = Just (toString erro)
+        msg = Just (Mensagem (toString erro) "is-danger")
       in
        ({model | mensagem = msg}, Cmd.none)
 
     HttpRespostaEncontrarPalestras palestras ->
       let
-        msg = if (List.isEmpty palestras) then Just "Não há palestras cadastradas" else Nothing
+        msg = case List.isEmpty palestras of
+          True -> Just (Mensagem "Não há palestras cadastradas" "is-warning")
+          False -> Nothing
       in
         ({model | palestras = palestras, mensagem = msg}, Cmd.none)
 
-    HttpRespostaPesquisarEstudante json ->
-      let
-        mbEstudante = obterEstudante json
-      in
-        case mbEstudante of
+    HttpRespostaPesquisarEstudante maybeEstudante ->
+        case maybeEstudante of
           Nothing ->
-            ({model | mensagem = Just "Estudante não cadastrado!"}, Cmd.none)
+            ({model | mensagem = Just (Mensagem "Estudante não cadastrado!" "is-warning")}, Cmd.none)
 
           Just estudante ->
-            ({model | mensagem = Just estudante.nome}, Cmd.none)
+            ({model | estudante = maybeEstudante, mensagem = Nothing}, Cmd.none)
+
+    RegistrePresenca idPalestra matricula->
+      let
+        sm = toString matricula
+        sid = toString idPalestra
+        url = Http.url "WSPresenca/cadastrar" [("matricula", sm), ("palestra", sid)]
+        comando = Task.perform HttpErro HttpRespostaRegistrarPresenca (Http.post decoderRespostaRegistrarPresenca url Http.empty)
+      in
+        ({model | mensagem = Just (Mensagem "registrando..." "is-info")}, comando)
+
+    HttpRespostaRegistrarPresenca registrou ->
+      let
+        msg = case registrou of
+          True -> Just (Mensagem "Presença registrada com sucesso" "is-success")
+          False -> Just (Mensagem "Presença já havia sido registrada" "is-warning")
+      in
+        ({model | mensagem = msg}, Cmd.none)
+
+--
+--
 
 buscarPalestras : String -> Cmd Msg
 buscarPalestras sAno =
   let
     url = Http.url "WSPalestra/encontrarPorAno" [("ano", sAno)]
   in
---    Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get Json.string url)
     Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get Palestra.decoderTodas url)
 
 pesquisarEstudante : Maybe String -> Cmd Msg
@@ -107,14 +137,13 @@ pesquisarEstudante mbSMatricula =
       let
         url = Http.url "WSEstudante/encontrarPorMatricula" [("matricula", sMatricula)]
       in
-        Task.perform HttpErro HttpRespostaPesquisarEstudante (Http.get Json.value url)
+        Task.perform HttpErro HttpRespostaPesquisarEstudante (Http.get decoderMsgEstudante url)
 
 
 obterEstudante : Json.Value -> Maybe Estudante
 obterEstudante json =
   let
     result = Json.decodeValue decoderMsgEstudante json
---    result = Result.Ok (Just (Estudante 1010 "Fulano Fulano"))
   in
     case result of
       Err e -> Nothing
@@ -132,11 +161,20 @@ dme msg =
     "EstudanteNaoEncontrado" -> Json.maybe (Json.fail "aluno não cadastrado")
 
     "EstudanteEncontrado" ->
-      -- FIXME por que não esta funcionando?
        Json.maybe (("estudante" := Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)))
 
     _ -> Json.maybe(Json.fail "parâmetro Msg não reconhecido")
 
+decoderRespostaRegistrarPresenca : Json.Decoder Bool
+decoderRespostaRegistrarPresenca =
+  ("Msg" := Json.string) `Json.andThen` drrp
+
+drrp : String -> Json.Decoder Bool
+drrp msg =
+  case msg of
+    "PresencaCadastrada" -> Json.succeed True
+    "PresencaJaCadastrada" -> Json.succeed False
+    _ -> Json.succeed False
 
 obterPalestras : String -> List Palestra
 obterPalestras respostaJson =
@@ -162,6 +200,7 @@ view model =
     , button [class "button is-primary", onClick BusquePalestras] [text "Buscar Palestras"]
     , escolherPalestra model.palestras
     , escolherAluno model.palestras model.idPalestra
+    , registrarPresenca (model.palestra, model.estudante)
     ]
 
 escolherPalestra : List Palestra -> Html Msg
@@ -246,10 +285,40 @@ escolherAluno palestras mbIdPalestra =
        , button [class "button is-primary", onClick PesquiseEstudante] [text "Buscar Estudante"]
        ]
 
+registrarPresenca : (Maybe Palestra, Maybe Estudante) -> Html Msg
+registrarPresenca (mbPalestra, mbEstudante) =
+  case (mbPalestra, mbEstudante) of
+    (Just palestra, Just estudante) ->
+      let
+        mostrarPalestra = \palestra ->
+          div []
+            [ span [class "subtitle"] [text "Palestra : "]
+            , span []
+                [ text palestra.dia
+                , text " - "
+                , text palestra.horarioDeInicio
+                , text "  "
+                , text palestra.titulo
+                , text " - "
+                , text palestra.palestrante
+                ]
+            ]
+      in
+        div [class "box"]
+          [ div [class "title"] [text "Registrar Presença"]
+          , mostrarPalestra palestra
+          , span [class "subtitle"] [text "Estudante : "]
+          , span [] [text (toString estudante.matricula), text " -- ", text estudante.nome]
+          , br [] []
+          , button [class "button is-primary", onClick (RegistrePresenca palestra.id estudante.matricula) ] [text "Registrar"]
+          ]
 
-mostrarMensagem : Maybe String -> Html Msg
-mostrarMensagem maybeMsg =
-  case maybeMsg of
+    _ -> div [] []
+
+
+mostrarMensagem : Maybe Mensagem -> Html Msg
+mostrarMensagem maybeMensagem =
+  case maybeMensagem of
     Nothing -> span [] []
 
-    Just msg -> div [class "notification is-info"] [text msg]
+    Just mensagem -> div [class ("notification " ++ mensagem.tipo)] [text mensagem.msg]

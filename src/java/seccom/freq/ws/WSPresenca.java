@@ -101,9 +101,12 @@ public class WSPresenca extends HttpServlet {
         int palestra = Integer.parseInt(request.getParameter("palestra"));
         Presenca presenca = new Presenca(matricula, palestra);
 
-        boolean resultado = BDUtil.cadastrePresenca(ds, presenca);
+        boolean cadastrou = BDUtil.cadastrePresenca(ds, presenca);
         JsonObject jo = new JsonObject();
-        jo.addProperty("Msg", "PresencaCadastrada");
+        if (cadastrou)
+            jo.addProperty("Msg", "PresencaCadastrada");
+        else
+            jo.addProperty("Msg", "PresencaJaCadastrada");
         return jo;
     }
 
