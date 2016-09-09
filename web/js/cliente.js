@@ -9775,7 +9775,9 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 				A2(
 				_elm_lang$html$Html$table,
 				_elm_lang$core$Native_List.fromArray(
-					[]),
+					[
+						_elm_lang$html$Html_Attributes$class('table')
+					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(

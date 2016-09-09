@@ -259,7 +259,7 @@ mostrarPalestras palestras =
     [ class "box" ]
     [ div [class "title"] [text "Escolher Palestra"]
     , table
-        []
+        [ class "table"]
         [ tr
             []
             [ th [] [text "Selecione"]
