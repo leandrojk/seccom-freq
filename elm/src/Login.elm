@@ -1,4 +1,4 @@
-module Login exposing (Model, Msg, init, update, view)
+module Login exposing (Model, Msg, init, update, view, estaLogado)
 
 import Html exposing (Html, div, text, input, button, h3)
 import Html.Events exposing (onClick, onInput)
@@ -22,11 +22,17 @@ type alias Model =
 --
 --
 --
+
 init : Model
 init =
   Model "" "button is-primary" False ""
 
-
+--
+--
+--
+estaLogado : Model -> Bool
+estaLogado model =
+  model.logado
 
 -- UPDATE
 

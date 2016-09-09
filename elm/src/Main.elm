@@ -54,14 +54,19 @@ update msg model =
     LoginMsg msg ->
       let
         (loginAtualizado, loginCmd) = Login.update msg model.login
+        (novoModelo, _) = init
       in
-        ({ model | login = loginAtualizado , menu = Menu.init}, Cmd.map LoginMsg loginCmd)
+        ({ novoModelo | login = loginAtualizado }, Cmd.map LoginMsg loginCmd)
 
     MenuMsg msg ->
-      let
-        (menuAtualizado, menuCmd) = Menu.update msg model.menu
-      in
-      ({model | menu = menuAtualizado}, Cmd.map MenuMsg menuCmd)
+      case Login.estaLogado model.login of
+        False ->
+          init
+        True ->
+          let
+            (menuAtualizado, menuCmd) = Menu.update msg model.menu
+          in
+            ({model | menu = menuAtualizado}, Cmd.map MenuMsg menuCmd)
 
     SemanaMsg msg ->
       let
@@ -76,23 +81,30 @@ update msg model =
         ({model | palestra = palestraAtualizada}, Cmd.map PalestraMsg palestraCmd)
 
     PresencaMsg msg ->
-      let
-        (presencaAtualizada, presencaCmd) = Presenca.update msg model.presenca
-      in
-        ({model | presenca = presencaAtualizada}, Cmd.map PresencaMsg presencaCmd)
+      case Login.estaLogado model.login of
+        False -> init
+        True ->
+          let
+            (presencaAtualizada, presencaCmd) = Presenca.update msg model.presenca
+          in
+            ({model | presenca = presencaAtualizada}, Cmd.map PresencaMsg presencaCmd)
 
 -- View
 
 view : Model -> Html Msg
 view model =
-  div []
-      [
-       mostrarLogin model.login
-       , mostrarMenu model.login.logado model.menu
-       , mostrarSemana (Menu.isSemana model.menu) model.semana
-       , mostrarPalestra (Menu.isPalestra model.menu) model.palestra
-       , mostrarPresenca (Menu.isPresenca model.menu) model.presenca
-       ]
+  case Login.estaLogado model.login of
+    False ->
+      div [] [mostrarLogin model.login]
+
+    True ->
+      div []
+        [ mostrarLogin model.login
+        , mostrarMenu model.login.logado model.menu
+        , mostrarSemana (Menu.isSemana model.menu) model.semana
+        , mostrarPalestra (Menu.isPalestra model.menu) model.palestra
+        , mostrarPresenca (Menu.isPresenca model.menu) model.presenca
+        ]
 
 
 mostrarLogin : Login.Model -> Html Msg
