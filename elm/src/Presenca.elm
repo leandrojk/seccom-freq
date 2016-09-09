@@ -133,7 +133,7 @@ dme msg =
 
     "EstudanteEncontrado" ->
       -- FIXME por que não esta funcionando?
-       Json.maybe (Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string))
+       Json.maybe (("estudante" := Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)))
 
     _ -> Json.maybe(Json.fail "parâmetro Msg não reconhecido")
 

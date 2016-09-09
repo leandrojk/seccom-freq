@@ -9486,11 +9486,14 @@ var _user$project$Presenca$dme = function (msg) {
 				_elm_lang$core$Json_Decode$fail('aluno não cadastrado'));
 		case 'EstudanteEncontrado':
 			return _elm_lang$core$Json_Decode$maybe(
-				A3(
-					_elm_lang$core$Json_Decode$object2,
-					_user$project$Estudante$Estudante,
-					A2(_elm_lang$core$Json_Decode_ops[':='], 'matriculaXX', _elm_lang$core$Json_Decode$int),
-					A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string)));
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'estudante',
+					A3(
+						_elm_lang$core$Json_Decode$object2,
+						_user$project$Estudante$Estudante,
+						A2(_elm_lang$core$Json_Decode_ops[':='], 'matricula', _elm_lang$core$Json_Decode$int),
+						A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string))));
 		default:
 			return _elm_lang$core$Json_Decode$maybe(
 				_elm_lang$core$Json_Decode$fail('parâmetro Msg não reconhecido'));
