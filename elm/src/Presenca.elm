@@ -17,11 +17,11 @@ import Palestra exposing (Palestra)
 
 type alias Model =
   {
-    sAno : String,
+    ano : Maybe Int,
     palestras : List Palestra,
     palestra : Maybe Palestra,
     estudante : Maybe  Estudante,
-    sMatricula : Maybe String,
+    matricula : Maybe Int,
     idPalestra : Maybe Int,
     mensagem : Maybe Mensagem
 
@@ -34,7 +34,7 @@ type alias Mensagem =
 
 init : Model
 init =
-  Model "" [] Nothing Nothing Nothing Nothing Nothing
+  Model Nothing [] Nothing Nothing Nothing Nothing Nothing
 
 
 -- UPDATE
@@ -55,10 +55,23 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Ano sAno ->
-      ({init | sAno = sAno}, Cmd.none)
+      case String.toInt sAno of
+        Ok ano ->
+          ({init | ano = Just ano}, Cmd.none)
+
+        Err _ ->
+          ({init | mensagem = Just (Mensagem "Digite apenas números" "is-danger")}, Cmd.none)
 
     Matricula sMatricula ->
-      ({model | sMatricula = Just sMatricula, mensagem = Nothing, estudante = Nothing}, Cmd.none)
+      case String.toInt sMatricula of
+        Ok matricula ->
+          ({model | matricula = Just matricula, mensagem = Nothing, estudante = Nothing}, Cmd.none)
+
+        Err _ ->
+          let
+            mensagem = Just (Mensagem "Digite apenas números" "is-danger")
+          in
+            ({model | matricula = Nothing, estudante = Nothing, mensagem = mensagem}, Cmd.none)
 
     PalestraEscolhida idPalestra ->
       let
@@ -68,16 +81,24 @@ update msg model =
       ({model | idPalestra = Just idPalestra, palestra = maybePalestra}, Cmd.none)
 
     BusquePalestras ->
-      let
-        msg = Just (Mensagem "Buscando palestras..." "is-info")
-      in
-        ({model | palestras = [], mensagem = msg}, buscarPalestras model.sAno)
+      case model.ano of
+        Nothing -> ({model | mensagem = Just (Mensagem "Ano não definido!" "is-warning")}, Cmd.none)
+
+        Just ano ->
+          let
+            msg = Just (Mensagem "Buscando palestras..." "is-info")
+          in
+            ({model | palestras = [], mensagem = msg}, buscarPalestras ano)
 
     PesquiseEstudante ->
-      let
-        msg = Just (Mensagem "Buscando estudante..." "is-info")
-      in
-        ({model | mensagem = msg}, pesquisarEstudante model.sMatricula)
+      case model.matricula of
+        Nothing -> ({model | mensagem = Just (Mensagem "Matrícula não definida" "is-warning")}, Cmd.none)
+
+        Just matricula ->
+          let
+            msg = Just (Mensagem "Buscando estudante..." "is-info")
+          in
+            ({model | mensagem = msg}, pesquisarEstudante matricula)
 
     HttpErro erro ->
       let
@@ -121,23 +142,19 @@ update msg model =
 --
 --
 
-buscarPalestras : String -> Cmd Msg
-buscarPalestras sAno =
+buscarPalestras : Int -> Cmd Msg
+buscarPalestras ano =
   let
-    url = Http.url "WSPalestra/encontrarPorAno" [("ano", sAno)]
+    url = Http.url "WSPalestra/encontrarPorAno" [("ano", toString(ano))]
   in
     Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get Palestra.decoderTodas url)
 
-pesquisarEstudante : Maybe String -> Cmd Msg
-pesquisarEstudante mbSMatricula =
-  case mbSMatricula of
-    Nothing -> Cmd.none
-
-    Just sMatricula ->
-      let
-        url = Http.url "WSEstudante/encontrarPorMatricula" [("matricula", sMatricula)]
-      in
-        Task.perform HttpErro HttpRespostaPesquisarEstudante (Http.get decoderMsgEstudante url)
+pesquisarEstudante : Int -> Cmd Msg
+pesquisarEstudante matricula =
+  let
+    url = Http.url "WSEstudante/encontrarPorMatricula" [("matricula", toString(matricula))]
+  in
+    Task.perform HttpErro HttpRespostaPesquisarEstudante (Http.get decoderMsgEstudante url)
 
 
 obterEstudante : Json.Value -> Maybe Estudante
@@ -176,16 +193,6 @@ drrp msg =
     "PresencaJaCadastrada" -> Json.succeed False
     _ -> Json.succeed False
 
-obterPalestras : String -> List Palestra
-obterPalestras respostaJson =
-  let
-    p = Palestra 77 1999 "ttt" "palestrante" "dia" "data i" "data t"
-    q = Palestra 200 1999 "ttt" "palestrante" "dia" "data i" "data t"
-
-    msg = Result.withDefault "erro" (Json.decodeString ("Msg" := Json.string) respostaJson)
-    palestras = if msg == "PalestrasEncontradas" then Result.withDefault [p] (Json.decodeString Palestra.decoderTodas respostaJson) else [q]
-  in
-    [p,q]
 
 
 
@@ -194,14 +201,24 @@ view : Model -> Html Msg
 view model =
   div [class "box"]
     [ div [class "title"] [text "Registro de Presença"]
-    , mostrarMensagem model.mensagem
     , span [] [text "Ano da Semana"]
     , input [type' "number", placeholder "ano", onInput Ano] []
-    , button [class "button is-primary", onClick BusquePalestras] [text "Buscar Palestras"]
+    , mostrarBotaoBuscarPalestras model.ano
     , escolherPalestra model.palestras
-    , escolherAluno model.palestras model.idPalestra
+    , escolherAluno model.idPalestra model.matricula
     , registrarPresenca (model.palestra, model.estudante)
+    , mostrarMensagem model.mensagem
     ]
+
+mostrarBotaoBuscarPalestras : Maybe Int -> Html Msg
+mostrarBotaoBuscarPalestras mbAno =
+  case mbAno of
+    Nothing  -> div [] []
+    Just _ ->
+      button
+        [ class "button is-primary", onClick BusquePalestras ]
+        [ text "Buscar Palestras" ]
+
 
 escolherPalestra : List Palestra -> Html Msg
 escolherPalestra palestras =
@@ -271,8 +288,8 @@ mostrarPalestras palestras =
         ]
     ]
 
-escolherAluno : List Palestra -> Maybe Int -> Html Msg
-escolherAluno palestras mbIdPalestra =
+escolherAluno : Maybe Int -> Maybe Int -> Html Msg
+escolherAluno mbIdPalestra mbMatricula =
   case mbIdPalestra of
     Nothing -> div [] []
 
@@ -282,8 +299,19 @@ escolherAluno palestras mbIdPalestra =
        [ div [class "title"] [text "Definir Estudante"]
        , span [] [text "Matrícula : "]
        , input [type' "number", onInput Matricula] []
-       , button [class "button is-primary", onClick PesquiseEstudante] [text "Buscar Estudante"]
+       , mostrarBotaoPesquisarEstudante mbMatricula
        ]
+
+mostrarBotaoPesquisarEstudante : Maybe Int -> Html Msg
+mostrarBotaoPesquisarEstudante mbMatricula =
+  case mbMatricula of
+    Nothing -> div [] []
+
+    Just _ ->
+       button
+        [class "button is-primary", onClick PesquiseEstudante]
+        [text "Buscar Estudante"]
+
 
 registrarPresenca : (Maybe Palestra, Maybe Estudante) -> Html Msg
 registrarPresenca (mbPalestra, mbEstudante) =
