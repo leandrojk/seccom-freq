@@ -100,10 +100,10 @@ view model =
     True ->
       div []
         [ mostrarLogin model.login
-        , mostrarMenu model.login.logado model.menu
+--        , mostrarMenu model.login.logado model.menu
         , mostrarSemana (Menu.isSemana model.menu) model.semana
         , mostrarPalestra (Menu.isPalestra model.menu) model.palestra
-        , mostrarPresenca (Menu.isPresenca model.menu) model.presenca
+        , mostrarPresenca  model.presenca
         ]
 
 
@@ -143,10 +143,7 @@ mostrarPalestra exibir model =
 
     False -> div [] []
 
-mostrarPresenca : Bool -> Presenca.Model -> Html Msg
-mostrarPresenca exibir model =
-  case exibir of
-    True ->
-      div [class "box"] [App.map PresencaMsg (Presenca.view model)]
-
-    False -> div [] []
+mostrarPresenca :  Presenca.Model -> Html Msg
+mostrarPresenca  presencaModel =
+  div [class "box"]
+    [App.map PresencaMsg (Presenca.view presencaModel)]

@@ -8709,12 +8709,7 @@ var _user$project$Estudante$Estudante = F2(
 		return {matricula: a, nome: b};
 	});
 
-var _user$project$Login$decodeMsg = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['Msg']),
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Login$post$ = F3(
+var _user$project$HttpUtil$post$ = F3(
 	function (dec, url, body) {
 		return A2(
 			_evancz$elm_http$Http$fromJson,
@@ -8732,6 +8727,12 @@ var _user$project$Login$post$ = F3(
 					body: body
 				}));
 	});
+
+var _user$project$Login$decodeMsg = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['Msg']),
+	_elm_lang$core$Json_Decode$string);
 var _user$project$Login$analisarResposta = F2(
 	function (resposta, model) {
 		var cb = 'button is-primary';
@@ -8791,7 +8792,7 @@ var _user$project$Login$enviarSenha = function (senha) {
 		_elm_lang$core$Task$perform,
 		_user$project$Login$RespostaErro,
 		_user$project$Login$RespostaLoginOk,
-		A3(_user$project$Login$post$, _user$project$Login$decodeMsg, url, corpo));
+		A3(_user$project$HttpUtil$post$, _user$project$Login$decodeMsg, url, corpo));
 };
 var _user$project$Login$update = F2(
 	function (msg, model) {
@@ -9531,11 +9532,11 @@ var _user$project$Presenca$obterEstudante = function (json) {
 		return _p4._0;
 	}
 };
-var _user$project$Presenca$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {ano: a, palestras: b, palestra: c, estudante: d, matricula: e, idPalestra: f, mensagem: g};
+var _user$project$Presenca$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {ano: a, palestras: b, palestra: c, estudante: d, matricula: e, idPalestra: f, mensagem: g, ativo: h};
 	});
-var _user$project$Presenca$init = A7(
+var _user$project$Presenca$init = A8(
 	_user$project$Presenca$Model,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Native_List.fromArray(
@@ -9544,7 +9545,8 @@ var _user$project$Presenca$init = A7(
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
-	_elm_lang$core$Maybe$Nothing);
+	_elm_lang$core$Maybe$Nothing,
+	true);
 var _user$project$Presenca$Mensagem = F2(
 	function (a, b) {
 		return {msg: a, tipo: b};
@@ -9915,6 +9917,16 @@ var _user$project$Presenca$update = F2(
 	function (msg, model) {
 		var _p12 = msg;
 		switch (_p12.ctor) {
+			case 'Ativar':
+				return {ctor: '_Tuple2', _0: _user$project$Presenca$init, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Desativar':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_user$project$Presenca$init,
+						{ativo: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'Ano':
 				var _p13 = _elm_lang$core$String$toInt(_p12._0);
 				if (_p13.ctor === 'Ok') {
@@ -10088,21 +10100,26 @@ var _user$project$Presenca$update = F2(
 					};
 				}
 			case 'RegistrePresenca':
-				var sid = _elm_lang$core$Basics$toString(_p12._0);
-				var sm = _elm_lang$core$Basics$toString(_p12._1);
 				var url = A2(
 					_evancz$elm_http$Http$url,
 					'WSPresenca/cadastrar',
 					_elm_lang$core$Native_List.fromArray(
-						[
-							{ctor: '_Tuple2', _0: 'matricula', _1: sm},
-							{ctor: '_Tuple2', _0: 'palestra', _1: sid}
-						]));
+						[]));
+				var sid = _elm_lang$core$Basics$toString(_p12._0);
+				var sm = _elm_lang$core$Basics$toString(_p12._1);
+				var corpo = _evancz$elm_http$Http$string(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'matricula=',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							sm,
+							A2(_elm_lang$core$Basics_ops['++'], '&palestra=', sid))));
 				var comando = A3(
 					_elm_lang$core$Task$perform,
 					_user$project$Presenca$HttpErro,
 					_user$project$Presenca$HttpRespostaRegistrarPresenca,
-					A3(_evancz$elm_http$Http$post, _user$project$Presenca$decoderRespostaRegistrarPresenca, url, _evancz$elm_http$Http$empty));
+					A3(_user$project$HttpUtil$post$, _user$project$Presenca$decoderRespostaRegistrarPresenca, url, corpo));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10213,50 +10230,85 @@ var _user$project$Presenca$escolherAluno = F2(
 var _user$project$Presenca$Ano = function (a) {
 	return {ctor: 'Ano', _0: a};
 };
+var _user$project$Presenca$Desativar = {ctor: 'Desativar'};
+var _user$project$Presenca$Ativar = {ctor: 'Ativar'};
 var _user$project$Presenca$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('box')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('title')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Registro de Presença')
-					])),
-				A2(
-				_elm_lang$html$Html$span,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Ano da Semana')
-					])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('number'),
-						_elm_lang$html$Html_Attributes$placeholder('ano'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Presenca$Ano)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				_user$project$Presenca$mostrarBotaoBuscarPalestras(model.ano),
-				_user$project$Presenca$escolherPalestra(model.palestras),
-				A2(_user$project$Presenca$escolherAluno, model.idPalestra, model.matricula),
-				_user$project$Presenca$registrarPresenca(
-				{ctor: '_Tuple2', _0: model.palestra, _1: model.estudante}),
-				_user$project$Presenca$mostrarMensagem(model.mensagem)
-			]));
+	var _p25 = model.ativo;
+	if (_p25 === false) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tag is-primary'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Presenca$Ativar)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Registrar Presença')
+						]))
+				]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('box')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tag is-info'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Presenca$Desativar)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Fechar')
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('title')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Registro de Presença')
+						])),
+					A2(
+					_elm_lang$html$Html$span,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Ano da Semana')
+						])),
+					A2(
+					_elm_lang$html$Html$input,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$type$('number'),
+							_elm_lang$html$Html_Attributes$placeholder('ano'),
+							_elm_lang$html$Html_Events$onInput(_user$project$Presenca$Ano)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					_user$project$Presenca$mostrarBotaoBuscarPalestras(model.ano),
+					_user$project$Presenca$escolherPalestra(model.palestras),
+					A2(_user$project$Presenca$escolherAluno, model.idPalestra, model.matricula),
+					_user$project$Presenca$registrarPresenca(
+					{ctor: '_Tuple2', _0: model.palestra, _1: model.estudante}),
+					_user$project$Presenca$mostrarMensagem(model.mensagem)
+				]));
+	}
 };
 
 var _user$project$Main$subscriptions = function (model) {
@@ -10274,39 +10326,28 @@ var _user$project$Main$init = {
 var _user$project$Main$PresencaMsg = function (a) {
 	return {ctor: 'PresencaMsg', _0: a};
 };
-var _user$project$Main$mostrarPresenca = F2(
-	function (exibir, model) {
-		var _p0 = exibir;
-		if (_p0 === true) {
-			return A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('box')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html_App$map,
-						_user$project$Main$PresencaMsg,
-						_user$project$Presenca$view(model))
-					]));
-		} else {
-			return A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		}
-	});
+var _user$project$Main$mostrarPresenca = function (presencaModel) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html_App$map,
+				_user$project$Main$PresencaMsg,
+				_user$project$Presenca$view(presencaModel))
+			]));
+};
 var _user$project$Main$PalestraMsg = function (a) {
 	return {ctor: 'PalestraMsg', _0: a};
 };
 var _user$project$Main$mostrarPalestra = F2(
 	function (exibir, model) {
-		var _p1 = exibir;
-		if (_p1 === true) {
+		var _p0 = exibir;
+		if (_p0 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -10334,8 +10375,8 @@ var _user$project$Main$SemanaMsg = function (a) {
 };
 var _user$project$Main$mostrarSemana = F2(
 	function (exibir, model) {
-		var _p2 = exibir;
-		if (_p2 === true) {
+		var _p1 = exibir;
+		if (_p1 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -10363,8 +10404,8 @@ var _user$project$Main$MenuMsg = function (a) {
 };
 var _user$project$Main$mostrarMenu = F2(
 	function (logado, menu) {
-		var _p3 = logado;
-		if (_p3 === true) {
+		var _p2 = logado;
+		if (_p2 === true) {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -10392,14 +10433,14 @@ var _user$project$Main$LoginMsg = function (a) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'LoginMsg':
-				var _p5 = _user$project$Main$init;
-				var novoModelo = _p5._0;
-				var _p6 = A2(_user$project$Login$update, _p4._0, model.login);
-				var loginAtualizado = _p6._0;
-				var loginCmd = _p6._1;
+				var _p4 = _user$project$Main$init;
+				var novoModelo = _p4._0;
+				var _p5 = A2(_user$project$Login$update, _p3._0, model.login);
+				var loginAtualizado = _p5._0;
+				var loginCmd = _p5._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10408,13 +10449,13 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
 				};
 			case 'MenuMsg':
-				var _p7 = _user$project$Login$estaLogado(model.login);
-				if (_p7 === false) {
+				var _p6 = _user$project$Login$estaLogado(model.login);
+				if (_p6 === false) {
 					return _user$project$Main$init;
 				} else {
-					var _p8 = A2(_user$project$Menu$update, _p4._0, model.menu);
-					var menuAtualizado = _p8._0;
-					var menuCmd = _p8._1;
+					var _p7 = A2(_user$project$Menu$update, _p3._0, model.menu);
+					var menuAtualizado = _p7._0;
+					var menuCmd = _p7._1;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -10424,9 +10465,9 @@ var _user$project$Main$update = F2(
 					};
 				}
 			case 'SemanaMsg':
-				var _p9 = A2(_user$project$Semana$update, _p4._0, model.semana);
-				var semanaAtualizada = _p9._0;
-				var semanaCmd = _p9._1;
+				var _p8 = A2(_user$project$Semana$update, _p3._0, model.semana);
+				var semanaAtualizada = _p8._0;
+				var semanaCmd = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10435,9 +10476,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SemanaMsg, semanaCmd)
 				};
 			case 'PalestraMsg':
-				var _p10 = A2(_user$project$Palestra$update, _p4._0, model.palestra);
-				var palestraAtualizada = _p10._0;
-				var palestraCmd = _p10._1;
+				var _p9 = A2(_user$project$Palestra$update, _p3._0, model.palestra);
+				var palestraAtualizada = _p9._0;
+				var palestraCmd = _p9._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10446,13 +10487,13 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PalestraMsg, palestraCmd)
 				};
 			default:
-				var _p11 = _user$project$Login$estaLogado(model.login);
-				if (_p11 === false) {
+				var _p10 = _user$project$Login$estaLogado(model.login);
+				if (_p10 === false) {
 					return _user$project$Main$init;
 				} else {
-					var _p12 = A2(_user$project$Presenca$update, _p4._0, model.presenca);
-					var presencaAtualizada = _p12._0;
-					var presencaCmd = _p12._1;
+					var _p11 = A2(_user$project$Presenca$update, _p3._0, model.presenca);
+					var presencaAtualizada = _p11._0;
+					var presencaCmd = _p11._1;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -10489,8 +10530,8 @@ var _user$project$Main$mostrarLogin = function (login) {
 			]));
 };
 var _user$project$Main$view = function (model) {
-	var _p13 = _user$project$Login$estaLogado(model.login);
-	if (_p13 === false) {
+	var _p12 = _user$project$Login$estaLogado(model.login);
+	if (_p12 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10507,7 +10548,6 @@ var _user$project$Main$view = function (model) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_user$project$Main$mostrarLogin(model.login),
-					A2(_user$project$Main$mostrarMenu, model.login.logado, model.menu),
 					A2(
 					_user$project$Main$mostrarSemana,
 					_user$project$Menu$isSemana(model.menu),
@@ -10516,10 +10556,7 @@ var _user$project$Main$view = function (model) {
 					_user$project$Main$mostrarPalestra,
 					_user$project$Menu$isPalestra(model.menu),
 					model.palestra),
-					A2(
-					_user$project$Main$mostrarPresenca,
-					_user$project$Menu$isPresenca(model.menu),
-					model.presenca)
+					_user$project$Main$mostrarPresenca(model.presenca)
 				]));
 	}
 };

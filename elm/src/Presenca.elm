@@ -12,6 +12,7 @@ import String
 
 import Estudante exposing (Estudante)
 import Palestra exposing (Palestra)
+import HttpUtil
 
 -- MODEL
 
@@ -23,8 +24,8 @@ type alias Model =
     estudante : Maybe  Estudante,
     matricula : Maybe Int,
     idPalestra : Maybe Int,
-    mensagem : Maybe Mensagem
-
+    mensagem : Maybe Mensagem,
+    ativo : Bool
   }
 
 type alias Mensagem =
@@ -34,13 +35,15 @@ type alias Mensagem =
 
 init : Model
 init =
-  Model Nothing [] Nothing Nothing Nothing Nothing Nothing
+  Model Nothing [] Nothing Nothing Nothing Nothing Nothing True
 
 
 -- UPDATE
 
 type Msg =
-  Ano String
+  Ativar
+  | Desativar
+  | Ano String
   | Matricula String
   | BusquePalestras
   | HttpErro Http.Error
@@ -54,6 +57,12 @@ type Msg =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Ativar ->
+      (init, Cmd.none)
+
+    Desativar ->
+      ({init | ativo = False}, Cmd.none)
+
     Ano sAno ->
       case String.toInt sAno of
         Ok ano ->
@@ -126,8 +135,9 @@ update msg model =
       let
         sm = toString matricula
         sid = toString idPalestra
-        url = Http.url "WSPresenca/cadastrar" [("matricula", sm), ("palestra", sid)]
-        comando = Task.perform HttpErro HttpRespostaRegistrarPresenca (Http.post decoderRespostaRegistrarPresenca url Http.empty)
+        url = Http.url "WSPresenca/cadastrar" []
+        corpo = Http.string ("matricula=" ++ sm ++ "&palestra=" ++ sid)
+        comando = Task.perform HttpErro HttpRespostaRegistrarPresenca (HttpUtil.post' decoderRespostaRegistrarPresenca url corpo)
       in
         ({model | mensagem = Just (Mensagem "registrando..." "is-info")}, comando)
 
@@ -199,16 +209,25 @@ drrp msg =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [class "box"]
-    [ div [class "title"] [text "Registro de Presença"]
-    , span [] [text "Ano da Semana"]
-    , input [type' "number", placeholder "ano", onInput Ano] []
-    , mostrarBotaoBuscarPalestras model.ano
-    , escolherPalestra model.palestras
-    , escolherAluno model.idPalestra model.matricula
-    , registrarPresenca (model.palestra, model.estudante)
-    , mostrarMensagem model.mensagem
-    ]
+  case model.ativo of
+    False ->
+      div []
+        [ button [class "tag is-primary", onClick Ativar]
+                 [text "Registrar Presença"]
+        ]
+
+    True ->
+      div [class "box"]
+        [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
+        , div [class "title"] [text "Registro de Presença"]
+        , span [] [text "Ano da Semana"]
+        , input [type' "number", placeholder "ano", onInput Ano] []
+        , mostrarBotaoBuscarPalestras model.ano
+        , escolherPalestra model.palestras
+        , escolherAluno model.idPalestra model.matricula
+        , registrarPresenca (model.palestra, model.estudante)
+        , mostrarMensagem model.mensagem
+        ]
 
 mostrarBotaoBuscarPalestras : Maybe Int -> Html Msg
 mostrarBotaoBuscarPalestras mbAno =

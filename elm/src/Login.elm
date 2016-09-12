@@ -7,7 +7,7 @@ import Html.Attributes exposing (placeholder, type', class)
 import Http
 import Task
 import Json.Decode as Json
-
+import HttpUtil
 
 -- MODEL
 
@@ -102,18 +102,8 @@ enviarSenha senha =
     url = Http.url "WSAutenticador/fazerLogin" []
     corpo = Http.string ("codigo=" ++ senha)
   in
-    Task.perform RespostaErro RespostaLoginOk (post' decodeMsg url corpo)
+    Task.perform RespostaErro RespostaLoginOk (HttpUtil.post' decodeMsg url corpo)
 
-
-post' : Json.Decoder a -> String -> Http.Body -> Task.Task Http.Error a
-post' dec url body =
-    Http.send Http.defaultSettings
-    { verb = "POST"
-    , headers = [("Content-type", "application/x-www-form-urlencoded")]
-    , url = url
-    , body = body
-    }
-        |> Http.fromJson dec
 
 --
 --
