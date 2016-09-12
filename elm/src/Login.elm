@@ -98,10 +98,22 @@ analisarResposta resposta model =
 enviarSenha : String -> Cmd Msg
 enviarSenha senha =
   let
-    url = Http.url "WSAutenticador/fazerLogin" [("codigo", senha)]
+--    url = Http.url "WSAutenticador/fazerLogin" [("codigo", senha)]
+    url = Http.url "WSAutenticador/fazerLogin" []
+    corpo = Http.string ("codigo=" ++ senha)
   in
-    Task.perform RespostaErro RespostaLoginOk (Http.post decodeMsg url Http.empty )
+    Task.perform RespostaErro RespostaLoginOk (post' decodeMsg url corpo)
 
+
+post' : Json.Decoder a -> String -> Http.Body -> Task.Task Http.Error a
+post' dec url body =
+    Http.send Http.defaultSettings
+    { verb = "POST"
+    , headers = [("Content-type", "application/x-www-form-urlencoded")]
+    , url = url
+    , body = body
+    }
+        |> Http.fromJson dec
 
 --
 --

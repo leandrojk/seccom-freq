@@ -8714,6 +8714,24 @@ var _user$project$Login$decodeMsg = A2(
 	_elm_lang$core$Native_List.fromArray(
 		['Msg']),
 	_elm_lang$core$Json_Decode$string);
+var _user$project$Login$post$ = F3(
+	function (dec, url, body) {
+		return A2(
+			_evancz$elm_http$Http$fromJson,
+			dec,
+			A2(
+				_evancz$elm_http$Http$send,
+				_evancz$elm_http$Http$defaultSettings,
+				{
+					verb: 'POST',
+					headers: _elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: 'Content-type', _1: 'application/x-www-form-urlencoded'}
+						]),
+					url: url,
+					body: body
+				}));
+	});
 var _user$project$Login$analisarResposta = F2(
 	function (resposta, model) {
 		var cb = 'button is-primary';
@@ -8762,18 +8780,18 @@ var _user$project$Login$RespostaLoginOk = function (a) {
 	return {ctor: 'RespostaLoginOk', _0: a};
 };
 var _user$project$Login$enviarSenha = function (senha) {
+	var corpo = _evancz$elm_http$Http$string(
+		A2(_elm_lang$core$Basics_ops['++'], 'codigo=', senha));
 	var url = A2(
 		_evancz$elm_http$Http$url,
 		'WSAutenticador/fazerLogin',
 		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 'codigo', _1: senha}
-			]));
+			[]));
 	return A3(
 		_elm_lang$core$Task$perform,
 		_user$project$Login$RespostaErro,
 		_user$project$Login$RespostaLoginOk,
-		A3(_evancz$elm_http$Http$post, _user$project$Login$decodeMsg, url, _evancz$elm_http$Http$empty));
+		A3(_user$project$Login$post$, _user$project$Login$decodeMsg, url, corpo));
 };
 var _user$project$Login$update = F2(
 	function (msg, model) {
