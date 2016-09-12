@@ -14,6 +14,7 @@ import seccom.freq.modelo.Estudante;
 import seccom.freq.modelo.Palestra;
 import seccom.freq.modelo.Presenca;
 import seccom.freq.modelo.Semana;
+import seccom.freq.modelo.Usuario;
 import seccom.freq.ws.WSSemana;
 
 /**
@@ -386,6 +387,45 @@ public class BDUtil {
         }
 
         return matriculas;
+    }
+
+    
+    public static Usuario encontreUsuario(DataSource ds, String login) {
+        String sql = "select * from USUARIO where login = ?";
+        Usuario usuario = null;
+        Connection con = null;
+        PreparedStatement ppstmt = null;
+        ResultSet rs = null;
+        try {
+            con = ds.getConnection();
+            ppstmt = con.prepareStatement(sql);
+            ppstmt.setString(1, login);
+            rs = ppstmt.executeQuery();
+            if (rs.next()) {
+                usuario = new Usuario(login, rs.getString("SENHA"), rs.getString("NOME"), rs.getBoolean("ADM"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+            //TODO tratar erro;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ppstmt != null) {
+                    ppstmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO tratar erro
+            }
+
+        }
+
+        return usuario;
     }
 
 }

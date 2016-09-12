@@ -1,9 +1,18 @@
 connect 'jdbc:derby://localhost:1300/BD_SECCOM_FREQ;user=usuario1;password=senha1';
 
+drop table USUARIO;
 drop table PRESENCA;
 drop table ESTUDANTE;
 drop table PALESTRA;
 drop table SEMANA;
+
+create table USUARIO(
+    LOGIN varchar(20) not null,
+    NOME varchar(100) not null,
+    SENHA varchar(100) not null,
+    ADM BOOLEAN not null,
+    primary key (LOGIN)
+);
 
 create table SEMANA(
     ANO int not null,

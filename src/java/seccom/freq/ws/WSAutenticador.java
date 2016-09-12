@@ -4,12 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
+import seccom.freq.banco.BDUtil;
+import seccom.freq.modelo.Usuario;
 
 /**
  *
@@ -25,6 +29,9 @@ public class WSAutenticador extends HttpServlet {
         fazerLogout
     }
     Gson gson = new Gson();
+    
+    @Resource(name = "jdbc/SECCOMDB")
+    DataSource ds;
     
     public static JsonObject respostaNaoLogado() {
         JsonObject jo = new JsonObject();
@@ -68,14 +75,17 @@ public class WSAutenticador extends HttpServlet {
 
     private JsonObject processeLogin(HttpServletRequest request) {
         
-        String codigo = request.getParameter("codigo");
+        String login = request.getParameter("login");
+        String senha = request.getParameter("senha");
+        Usuario u;
         
-        System.out.println(codigo);
+        u = BDUtil.encontreUsuario(ds, login);
         
-        if (codigo.equals(CODIGO_DE_ACESSO)) {
+        if (u != null && u.getSenha().equals(senha)) {
             request.getSession().setAttribute(ATTR_LOGADO, true);
             JsonObject jo = new JsonObject();
             jo.addProperty("Msg", "LoginAceito");
+            jo.add("usuario", gson.toJsonTree(u));
             return jo;
         } else {
             HttpSession sessao = request.getSession(false);
