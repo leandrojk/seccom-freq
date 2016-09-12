@@ -39,8 +39,6 @@ public class WSAutenticador extends HttpServlet {
         return jo;
     }
 
-    // senha de autenticação do usuário
-    final private String CODIGO_DE_ACESSO = "c";
     
     // attributo da session que indica se usuário está logado ou não
     final private static String ATTR_LOGADO = "logado";
@@ -85,6 +83,7 @@ public class WSAutenticador extends HttpServlet {
             request.getSession().setAttribute(ATTR_LOGADO, true);
             JsonObject jo = new JsonObject();
             jo.addProperty("Msg", "LoginAceito");
+            u.apagueSenha(); // para evitar que a senha fique disponível no browser
             jo.add("usuario", gson.toJsonTree(u));
             return jo;
         } else {

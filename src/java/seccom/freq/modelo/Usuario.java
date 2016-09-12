@@ -33,6 +33,9 @@ public class Usuario {
     public boolean isAdm() {
         return adm;
     }
-    
-    
+
+    public void apagueSenha() {
+        this.senha = "";
+    }
+        
 }

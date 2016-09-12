@@ -6,17 +6,24 @@ import Html.Attributes exposing (placeholder, type', class)
 
 import Http
 import Task
-import Json.Decode as Json
+import Json.Decode as Json exposing ((:=))
 import HttpUtil
 
 -- MODEL
 
+type alias Usuario = {
+  login : String,
+  nome : String,
+  adm : Bool
+}
+
 type alias Model =
   {
+  loginDigitado : String,
   senhaDigitada : String,
   classeDoBotao : String,
-  logado : Bool,
-  aviso : String
+  aviso : String,
+  usuario : Maybe Usuario
   }
 
 --
@@ -25,22 +32,26 @@ type alias Model =
 
 init : Model
 init =
-  Model "" "button is-primary" False ""
+  Model "" "" "button is-primary" "" Nothing
 
 --
 --
 --
 estaLogado : Model -> Bool
 estaLogado model =
-  model.logado
+  case model.usuario of
+    Nothing -> False
+
+    Just _ -> True
 
 -- UPDATE
 
 type Msg
   = ArmazeneSenha String
-  | EnvieSenha
+  | ArmazeneLogin String
+  | FazerLogin
   | FacaLogout
-  | RespostaLoginOk String
+  | RespostaLoginOk (Maybe Usuario)
   | RespostaErro Http.Error
   | RespostaLogoutOk String
 
@@ -53,11 +64,14 @@ update msg model =
     ArmazeneSenha senha ->
       ({ model | senhaDigitada = senha, aviso = "" }, Cmd.none)
 
-    EnvieSenha ->
-      ({ model | classeDoBotao = "button is-primary is-loading" }, enviarSenha model.senhaDigitada)
+    ArmazeneLogin login ->
+      ({ model | loginDigitado = login, aviso = "" }, Cmd.none)
 
-    RespostaLoginOk resposta ->
-      (analisarResposta resposta model, Cmd.none)
+    FazerLogin ->
+      ({ model | classeDoBotao = "button is-primary is-loading" }, fazerLogin model.loginDigitado, model.senhaDigitada)
+
+    RespostaLoginOk mbUsuario ->
+      (analisarResposta mbUsuario model, Cmd.none)
 
     RespostaErro erro ->
       ({model | classeDoBotao = "button is-primary"}, Cmd.none)
@@ -74,33 +88,39 @@ update msg model =
 analisarRespostaLogout : String -> Model -> Model
 analisarRespostaLogout resposta model =
   let
-    logado = False
     cb = "button is-primary"
     aviso = ""
   in
-    {model | logado = logado, classeDoBotao = cb, aviso = aviso }
+    {model | usuario = Nothing, classeDoBotao = cb, aviso = aviso }
 
 --
 --
 --
-analisarResposta : String -> Model -> Model
+analisarResposta : Maybe Usuario -> Model -> Model
 analisarResposta resposta model =
-  let
-    logado = resposta == "LoginAceito"
-    cb = "button is-primary"
-    aviso = if (logado) then "" else "Código incorreto!"
-  in
-    {model | logado = logado, classeDoBotao = cb, aviso = aviso }
+  case resposta of
+    Nothing ->
+      let
+        cb = "button is-primary"
+        aviso = "Login e/ou senha incorretos!"
+      in
+        {model | classeDoBotao = cb, aviso = aviso }
+
+    Just usuario ->
+      let
+        cb = "button is-primary"
+        aviso = ""
+      in
+          {model | classeDoBotao = cb, aviso = aviso}
 
 --
 --
 --
-enviarSenha : String -> Cmd Msg
-enviarSenha senha =
+fazerLogin : String -> String -> Cmd Msg
+fazerLogin login senha =
   let
---    url = Http.url "WSAutenticador/fazerLogin" [("codigo", senha)]
     url = Http.url "WSAutenticador/fazerLogin" []
-    corpo = Http.string ("codigo=" ++ senha)
+    corpo = Http.string ("login=" ++ login ++ "&senha=" ++ senha)
   in
     Task.perform RespostaErro RespostaLoginOk (HttpUtil.post' decodeMsg url corpo)
 
@@ -108,10 +128,17 @@ enviarSenha senha =
 --
 --
 --
-decodeMsg : Json.Decoder String
+decodeMsg : Json.Decoder (Maybe Usuario)
 decodeMsg =
-  Json.at ["Msg"] Json.string
+  ("Msg" := Json.string) `Json.andThen` decode2
 
+decode2 : String -> Json.Decoder (Maybe Usuario)
+decode2 msg =
+  case msg of
+    "LoginAceito" ->
+      Json.maybe ("usuario" := Json.object3 Usuario ("nome" := Json.string) ("login" := Json.string) ("adm" := Json.bool))
+
+    _ -> Json.maybe (Json.fail "login e/ou senha incorretos")
 
 --
 --
@@ -121,7 +148,7 @@ fazerLogout =
   let
     url = Http.url "WSAutenticador/fazerLogout" []
   in
-    Task.perform RespostaErro RespostaLogoutOk (Http.post decodeMsg url Http.empty)
+    Task.perform RespostaErro RespostaLogoutOk (Http.post Json.string url Http.empty)
 
 
 --
@@ -129,16 +156,16 @@ fazerLogout =
 --
 view : Model -> Html Msg
 view model =
-  case model.logado of
-    True -> div []
+  case model.usuario of
+    Just _ -> div []
       [
       h3 [class "title"] [text "Logout"]
       , button [class model.classeDoBotao, onClick FacaLogout] [text "Sair"]
       ]
 
-    False -> div []
+    Nothing -> div []
         [ h3 [class "title"] [text "Login"]
         , input [ type' "text", placeholder "Código", onInput ArmazeneSenha ] []
-        , button [ class model.classeDoBotao, onClick EnvieSenha ] [text  "Entrar"]
+        , button [ class model.classeDoBotao, onClick FazerLogin ] [text  "Entrar"]
         , h3 [] [text model.aviso]
         ]
