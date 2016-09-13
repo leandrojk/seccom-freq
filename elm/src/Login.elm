@@ -81,7 +81,7 @@ update msg model =
       let
         aviso = Just "Erro na resposta http"
       in
-        ({model | aviso = aviso, classeDoBotao = "button is-primary"}, Cmd.none)
+        ({init | aviso = aviso}, Cmd.none)
 
     FacaLogout ->
       (model, fazerLogout)

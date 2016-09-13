@@ -8708,6 +8708,14 @@ var _user$project$Estudante$Estudante = F2(
 	function (a, b) {
 		return {matricula: a, nome: b};
 	});
+var _user$project$Estudante$decoderEstudante = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'estudante',
+	A3(
+		_elm_lang$core$Json_Decode$object2,
+		_user$project$Estudante$Estudante,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'matricula', _elm_lang$core$Json_Decode$int),
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string)));
 
 var _user$project$HttpUtil$post$ = F3(
 	function (dec, url, body) {
@@ -8902,8 +8910,8 @@ var _user$project$Login$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{aviso: aviso, classeDoBotao: 'button is-primary'}),
+						_user$project$Login$init,
+						{aviso: aviso}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'FacaLogout':
@@ -9616,18 +9624,14 @@ var _user$project$Presenca$dme = function (msg) {
 	var _p3 = msg;
 	switch (_p3) {
 		case 'EstudanteNaoEncontrado':
-			return _elm_lang$core$Json_Decode$maybe(
-				_elm_lang$core$Json_Decode$fail('aluno não cadastrado'));
+			return _elm_lang$core$Json_Decode$succeed(
+				_elm_lang$core$Maybe$Just(_elm_lang$core$Maybe$Nothing));
 		case 'EstudanteEncontrado':
 			return _elm_lang$core$Json_Decode$maybe(
-				A2(
-					_elm_lang$core$Json_Decode_ops[':='],
-					'estudante',
-					A3(
-						_elm_lang$core$Json_Decode$object2,
-						_user$project$Estudante$Estudante,
-						A2(_elm_lang$core$Json_Decode_ops[':='], 'matricula', _elm_lang$core$Json_Decode$int),
-						A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string))));
+				_elm_lang$core$Json_Decode$maybe(_user$project$Estudante$decoderEstudante));
+		case 'UsuarioNaoLogado':
+			return _elm_lang$core$Json_Decode$maybe(
+				_elm_lang$core$Json_Decode$fail('sessão expirada'));
 		default:
 			return _elm_lang$core$Json_Decode$maybe(
 				_elm_lang$core$Json_Decode$fail('parâmetro Msg não reconhecido'));
@@ -9637,15 +9641,21 @@ var _user$project$Presenca$decoderMsgEstudante = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
 	_user$project$Presenca$dme);
-var _user$project$Presenca$obterEstudante = function (json) {
-	var result = A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Presenca$decoderMsgEstudante, json);
-	var _p4 = result;
-	if (_p4.ctor === 'Err') {
-		return _elm_lang$core$Maybe$Nothing;
-	} else {
-		return _p4._0;
+var _user$project$Presenca$dmpe = function (msg) {
+	var _p4 = msg;
+	switch (_p4) {
+		case 'PalestrasEncontradas':
+			return _elm_lang$core$Json_Decode$maybe(_user$project$Palestra$decoderTodas);
+		case 'UsuarioNaoLogado':
+			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
+		default:
+			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
 	}
 };
+var _user$project$Presenca$decoderMsgPalestrasEncontradas = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+	_user$project$Presenca$dmpe);
 var _user$project$Presenca$Model = F9(
 	function (a, b, c, d, e, f, g, h, i) {
 		return {ano: a, palestras: b, palestra: c, estudante: d, matricula: e, idPalestra: f, mensagem: g, ativo: h, expirou: i};
@@ -9666,6 +9676,17 @@ var _user$project$Presenca$Mensagem = F2(
 	function (a, b) {
 		return {msg: a, tipo: b};
 	});
+var _user$project$Presenca$sessaoExpirada = function () {
+	var mensagem = _elm_lang$core$Maybe$Just(
+		A2(_user$project$Presenca$Mensagem, 'Sessão expirada! Saia e entre novamente', 'is-danger'));
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_user$project$Presenca$init,
+			{mensagem: mensagem, expirou: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+}();
 var _user$project$Presenca$HttpRespostaRegistrarPresenca = function (a) {
 	return {ctor: 'HttpRespostaRegistrarPresenca', _0: a};
 };
@@ -10008,7 +10029,7 @@ var _user$project$Presenca$buscarPalestras = function (ano) {
 		_elm_lang$core$Task$perform,
 		_user$project$Presenca$HttpErro,
 		_user$project$Presenca$HttpRespostaEncontrarPalestras,
-		A2(_evancz$elm_http$Http$get, _user$project$Palestra$decoderTodas, url));
+		A2(_evancz$elm_http$Http$get, _user$project$Presenca$decoderMsgPalestrasEncontradas, url));
 };
 var _user$project$Presenca$pesquisarEstudante = function (matricula) {
 	var url = A2(
@@ -10108,7 +10129,7 @@ var _user$project$Presenca$update = F2(
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'BusquePalestras':
+			case 'BusquePalestrasDoAno':
 				var _p16 = model.ano;
 				if (_p16.ctor === 'Nothing') {
 					return {
@@ -10174,45 +10195,55 @@ var _user$project$Presenca$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HttpRespostaEncontrarPalestras':
-				var _p19 = _p12._0;
-				var msg = function () {
-					var _p18 = _elm_lang$core$List$isEmpty(_p19);
-					if (_p18 === true) {
-						return _elm_lang$core$Maybe$Just(
-							A2(_user$project$Presenca$Mensagem, 'Não há palestras cadastradas', 'is-warning'));
-					} else {
-						return _elm_lang$core$Maybe$Nothing;
-					}
-				}();
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{palestras: _p19, mensagem: msg}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				var _p18 = _p12._0;
+				if (_p18.ctor === 'Nothing') {
+					return _user$project$Presenca$sessaoExpirada;
+				} else {
+					var _p20 = _p18._0;
+					var msg = function () {
+						var _p19 = _elm_lang$core$List$isEmpty(_p20);
+						if (_p19 === true) {
+							return _elm_lang$core$Maybe$Just(
+								A2(_user$project$Presenca$Mensagem, 'Não há palestras cadastradas', 'is-warning'));
+						} else {
+							return _elm_lang$core$Maybe$Nothing;
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{palestras: _p20, mensagem: msg}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
 			case 'HttpRespostaPesquisarEstudante':
 				var _p21 = _p12._0;
-				var _p20 = _p21;
-				if (_p20.ctor === 'Nothing') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								mensagem: _elm_lang$core$Maybe$Just(
-									A2(_user$project$Presenca$Mensagem, 'Estudante não cadastrado!', 'is-warning'))
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
+				if (_p21.ctor === 'Nothing') {
+					return _user$project$Presenca$sessaoExpirada;
 				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{estudante: _p21, mensagem: _elm_lang$core$Maybe$Nothing}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
+					var _p23 = _p21._0;
+					var _p22 = _p23;
+					if (_p22.ctor === 'Nothing') {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									mensagem: _elm_lang$core$Maybe$Just(
+										A2(_user$project$Presenca$Mensagem, 'Estudante não cadastrado!', 'is-warning'))
+								}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{estudante: _p23, mensagem: _elm_lang$core$Maybe$Nothing}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					}
 				}
 			case 'RegistrePresenca':
 				var url = A2(
@@ -10246,21 +10277,13 @@ var _user$project$Presenca$update = F2(
 					_1: comando
 				};
 			default:
-				var _p22 = _p12._0;
-				if (_p22.ctor === 'Nothing') {
-					var mensagem = _elm_lang$core$Maybe$Just(
-						A2(_user$project$Presenca$Mensagem, 'Sessão expirada! Faça logout e entre novamente', 'is-danger'));
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							_user$project$Presenca$init,
-							{mensagem: mensagem, expirou: true}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
+				var _p24 = _p12._0;
+				if (_p24.ctor === 'Nothing') {
+					return _user$project$Presenca$sessaoExpirada;
 				} else {
 					var mensagem = function () {
-						var _p23 = _p22._0;
-						if (_p23 === true) {
+						var _p25 = _p24._0;
+						if (_p25 === true) {
 							return _elm_lang$core$Maybe$Just(
 								A2(_user$project$Presenca$Mensagem, 'Presença registrada com sucesso', 'is-success'));
 						} else {
@@ -10278,10 +10301,10 @@ var _user$project$Presenca$update = F2(
 				}
 		}
 	});
-var _user$project$Presenca$BusquePalestras = {ctor: 'BusquePalestras'};
+var _user$project$Presenca$BusquePalestrasDoAno = {ctor: 'BusquePalestrasDoAno'};
 var _user$project$Presenca$mostrarBotaoBuscarPalestras = function (mbAno) {
-	var _p24 = mbAno;
-	if (_p24.ctor === 'Nothing') {
+	var _p26 = mbAno;
+	if (_p26.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10294,7 +10317,7 @@ var _user$project$Presenca$mostrarBotaoBuscarPalestras = function (mbAno) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$html$Html_Attributes$class('button is-primary'),
-					_elm_lang$html$Html_Events$onClick(_user$project$Presenca$BusquePalestras)
+					_elm_lang$html$Html_Events$onClick(_user$project$Presenca$BusquePalestrasDoAno)
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -10307,8 +10330,8 @@ var _user$project$Presenca$Matricula = function (a) {
 };
 var _user$project$Presenca$escolherAluno = F2(
 	function (mbIdPalestra, mbMatricula) {
-		var _p25 = mbIdPalestra;
-		if (_p25.ctor === 'Nothing') {
+		var _p27 = mbIdPalestra;
+		if (_p27.ctor === 'Nothing') {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -10361,8 +10384,8 @@ var _user$project$Presenca$Ano = function (a) {
 var _user$project$Presenca$Desativar = {ctor: 'Desativar'};
 var _user$project$Presenca$Ativar = {ctor: 'Ativar'};
 var _user$project$Presenca$view2 = function (model) {
-	var _p26 = model.ativo;
-	if (_p26 === false) {
+	var _p28 = model.ativo;
+	if (_p28 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10439,8 +10462,8 @@ var _user$project$Presenca$view2 = function (model) {
 	}
 };
 var _user$project$Presenca$view = function (model) {
-	var _p27 = model.expirou;
-	if (_p27 === true) {
+	var _p29 = model.expirou;
+	if (_p29 === true) {
 		return _user$project$Presenca$mostrarMensagem(model.mensagem);
 	} else {
 		return _user$project$Presenca$view2(model);
