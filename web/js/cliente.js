@@ -8728,37 +8728,70 @@ var _user$project$HttpUtil$post$ = F3(
 				}));
 	});
 
-var _user$project$Login$decodeMsg = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['Msg']),
-	_elm_lang$core$Json_Decode$string);
 var _user$project$Login$analisarResposta = F2(
 	function (resposta, model) {
-		var cb = 'button is-primary';
-		var logado = _elm_lang$core$Native_Utils.eq(resposta, 'LoginAceito');
-		var aviso = logado ? '' : 'Código incorreto!';
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{logado: logado, classeDoBotao: cb, aviso: aviso});
+		var _p0 = resposta;
+		if (_p0.ctor === 'Nothing') {
+			var aviso = 'Login e/ou senha incorretos!';
+			var cb = 'button is-primary';
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{classeDoBotao: cb, aviso: aviso});
+		} else {
+			var aviso = '';
+			var cb = 'button is-primary';
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{classeDoBotao: cb, aviso: aviso, usuario: resposta});
+		}
 	});
 var _user$project$Login$analisarRespostaLogout = F2(
 	function (resposta, model) {
 		var aviso = '';
 		var cb = 'button is-primary';
-		var logado = false;
 		return _elm_lang$core$Native_Utils.update(
 			model,
-			{logado: logado, classeDoBotao: cb, aviso: aviso});
+			{usuario: _elm_lang$core$Maybe$Nothing, classeDoBotao: cb, aviso: aviso});
 	});
 var _user$project$Login$estaLogado = function (model) {
-	return model.logado;
+	var _p1 = model.usuario;
+	if (_p1.ctor === 'Nothing') {
+		return false;
+	} else {
+		return true;
+	}
 };
-var _user$project$Login$Model = F4(
-	function (a, b, c, d) {
-		return {senhaDigitada: a, classeDoBotao: b, logado: c, aviso: d};
+var _user$project$Login$Usuario = F3(
+	function (a, b, c) {
+		return {login: a, nome: b, adm: c};
 	});
-var _user$project$Login$init = A4(_user$project$Login$Model, '', 'button is-primary', false, '');
+var _user$project$Login$decode2 = function (msg) {
+	var _p2 = msg;
+	if (_p2 === 'LoginAceito') {
+		return _elm_lang$core$Json_Decode$maybe(
+			A2(
+				_elm_lang$core$Json_Decode_ops[':='],
+				'usuario',
+				A4(
+					_elm_lang$core$Json_Decode$object3,
+					_user$project$Login$Usuario,
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'login', _elm_lang$core$Json_Decode$string),
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string),
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'adm', _elm_lang$core$Json_Decode$bool))));
+	} else {
+		return _elm_lang$core$Json_Decode$maybe(
+			_elm_lang$core$Json_Decode$fail('login e/ou senha incorretos'));
+	}
+};
+var _user$project$Login$decodeMsg = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+	_user$project$Login$decode2);
+var _user$project$Login$Model = F5(
+	function (a, b, c, d, e) {
+		return {loginDigitado: a, senhaDigitada: b, classeDoBotao: c, aviso: d, usuario: e};
+	});
+var _user$project$Login$init = A5(_user$project$Login$Model, '', '', 'button is-primary', '', _elm_lang$core$Maybe$Nothing);
 var _user$project$Login$RespostaLogoutOk = function (a) {
 	return {ctor: 'RespostaLogoutOk', _0: a};
 };
@@ -8775,57 +8808,77 @@ var _user$project$Login$fazerLogout = function () {
 		_elm_lang$core$Task$perform,
 		_user$project$Login$RespostaErro,
 		_user$project$Login$RespostaLogoutOk,
-		A3(_evancz$elm_http$Http$post, _user$project$Login$decodeMsg, url, _evancz$elm_http$Http$empty));
+		A3(
+			_evancz$elm_http$Http$post,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+			url,
+			_evancz$elm_http$Http$empty));
 }();
 var _user$project$Login$RespostaLoginOk = function (a) {
 	return {ctor: 'RespostaLoginOk', _0: a};
 };
-var _user$project$Login$enviarSenha = function (senha) {
-	var corpo = _evancz$elm_http$Http$string(
-		A2(_elm_lang$core$Basics_ops['++'], 'codigo=', senha));
-	var url = A2(
-		_evancz$elm_http$Http$url,
-		'WSAutenticador/fazerLogin',
-		_elm_lang$core$Native_List.fromArray(
-			[]));
-	return A3(
-		_elm_lang$core$Task$perform,
-		_user$project$Login$RespostaErro,
-		_user$project$Login$RespostaLoginOk,
-		A3(_user$project$HttpUtil$post$, _user$project$Login$decodeMsg, url, corpo));
-};
+var _user$project$Login$fazerLogin = F2(
+	function (login, senha) {
+		var corpo = _evancz$elm_http$Http$string(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'login=',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					login,
+					A2(_elm_lang$core$Basics_ops['++'], '&senha=', senha))));
+		var url = A2(
+			_evancz$elm_http$Http$url,
+			'WSAutenticador/fazerLogin',
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+		return A3(
+			_elm_lang$core$Task$perform,
+			_user$project$Login$RespostaErro,
+			_user$project$Login$RespostaLoginOk,
+			A3(_user$project$HttpUtil$post$, _user$project$Login$decodeMsg, url, corpo));
+	});
 var _user$project$Login$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'ArmazeneSenha':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{senhaDigitada: _p0._0, aviso: ''}),
+						{senhaDigitada: _p3._0, aviso: ''}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'EnvieSenha':
+			case 'ArmazeneLogin':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{loginDigitado: _p3._0, aviso: ''}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FazerLogin':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{classeDoBotao: 'button is-primary is-loading'}),
-					_1: _user$project$Login$enviarSenha(model.senhaDigitada)
+					_1: A2(_user$project$Login$fazerLogin, model.loginDigitado, model.senhaDigitada)
 				};
 			case 'RespostaLoginOk':
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$Login$analisarResposta, _p0._0, model),
+					_0: A2(_user$project$Login$analisarResposta, _p3._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'RespostaErro':
+				var aviso = 'Erro na resposta http';
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{classeDoBotao: 'button is-primary'}),
+						{aviso: aviso, classeDoBotao: 'button is-primary'}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'FacaLogout':
@@ -8833,19 +8886,22 @@ var _user$project$Login$update = F2(
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$Login$analisarRespostaLogout, _p0._0, model),
+					_0: A2(_user$project$Login$analisarRespostaLogout, _p3._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
 	});
 var _user$project$Login$FacaLogout = {ctor: 'FacaLogout'};
-var _user$project$Login$EnvieSenha = {ctor: 'EnvieSenha'};
+var _user$project$Login$FazerLogin = {ctor: 'FazerLogin'};
+var _user$project$Login$ArmazeneLogin = function (a) {
+	return {ctor: 'ArmazeneLogin', _0: a};
+};
 var _user$project$Login$ArmazeneSenha = function (a) {
 	return {ctor: 'ArmazeneSenha', _0: a};
 };
 var _user$project$Login$view = function (model) {
-	var _p1 = model.logado;
-	if (_p1 === true) {
+	var _p4 = model.usuario;
+	if (_p4.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -8853,14 +8909,14 @@ var _user$project$Login$view = function (model) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
-					_elm_lang$html$Html$h3,
+					_elm_lang$html$Html$h4,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html_Attributes$class('title')
+							_elm_lang$html$Html_Attributes$class('subtitle')
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Logout')
+							_elm_lang$html$Html$text(_p4._0.nome)
 						])),
 					A2(
 					_elm_lang$html$Html$button,
@@ -8892,13 +8948,51 @@ var _user$project$Login$view = function (model) {
 							_elm_lang$html$Html$text('Login')
 						])),
 					A2(
+					_elm_lang$html$Html$span,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Login : ')
+						])),
+					A2(
 					_elm_lang$html$Html$input,
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html_Attributes$type$('text'),
-							_elm_lang$html$Html_Attributes$placeholder('Código'),
+							_elm_lang$html$Html_Attributes$placeholder('login'),
+							_elm_lang$html$Html_Events$onInput(_user$project$Login$ArmazeneLogin)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$span,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Senha : ')
+						])),
+					A2(
+					_elm_lang$html$Html$input,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$type$('password'),
+							_elm_lang$html$Html_Attributes$placeholder('senha'),
 							_elm_lang$html$Html_Events$onInput(_user$project$Login$ArmazeneSenha)
 						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[])),
 					A2(
@@ -8906,7 +9000,7 @@ var _user$project$Login$view = function (model) {
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html_Attributes$class(model.classeDoBotao),
-							_elm_lang$html$Html_Events$onClick(_user$project$Login$EnvieSenha)
+							_elm_lang$html$Html_Events$onClick(_user$project$Login$FazerLogin)
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
