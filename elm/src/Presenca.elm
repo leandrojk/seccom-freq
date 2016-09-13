@@ -88,7 +88,7 @@ update msg model =
         f = \palestra -> palestra.id == idPalestra
         maybePalestra = List.head (List.filter f model.palestras)
       in
-      ({model | idPalestra = Just idPalestra, palestra = maybePalestra}, Cmd.none)
+      ({model | idPalestra = Just idPalestra, palestra = maybePalestra, mensagem = Nothing}, Cmd.none)
 
     BusquePalestrasDoAno ->
       case model.ano of
@@ -283,10 +283,8 @@ escolherPalestra palestras =
     True -> div [] []
 
     False ->
-      div []
-        [ mostrarPalestras palestras
+      div [] [ mostrarPalestras palestras ]
 
-        ]
 
 mostrarPalestras : List Palestra -> Html Msg
 mostrarPalestras palestras =
@@ -308,22 +306,29 @@ mostrarPalestras palestras =
       \palestra ->
         input
           [ type' "radio"
-          , name "id"
+          , name "idPalestra"
+          , id (toString palestra.id)
           , value (toString palestra.id)
           , onClick  (PalestraEscolhida palestra.id)
           ]
           []
 
-
+    mostrarSeleciona =
+      \palestra ->
+          div [class "notification is-primary"]
+            [ (mostrarRadio palestra)
+            , text "  "
+            , label [for (toString palestra.id)] [text "Escolha" ]
+            ]
 
     montarLinha =
       \palestra ->
-        tr
-          []
-          [ td [] [ (mostrarRadio palestra), text "  ", text (toString palestra.id) ]
-          , td [] [ text palestra.titulo ]
-          , td [] [ text palestra.palestrante ]
-          , td [] [ (mostrarDiaEHorario palestra) ]
+        div
+          [class "panel"]
+          [ div [class "panel-block"] [(mostrarSeleciona palestra) ]
+          , div [class "panel-block"] [ text palestra.titulo ]
+          , div [class "panel-block"] [ text palestra.palestrante ]
+          , div [class "panel-block"] [ (mostrarDiaEHorario palestra) ]
           ]
 
     linhas = List.map montarLinha palestras
@@ -332,17 +337,7 @@ mostrarPalestras palestras =
   div
     [ class "box" ]
     [ div [class "title"] [text "Escolher Palestra"]
-    , table
-        [ class "table"]
-        [ tr
-            []
-            [ th [] [text "Selecione"]
-            , th [] [text "Título"]
-            , th [] [text "Palestrante"]
-            , th [] [text "Dia e Horário"]
-            ]
-        , tbody [] linhas
-        ]
+    , div [] linhas
     ]
 
 escolherAluno : Maybe Int -> Maybe Int -> Html Msg
@@ -378,7 +373,8 @@ registrarPresenca (mbPalestra, mbEstudante) =
         mostrarPalestra = \palestra ->
           div []
             [ span [class "subtitle"] [text "Palestra : "]
-            , span []
+            , br [] []
+            , p []
                 [ text palestra.dia
                 , text " - "
                 , text palestra.horarioDeInicio
@@ -392,8 +388,10 @@ registrarPresenca (mbPalestra, mbEstudante) =
         div [class "box"]
           [ div [class "title"] [text "Registrar Presença"]
           , mostrarPalestra palestra
+          , hr [] []
           , span [class "subtitle"] [text "Estudante : "]
-          , span [] [text (toString estudante.matricula), text " -- ", text estudante.nome]
+          , br [] []
+          , p [] [text (toString estudante.matricula), text " -- ", text estudante.nome]
           , br [] []
           , button [class "button is-primary", onClick (RegistrePresenca palestra.id estudante.matricula) ] [text "Registrar"]
           ]

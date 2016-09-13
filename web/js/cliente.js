@@ -9718,7 +9718,13 @@ var _user$project$Presenca$registrarPresenca = function (_p5) {
 								_elm_lang$html$Html$text('Palestra : ')
 							])),
 						A2(
-						_elm_lang$html$Html$span,
+						_elm_lang$html$Html$br,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$p,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
 						_elm_lang$core$Native_List.fromArray(
@@ -9753,6 +9759,12 @@ var _user$project$Presenca$registrarPresenca = function (_p5) {
 						])),
 					mostrarPalestra(_p9),
 					A2(
+					_elm_lang$html$Html$hr,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
 					_elm_lang$html$Html$span,
 					_elm_lang$core$Native_List.fromArray(
 						[
@@ -9763,7 +9775,13 @@ var _user$project$Presenca$registrarPresenca = function (_p5) {
 							_elm_lang$html$Html$text('Estudante : ')
 						])),
 					A2(
-					_elm_lang$html$Html$span,
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$p,
 					_elm_lang$core$Native_List.fromArray(
 						[]),
 					_elm_lang$core$Native_List.fromArray(
@@ -9838,7 +9856,9 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$html$Html_Attributes$type$('radio'),
-					_elm_lang$html$Html_Attributes$name('id'),
+					_elm_lang$html$Html_Attributes$name('idPalestra'),
+					_elm_lang$html$Html_Attributes$id(
+					_elm_lang$core$Basics$toString(palestra.id)),
 					_elm_lang$html$Html_Attributes$value(
 					_elm_lang$core$Basics$toString(palestra.id)),
 					_elm_lang$html$Html_Events$onClick(
@@ -9846,6 +9866,30 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
+	};
+	var mostrarSeleciona = function (palestra) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('notification is-primary')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					mostrarRadio(palestra),
+					_elm_lang$html$Html$text('  '),
+					A2(
+					_elm_lang$html$Html$label,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$for(
+							_elm_lang$core$Basics$toString(palestra.id))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Escolha')
+						]))
+				]));
 	};
 	var mostrarDiaEHorario = function (palestra) {
 		return A2(
@@ -9871,42 +9915,49 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 	};
 	var montarLinha = function (palestra) {
 		return A2(
-			_elm_lang$html$Html$tr,
+			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
-				[]),
+				[
+					_elm_lang$html$Html_Attributes$class('panel')
+				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
-					_elm_lang$html$Html$td,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							mostrarRadio(palestra),
-							_elm_lang$html$Html$text('  '),
-							_elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(palestra.id))
+							_elm_lang$html$Html_Attributes$class('panel-block')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							mostrarSeleciona(palestra)
 						])),
 					A2(
-					_elm_lang$html$Html$td,
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
-						[]),
+						[
+							_elm_lang$html$Html_Attributes$class('panel-block')
+						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html$text(palestra.titulo)
 						])),
 					A2(
-					_elm_lang$html$Html$td,
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
-						[]),
+						[
+							_elm_lang$html$Html_Attributes$class('panel-block')
+						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html$text(palestra.palestrante)
 						])),
 					A2(
-					_elm_lang$html$Html$td,
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
-						[]),
+						[
+							_elm_lang$html$Html_Attributes$class('panel-block')
+						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							mostrarDiaEHorario(palestra)
@@ -9933,58 +9984,10 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 						_elm_lang$html$Html$text('Escolher Palestra')
 					])),
 				A2(
-				_elm_lang$html$Html$table,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('table')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$tr,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$th,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Selecione')
-									])),
-								A2(
-								_elm_lang$html$Html$th,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Título')
-									])),
-								A2(
-								_elm_lang$html$Html$th,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Palestrante')
-									])),
-								A2(
-								_elm_lang$html$Html$th,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Dia e Horário')
-									]))
-							])),
-						A2(
-						_elm_lang$html$Html$tbody,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						linhas)
-					]))
+					[]),
+				linhas)
 			]));
 };
 var _user$project$Presenca$escolherPalestra = function (palestras) {
@@ -10125,7 +10128,8 @@ var _user$project$Presenca$update = F2(
 						model,
 						{
 							idPalestra: _elm_lang$core$Maybe$Just(_p15),
-							palestra: maybePalestra
+							palestra: maybePalestra,
+							mensagem: _elm_lang$core$Maybe$Nothing
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
