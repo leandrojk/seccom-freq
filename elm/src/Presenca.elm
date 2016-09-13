@@ -25,7 +25,8 @@ type alias Model =
     matricula : Maybe Int,
     idPalestra : Maybe Int,
     mensagem : Maybe Mensagem,
-    ativo : Bool
+    ativo : Bool,
+    expirou : Bool -- só será True quando sessão expirar no servidor
   }
 
 type alias Mensagem =
@@ -35,7 +36,7 @@ type alias Mensagem =
 
 init : Model
 init =
-  Model Nothing [] Nothing Nothing Nothing Nothing Nothing True
+  Model Nothing [] Nothing Nothing Nothing Nothing Nothing True False
 
 
 -- UPDATE
@@ -52,7 +53,7 @@ type Msg =
   | PesquiseEstudante
   | HttpRespostaPesquisarEstudante (Maybe Estudante)
   | RegistrePresenca Int Int
-  | HttpRespostaRegistrarPresenca Bool
+  | HttpRespostaRegistrarPresenca (Maybe Bool)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -141,13 +142,21 @@ update msg model =
       in
         ({model | mensagem = Just (Mensagem "registrando..." "is-info")}, comando)
 
-    HttpRespostaRegistrarPresenca registrou ->
-      let
-        msg = case registrou of
-          True -> Just (Mensagem "Presença registrada com sucesso" "is-success")
-          False -> Just (Mensagem "Presença já havia sido registrada" "is-warning")
-      in
-        ({model | mensagem = msg}, Cmd.none)
+    HttpRespostaRegistrarPresenca mbRegistrou ->
+      case mbRegistrou of
+          Nothing ->
+            let
+              mensagem = Just (Mensagem "Sessão expirada! Faça logout e entre novamente" "is-danger")
+            in
+              ({init | mensagem = mensagem, expirou = True}, Cmd.none)
+
+          Just registrou ->
+            let
+              mensagem = case registrou of
+                True -> Just (Mensagem "Presença registrada com sucesso" "is-success")
+                False -> Just (Mensagem "Presença já havia sido registrada" "is-warning")
+            in
+              ({model | mensagem = mensagem}, Cmd.none)
 
 --
 --
@@ -192,16 +201,17 @@ dme msg =
 
     _ -> Json.maybe(Json.fail "parâmetro Msg não reconhecido")
 
-decoderRespostaRegistrarPresenca : Json.Decoder Bool
+decoderRespostaRegistrarPresenca : Json.Decoder (Maybe Bool)
 decoderRespostaRegistrarPresenca =
   ("Msg" := Json.string) `Json.andThen` drrp
 
-drrp : String -> Json.Decoder Bool
+drrp : String -> Json.Decoder (Maybe Bool)
 drrp msg =
   case msg of
-    "PresencaCadastrada" -> Json.succeed True
-    "PresencaJaCadastrada" -> Json.succeed False
-    _ -> Json.succeed False
+    "PresencaCadastrada" -> Json.succeed (Just True)
+    "PresencaJaCadastrada" -> Json.succeed (Just False)
+    "UsuarioNaoLogado" -> Json.maybe (Json.fail "sessão expirada")
+    _ -> Json.maybe (Json.fail "resposta inválida vinda do servidor")
 
 
 
@@ -209,6 +219,13 @@ drrp msg =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  case model.expirou of
+    True ->  mostrarMensagem model.mensagem
+
+    False -> view2 model
+
+view2 : Model -> Html Msg
+view2 model =
   case model.ativo of
     False ->
       div []

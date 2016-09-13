@@ -8728,34 +8728,48 @@ var _user$project$HttpUtil$post$ = F3(
 				}));
 	});
 
-var _user$project$Login$analisarResposta = F2(
-	function (resposta, model) {
-		var _p0 = resposta;
-		if (_p0.ctor === 'Nothing') {
-			var aviso = 'Login e/ou senha incorretos!';
+var _user$project$Login$mostreAviso = function (mbAviso) {
+	var _p0 = mbAviso;
+	if (_p0.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('is-info')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(_p0._0)
+				]));
+	}
+};
+var _user$project$Login$analisarRespostaLogin = F2(
+	function (mbUsuario, model) {
+		var _p1 = mbUsuario;
+		if (_p1.ctor === 'Nothing') {
+			var aviso = _elm_lang$core$Maybe$Just('Login e/ou senha incorretos!');
 			var cb = 'button is-primary';
 			return _elm_lang$core$Native_Utils.update(
 				model,
 				{classeDoBotao: cb, aviso: aviso});
 		} else {
-			var aviso = '';
+			var aviso = _elm_lang$core$Maybe$Nothing;
 			var cb = 'button is-primary';
 			return _elm_lang$core$Native_Utils.update(
 				model,
-				{classeDoBotao: cb, aviso: aviso, usuario: resposta});
+				{classeDoBotao: cb, aviso: aviso, usuario: mbUsuario});
 		}
 	});
-var _user$project$Login$analisarRespostaLogout = F2(
-	function (resposta, model) {
-		var aviso = '';
-		var cb = 'button is-primary';
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{usuario: _elm_lang$core$Maybe$Nothing, classeDoBotao: cb, aviso: aviso});
-	});
 var _user$project$Login$estaLogado = function (model) {
-	var _p1 = model.usuario;
-	if (_p1.ctor === 'Nothing') {
+	var _p2 = model.usuario;
+	if (_p2.ctor === 'Nothing') {
 		return false;
 	} else {
 		return true;
@@ -8765,9 +8779,9 @@ var _user$project$Login$Usuario = F3(
 	function (a, b, c) {
 		return {login: a, nome: b, adm: c};
 	});
-var _user$project$Login$decode2 = function (msg) {
-	var _p2 = msg;
-	if (_p2 === 'LoginAceito') {
+var _user$project$Login$decodeMaybeUsuario = function (msg) {
+	var _p3 = msg;
+	if (_p3 === 'LoginAceito') {
 		return _elm_lang$core$Json_Decode$maybe(
 			A2(
 				_elm_lang$core$Json_Decode_ops[':='],
@@ -8783,15 +8797,15 @@ var _user$project$Login$decode2 = function (msg) {
 			_elm_lang$core$Json_Decode$fail('login e/ou senha incorretos'));
 	}
 };
-var _user$project$Login$decodeMsg = A2(
+var _user$project$Login$decodeRespostaLogin = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
-	_user$project$Login$decode2);
+	_user$project$Login$decodeMaybeUsuario);
 var _user$project$Login$Model = F5(
 	function (a, b, c, d, e) {
 		return {loginDigitado: a, senhaDigitada: b, classeDoBotao: c, aviso: d, usuario: e};
 	});
-var _user$project$Login$init = A5(_user$project$Login$Model, '', '', 'button is-primary', '', _elm_lang$core$Maybe$Nothing);
+var _user$project$Login$init = A5(_user$project$Login$Model, _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing, 'button is-primary', _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing);
 var _user$project$Login$RespostaLogoutOk = function (a) {
 	return {ctor: 'RespostaLogoutOk', _0: a};
 };
@@ -8836,18 +8850,21 @@ var _user$project$Login$fazerLogin = F2(
 			_elm_lang$core$Task$perform,
 			_user$project$Login$RespostaErro,
 			_user$project$Login$RespostaLoginOk,
-			A3(_user$project$HttpUtil$post$, _user$project$Login$decodeMsg, url, corpo));
+			A3(_user$project$HttpUtil$post$, _user$project$Login$decodeRespostaLogin, url, corpo));
 	});
 var _user$project$Login$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'ArmazeneSenha':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{senhaDigitada: _p3._0, aviso: ''}),
+						{
+							senhaDigitada: _elm_lang$core$Maybe$Just(_p4._0),
+							aviso: _elm_lang$core$Maybe$Nothing
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ArmazeneLogin':
@@ -8855,25 +8872,33 @@ var _user$project$Login$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{loginDigitado: _p3._0, aviso: ''}),
+						{
+							loginDigitado: _elm_lang$core$Maybe$Just(_p4._0),
+							aviso: _elm_lang$core$Maybe$Nothing
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'FazerLogin':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{classeDoBotao: 'button is-primary is-loading'}),
-					_1: A2(_user$project$Login$fazerLogin, model.loginDigitado, model.senhaDigitada)
-				};
+				var _p5 = {ctor: '_Tuple2', _0: model.loginDigitado, _1: model.senhaDigitada};
+				if (((_p5.ctor === '_Tuple2') && (_p5._0.ctor === 'Just')) && (_p5._1.ctor === 'Just')) {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{classeDoBotao: 'button is-primary is-loading'}),
+						_1: A2(_user$project$Login$fazerLogin, _p5._0._0, _p5._1._0)
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 			case 'RespostaLoginOk':
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$Login$analisarResposta, _p3._0, model),
+					_0: A2(_user$project$Login$analisarRespostaLogin, _p4._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'RespostaErro':
-				var aviso = 'Erro na resposta http';
+				var aviso = _elm_lang$core$Maybe$Just('Erro na resposta http');
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -8884,11 +8909,7 @@ var _user$project$Login$update = F2(
 			case 'FacaLogout':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Login$fazerLogout};
 			default:
-				return {
-					ctor: '_Tuple2',
-					_0: A2(_user$project$Login$analisarRespostaLogout, _p3._0, model),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return {ctor: '_Tuple2', _0: _user$project$Login$init, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Login$FacaLogout = {ctor: 'FacaLogout'};
@@ -8900,8 +8921,8 @@ var _user$project$Login$ArmazeneSenha = function (a) {
 	return {ctor: 'ArmazeneSenha', _0: a};
 };
 var _user$project$Login$view = function (model) {
-	var _p4 = model.usuario;
-	if (_p4.ctor === 'Just') {
+	var _p6 = model.usuario;
+	if (_p6.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -8916,7 +8937,7 @@ var _user$project$Login$view = function (model) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text(_p4._0.nome)
+							_elm_lang$html$Html$text(_p6._0.nome)
 						])),
 					A2(
 					_elm_lang$html$Html$button,
@@ -9006,14 +9027,7 @@ var _user$project$Login$view = function (model) {
 						[
 							_elm_lang$html$Html$text('Entrar')
 						])),
-					A2(
-					_elm_lang$html$Html$h3,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(model.aviso)
-						]))
+					_user$project$Login$mostreAviso(model.aviso)
 				]));
 	}
 };
@@ -9581,11 +9595,17 @@ var _user$project$Presenca$drrp = function (msg) {
 	var _p2 = msg;
 	switch (_p2) {
 		case 'PresencaCadastrada':
-			return _elm_lang$core$Json_Decode$succeed(true);
+			return _elm_lang$core$Json_Decode$succeed(
+				_elm_lang$core$Maybe$Just(true));
 		case 'PresencaJaCadastrada':
-			return _elm_lang$core$Json_Decode$succeed(false);
+			return _elm_lang$core$Json_Decode$succeed(
+				_elm_lang$core$Maybe$Just(false));
+		case 'UsuarioNaoLogado':
+			return _elm_lang$core$Json_Decode$maybe(
+				_elm_lang$core$Json_Decode$fail('sessão expirada'));
 		default:
-			return _elm_lang$core$Json_Decode$succeed(false);
+			return _elm_lang$core$Json_Decode$maybe(
+				_elm_lang$core$Json_Decode$fail('resposta inválida vinda do servidor'));
 	}
 };
 var _user$project$Presenca$decoderRespostaRegistrarPresenca = A2(
@@ -9626,11 +9646,11 @@ var _user$project$Presenca$obterEstudante = function (json) {
 		return _p4._0;
 	}
 };
-var _user$project$Presenca$Model = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {ano: a, palestras: b, palestra: c, estudante: d, matricula: e, idPalestra: f, mensagem: g, ativo: h};
+var _user$project$Presenca$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {ano: a, palestras: b, palestra: c, estudante: d, matricula: e, idPalestra: f, mensagem: g, ativo: h, expirou: i};
 	});
-var _user$project$Presenca$init = A8(
+var _user$project$Presenca$init = A9(
 	_user$project$Presenca$Model,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Native_List.fromArray(
@@ -9640,7 +9660,8 @@ var _user$project$Presenca$init = A8(
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
 	_elm_lang$core$Maybe$Nothing,
-	true);
+	true,
+	false);
 var _user$project$Presenca$Mensagem = F2(
 	function (a, b) {
 		return {msg: a, tipo: b};
@@ -10225,29 +10246,42 @@ var _user$project$Presenca$update = F2(
 					_1: comando
 				};
 			default:
-				var msg = function () {
-					var _p22 = _p12._0;
-					if (_p22 === true) {
-						return _elm_lang$core$Maybe$Just(
-							A2(_user$project$Presenca$Mensagem, 'Presença registrada com sucesso', 'is-success'));
-					} else {
-						return _elm_lang$core$Maybe$Just(
-							A2(_user$project$Presenca$Mensagem, 'Presença já havia sido registrada', 'is-warning'));
-					}
-				}();
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{mensagem: msg}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				var _p22 = _p12._0;
+				if (_p22.ctor === 'Nothing') {
+					var mensagem = _elm_lang$core$Maybe$Just(
+						A2(_user$project$Presenca$Mensagem, 'Sessão expirada! Faça logout e entre novamente', 'is-danger'));
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							_user$project$Presenca$init,
+							{mensagem: mensagem, expirou: true}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					var mensagem = function () {
+						var _p23 = _p22._0;
+						if (_p23 === true) {
+							return _elm_lang$core$Maybe$Just(
+								A2(_user$project$Presenca$Mensagem, 'Presença registrada com sucesso', 'is-success'));
+						} else {
+							return _elm_lang$core$Maybe$Just(
+								A2(_user$project$Presenca$Mensagem, 'Presença já havia sido registrada', 'is-warning'));
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{mensagem: mensagem}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
 		}
 	});
 var _user$project$Presenca$BusquePalestras = {ctor: 'BusquePalestras'};
 var _user$project$Presenca$mostrarBotaoBuscarPalestras = function (mbAno) {
-	var _p23 = mbAno;
-	if (_p23.ctor === 'Nothing') {
+	var _p24 = mbAno;
+	if (_p24.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10273,8 +10307,8 @@ var _user$project$Presenca$Matricula = function (a) {
 };
 var _user$project$Presenca$escolherAluno = F2(
 	function (mbIdPalestra, mbMatricula) {
-		var _p24 = mbIdPalestra;
-		if (_p24.ctor === 'Nothing') {
+		var _p25 = mbIdPalestra;
+		if (_p25.ctor === 'Nothing') {
 			return A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -10326,9 +10360,9 @@ var _user$project$Presenca$Ano = function (a) {
 };
 var _user$project$Presenca$Desativar = {ctor: 'Desativar'};
 var _user$project$Presenca$Ativar = {ctor: 'Ativar'};
-var _user$project$Presenca$view = function (model) {
-	var _p25 = model.ativo;
-	if (_p25 === false) {
+var _user$project$Presenca$view2 = function (model) {
+	var _p26 = model.ativo;
+	if (_p26 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10402,6 +10436,14 @@ var _user$project$Presenca$view = function (model) {
 					{ctor: '_Tuple2', _0: model.palestra, _1: model.estudante}),
 					_user$project$Presenca$mostrarMensagem(model.mensagem)
 				]));
+	}
+};
+var _user$project$Presenca$view = function (model) {
+	var _p27 = model.expirou;
+	if (_p27 === true) {
+		return _user$project$Presenca$mostrarMensagem(model.mensagem);
+	} else {
+		return _user$project$Presenca$view2(model);
 	}
 };
 

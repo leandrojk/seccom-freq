@@ -19,10 +19,10 @@ type alias Usuario = {
 
 type alias Model =
   {
-  loginDigitado : String,
-  senhaDigitada : String,
+  loginDigitado : Maybe String,
+  senhaDigitada : Maybe String,
   classeDoBotao : String,
-  aviso : String,
+  aviso : Maybe String,
   usuario : Maybe Usuario
   }
 
@@ -32,7 +32,7 @@ type alias Model =
 
 init : Model
 init =
-  Model "" "" "button is-primary" "" Nothing
+  Model Nothing Nothing "button is-primary" Nothing Nothing
 
 --
 --
@@ -62,20 +62,24 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ArmazeneSenha senha ->
-      ({ model | senhaDigitada = senha, aviso = "" }, Cmd.none)
+      ({ model | senhaDigitada = Just senha, aviso = Nothing }, Cmd.none)
 
     ArmazeneLogin login ->
-      ({ model | loginDigitado = login, aviso = "" }, Cmd.none)
+      ({ model | loginDigitado = Just login, aviso = Nothing }, Cmd.none)
 
     FazerLogin ->
-      ({ model | classeDoBotao = "button is-primary is-loading" }, fazerLogin model.loginDigitado model.senhaDigitada)
+      case (model.loginDigitado, model.senhaDigitada) of
+        (Just login, Just senha) ->
+          ({ model | classeDoBotao = "button is-primary is-loading" }, fazerLogin login senha)
+
+        _ -> (model, Cmd.none)
 
     RespostaLoginOk mbUsuario ->
-      (analisarResposta mbUsuario model, Cmd.none)
+      (analisarRespostaLogin mbUsuario model, Cmd.none)
 
     RespostaErro erro ->
       let
-        aviso = "Erro na resposta http"
+        aviso = Just "Erro na resposta http"
       in
         ({model | aviso = aviso, classeDoBotao = "button is-primary"}, Cmd.none)
 
@@ -83,38 +87,28 @@ update msg model =
       (model, fazerLogout)
 
     RespostaLogoutOk resposta ->
-      (analisarRespostaLogout resposta model, Cmd.none)
+      (init, Cmd.none)
+
 
 --
 --
 --
-analisarRespostaLogout : String -> Model -> Model
-analisarRespostaLogout resposta model =
-  let
-    cb = "button is-primary"
-    aviso = ""
-  in
-    {model | usuario = Nothing, classeDoBotao = cb, aviso = aviso }
-
---
---
---
-analisarResposta : Maybe Usuario -> Model -> Model
-analisarResposta resposta model =
-  case resposta of
+analisarRespostaLogin : Maybe Usuario -> Model -> Model
+analisarRespostaLogin mbUsuario model =
+  case mbUsuario of
     Nothing ->
       let
         cb = "button is-primary"
-        aviso = "Login e/ou senha incorretos!"
+        aviso = Just "Login e/ou senha incorretos!"
       in
         {model | classeDoBotao = cb, aviso = aviso }
 
     Just usuario ->
       let
         cb = "button is-primary"
-        aviso = ""
+        aviso = Nothing
       in
-          {model | classeDoBotao = cb, aviso = aviso, usuario = resposta}
+          {model | classeDoBotao = cb, aviso = aviso, usuario = mbUsuario}
 
 --
 --
@@ -125,18 +119,18 @@ fazerLogin login senha =
     url = Http.url "WSAutenticador/fazerLogin" []
     corpo = Http.string ("login=" ++ login ++ "&senha=" ++ senha)
   in
-    Task.perform RespostaErro RespostaLoginOk (HttpUtil.post' decodeMsg url corpo)
+    Task.perform RespostaErro RespostaLoginOk (HttpUtil.post' decodeRespostaLogin url corpo)
 
 
 --
 --
 --
-decodeMsg : Json.Decoder (Maybe Usuario)
-decodeMsg =
-  ("Msg" := Json.string) `Json.andThen` decode2
+decodeRespostaLogin : Json.Decoder (Maybe Usuario)
+decodeRespostaLogin =
+  ("Msg" := Json.string) `Json.andThen` decodeMaybeUsuario
 
-decode2 : String -> Json.Decoder (Maybe Usuario)
-decode2 msg =
+decodeMaybeUsuario : String -> Json.Decoder (Maybe Usuario)
+decodeMaybeUsuario msg =
   case msg of
     "LoginAceito" ->
       Json.maybe ("usuario" := Json.object3 Usuario ("login" := Json.string) ("nome" := Json.string) ("adm" := Json.bool))
@@ -174,5 +168,11 @@ view model =
         , input [ type' "password", placeholder "senha", onInput ArmazeneSenha ] []
         , br [] []
         , button [ class model.classeDoBotao, onClick FazerLogin ] [text  "Entrar"]
-        , h3 [] [text model.aviso]
+        , mostreAviso model.aviso
         ]
+
+mostreAviso : Maybe String -> Html Msg
+mostreAviso mbAviso =
+  case mbAviso of
+    Nothing -> div [] []
+    Just msg -> div [class "is-info"] [text msg]
