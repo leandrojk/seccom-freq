@@ -88,7 +88,50 @@ Agora é preciso criar as tabelas que armazenarão os dados da aplicação. Edit
 ```
 ij cria_tabelas.sql
 ```
+Criadas as tabelas, é preciso povoar o banco com os dados da semana, das palestras e dos estudantes. Analise o conteúdo do arquivo **cria_dados.sql** e veja como inserir os dados nas respectivas tabelas. **ATENÇÃO:** o arquivo atual apaga todos os dados atualmente armazenados nas tabelas. A sugestão é criar, a partir do arquivo, outros com objetivos bem específicos: um para cadastrar os dados de uma semana (e suas palestras); outro para cadastrar em massa os estudantes.
 
+**NÃO EXECUTE O cria_dados.sql EM PRODUÇÃO POIS TODOS OS DADOS SERÃO APAGADOS!!!!**
+
+Terminada esta etapa de configuração temos:
+* o SGBD Derby no ar
+* a base de dados SECCOM_FREQ criada e povoada com dados
+
+Agora é preciso configurar a aplicação para que ela possa ser executada em ambiente de produção.
+
+## Configurando a aplicação
+O "programa executável" da aplicação é o arquivo **seccom-freq.war**. Este arquivo contém, na forma compactada (zipada), todos os arquivos que formam a aplicação. É preciso alterar o arquivo **META-INF/context.xml** para os dados de usuário e senha da conexão com o banco de dados sejam iguais aos que foram definidos no arquivo *cria_banco.sql*. Para isso:
+
+```
+unzip -d seccom-freq seccom-freq.war
+```
+Edite o arquivo **seccom-freq/META-INF/context.xml** e substitua o conteúdo dos atributos *username* e *password* para os valores que foram definidos em *cria_banco.sql*. Assim, o Tomcat conseguirá se conectar com o Berby para executar os comandos SQL.
+
+Apague a versão antiga de **seccom-freq.war**
+
+```
+rm seccom-freq.war
+```
+e gere a nova versão (compactando o conteúdo do diretório **seccom-freq**):
+
+```
+cd seccom-freq
+zip -r ../seccom-freq.war *
+```
+**Atenção**: tenha certeza que o conteúdo do arquivo **seccom-freq.war** gerado é formado pelos arquivos que estão dentro do diretório **seccom-freq** e os caminhos (paths) não iniciam com *seccom-freq/...".
+
+Coloque o Tomcat no ar executando
+
+```
+startup.sh
+```
+
+Copie o arquivo **seccom-freq.war** para dentro do diretório **TOMCAT_HOME/webapps**
+
+```
+cp seccom-freq.war $TOMCAT_HOME/webapps
+```
+
+Se tudo deu certo a aplicação está disponível no endereço **https://host:8443/seccom-freq**  onde host é o nome do computador que hospeda a aplicação.
 
 
 
