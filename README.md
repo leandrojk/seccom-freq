@@ -18,6 +18,11 @@ Qualquer navegador (browser) com:
 
 ## Configurando o lado servidor
 Para colocar a aplicação no ar é preciso fazer algumas instalações e configurações no lado servidor. 
+Atenção: todas as variáveis de ambiente criadas devem fazer parte do $PATH. No arquivo **.profile** adicione, além das variáveis criadas a linha:
+
+```
+export PATH=$JAVA_HOME/bin:$DERBY_HOME/bin:$TOMCAT_HOME/bin:$PATH
+```
 
 ### Instalar a JVM
 Instalar a JVM da maneira habitual. Deve ser a Java SE SDK versão 8 por causa da versão usada no Tomcat. Defina no arquivo **.profile** a variável de ambiente **JAVA_HOME** apontando para o diretório onde a JVM foi instalada.
@@ -59,5 +64,33 @@ Copie os arquivos **derbyclient.jar** e todos os arquivos **derbyLocale_XX.jar**
 cp $DERBY_HOME/lib/derbyclient.jar $TOMCAT_HOME/lib
 cp $DERBY_HOME/lib/derbyLocale*.jar $TOMCAT_HOME/lib
 ```
+
+## Criando da Base de dados
+Agora que está tudo instalado e configurado é preciso criar a base de dados usada pela aplicação.
+
+Crie um diretório onde o banco de dados será armazenado e coloque o Derby no ar executando:
+
+```
+mkdir bases
+cd bases
+startNetworkServer -p 1300 &
+```
+
+Para criar a base de dados edite o arquivo **cria_banco.sql** e substitua as palavras *usuario1* e *senha1* por um nome de usuário e senha que só você conheça. Em seguida execute
+
+```
+ij cria_banco.sql
+```
+Será criado, dentro do diretório *bases* o diretório **SECCOM_FREQ** que contém a base de dados que acabou de ser criada. Para backup desta base de dados, basta copiar o conteúdo do diretório.
+
+Agora é preciso criar as tabelas que armazenarão os dados da aplicação. Edite o arquivo **cria_tabelas.sql**, substitua as palavaras *usuario1* e *senha1* pelos nomes que você colocou no arquivo *cria_banco.sql* e, em seguida execute
+
+```
+ij cria_tabelas.sql
+```
+
+
+
+
 
 
