@@ -1,4 +1,4 @@
-connect 'jdbc:derby://localhost:1300/BD_SECCOM_FREQ;user=administrador;password=Xp39B1';
+connect 'jdbc:derby://localhost:1300/BD_SECCOM_FREQ;user=usuario1;password=senha1';
 
 delete from USUARIO;
 delete from PRESENCA;

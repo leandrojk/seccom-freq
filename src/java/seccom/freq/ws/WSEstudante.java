@@ -102,6 +102,9 @@ public class WSEstudante extends HttpServlet {
     }
 
     private JsonObject cadastre(HttpServletRequest request) {
+        if (!WSAutenticador.estaLogadoComoAdministrador(request))
+            return WSAutenticador.invalideSessao(request);
+        
         final String FIM_DE_LINHA = "\\r?\\n|\\r"; // Windows (\r\n), Linux (\n) e Mac (\r ou \n)
         
         String[] csvEstudantes = request.getParameter("estudantes").split(FIM_DE_LINHA);

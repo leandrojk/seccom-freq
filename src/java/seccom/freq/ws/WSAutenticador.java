@@ -80,7 +80,7 @@ public class WSAutenticador extends HttpServlet {
         u = BDUtil.encontreUsuario(ds, login);
         
         if (u != null && u.getSenha().equals(senha)) {
-            request.getSession().setAttribute(ATTR_LOGADO, true);
+            request.getSession().setAttribute(ATTR_LOGADO, u);
             JsonObject jo = new JsonObject();
             jo.addProperty("Msg", "LoginAceito");
             u.apagueSenha(); // para evitar que a senha fique disponível no browser
@@ -112,7 +112,26 @@ public class WSAutenticador extends HttpServlet {
         if (sessao == null) {
             return false;
         } else {
-            return sessao.getAttribute(ATTR_LOGADO) != null;
+            return  sessao.getAttribute(ATTR_LOGADO) != null;
         }
+    }
+    
+    public static boolean estaLogadoComoAdministrador(HttpServletRequest request) {
+        HttpSession sessao = request.getSession(false);
+        if (sessao == null) {
+            return false;
+        } else {
+            Usuario usuarioLogado = (Usuario) sessao.getAttribute(ATTR_LOGADO);
+            
+            return usuarioLogado != null && usuarioLogado.isAdm();
+        }
+    }
+    
+    public static JsonObject invalideSessao(HttpServletRequest request) {
+        HttpSession sessao = request.getSession(false);
+        if (sessao != null) {
+            sessao.invalidate();
+        }
+        return respostaNaoLogado();
     }
 }

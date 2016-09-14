@@ -4,4 +4,8 @@
                maxTotal="100" maxIdle="30" maxWaitMillis="10000"
                username="usuario1" password="senha1" driverClassName="org.apache.derby.jdbc.ClientDriver"
                url="jdbc:derby://127.0.0.1:1300/BD_SECCOM_FREQ"/>  
+  
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         addConnectorPort="true"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1;\d*|150\.\d+\.\d+\.\d+;8443" />
 </Context>

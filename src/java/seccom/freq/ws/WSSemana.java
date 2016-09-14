@@ -101,6 +101,10 @@ public class WSSemana extends HttpServlet {
     }
 
     private JsonObject cadastre(HttpServletRequest request) {
+        if (!WSAutenticador.estaLogadoComoAdministrador(request))
+            return WSAutenticador.invalideSessao(request);
+        
+        
         int ano = Integer.parseInt(request.getParameter("ano"));
         String nome = request.getParameter("nome");
         String tema = request.getParameter("tema");

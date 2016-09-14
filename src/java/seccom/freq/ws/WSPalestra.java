@@ -93,6 +93,10 @@ public class WSPalestra extends HttpServlet {
     }
 
     private JsonObject cadastre(HttpServletRequest request) {
+        if (!WSAutenticador.estaLogadoComoAdministrador(request)) {
+            return WSAutenticador.invalideSessao(request);
+        }
+        
         int ano = Integer.parseInt(request.getParameter("ano"));
         String titulo = request.getParameter("titulo");
         String palestrante = request.getParameter("palestrante");
@@ -128,9 +132,12 @@ public class WSPalestra extends HttpServlet {
         JsonArray ja = new JsonArray();
                 
         jo.addProperty("Msg", "PalestrasEncontradas");
+        
         for (Palestra p : palestras)
             ja.add(UtilGSON.toJSON(p));
+        
         jo.add("palestras", ja);
+        
         return jo;
     }
 }
