@@ -14,6 +14,7 @@ Servidor Linux Ubuntu com:
 Qualquer navegador (browser) com:
 
 * Linguagem [Elm] (http://elm-lang.org/) (que compila para Javascript)
+* [Bulma] (http://bulma.io/) (estilos CSS)
 
 
 ## Configurando o lado servidor
