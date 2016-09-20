@@ -21,7 +21,7 @@ type alias Model =
     ano : Maybe Int,
     palestras : List Palestra,
     palestra : Maybe Palestra,
-    estudante : Maybe  Estudante,
+    estudante : Maybe Estudante,
     matricula : Maybe Int,
     idPalestra : Maybe Int,
     mensagem : Maybe Mensagem,
@@ -31,7 +31,7 @@ type alias Model =
 
 type alias Mensagem =
   { msg : String
-  , tipo : String  -- tipos válidos para o CSS
+  , tipo : String  -- tipos válidos para o CSS Bulma
   }
 
 init : Model

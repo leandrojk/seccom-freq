@@ -8704,6 +8704,145 @@ var _evancz$elm_http$Http$post = F3(
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
 
+var _user$project$Aviso$view = function (aviso) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'notification ', aviso.estilo))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(aviso.texto)
+			]));
+};
+var _user$project$Aviso$Aviso = F2(
+	function (a, b) {
+		return {texto: a, estilo: b};
+	});
+var _user$project$Aviso$Nada = {ctor: 'Nada'};
+
+var _user$project$Palestra$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('a palestra...')
+			]));
+};
+var _user$project$Palestra$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Palestra$Model = {};
+var _user$project$Palestra$init = _user$project$Palestra$Model;
+var _user$project$Palestra$Palestra = F7(
+	function (a, b, c, d, e, f, g) {
+		return {id: a, semanaAno: b, titulo: c, palestrante: d, dia: e, horarioDeInicio: f, horarioDeTermino: g};
+	});
+var _user$project$Palestra$decoderPalestra = A8(
+	_elm_lang$core$Json_Decode$object7,
+	_user$project$Palestra$Palestra,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'semanaAno', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'titulo', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'palestrante', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'dia', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeInicio', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeTermino', _elm_lang$core$Json_Decode$string));
+var _user$project$Palestra$decoderTodas = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['palestras']),
+	_elm_lang$core$Json_Decode$list(_user$project$Palestra$decoderPalestra));
+var _user$project$Palestra$A = {ctor: 'A'};
+
+var _user$project$EscolherPalestra$view2 = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$EscolherPalestra$anoInvalido = _elm_lang$core$Maybe$Just(
+	A2(_user$project$Aviso$Aviso, 'Digite apenas números', 'is-danger'));
+var _user$project$EscolherPalestra$Model = F5(
+	function (a, b, c, d, e) {
+		return {expirou: a, mbAno: b, mbPalestra: c, palestras: d, mbAviso: e};
+	});
+var _user$project$EscolherPalestra$init = A5(
+	_user$project$EscolherPalestra$Model,
+	false,
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Maybe$Nothing,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Maybe$Nothing);
+var _user$project$EscolherPalestra$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'MsgAviso') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			var _p1 = _elm_lang$core$String$toInt(_p0._0);
+			if (_p1.ctor === 'Ok') {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_user$project$EscolherPalestra$init,
+						{
+							mbAno: _elm_lang$core$Maybe$Just(_p1._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			} else {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_user$project$EscolherPalestra$init,
+						{mbAviso: _user$project$EscolherPalestra$anoInvalido}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			}
+		}
+	});
+var _user$project$EscolherPalestra$DefinaAno = function (a) {
+	return {ctor: 'DefinaAno', _0: a};
+};
+var _user$project$EscolherPalestra$MsgAviso = function (a) {
+	return {ctor: 'MsgAviso', _0: a};
+};
+var _user$project$EscolherPalestra$mostrarAviso = function (mbAviso) {
+	var _p2 = mbAviso;
+	if (_p2.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html_App$map,
+			_user$project$EscolherPalestra$MsgAviso,
+			_user$project$Aviso$view(_p2._0));
+	}
+};
+var _user$project$EscolherPalestra$view = function (model) {
+	var _p3 = model.expirou;
+	if (_p3 === true) {
+		return _user$project$EscolherPalestra$mostrarAviso(model.mbAviso);
+	} else {
+		return _user$project$EscolherPalestra$view2(model);
+	}
+};
+
 var _user$project$Estudante$Estudante = F2(
 	function (a, b) {
 		return {matricula: a, nome: b};
@@ -9039,45 +9178,6 @@ var _user$project$Login$view = function (model) {
 				]));
 	}
 };
-
-var _user$project$Palestra$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('box')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text('a palestra...')
-			]));
-};
-var _user$project$Palestra$update = F2(
-	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Palestra$Model = {};
-var _user$project$Palestra$init = _user$project$Palestra$Model;
-var _user$project$Palestra$Palestra = F7(
-	function (a, b, c, d, e, f, g) {
-		return {id: a, semanaAno: b, titulo: c, palestrante: d, dia: e, horarioDeInicio: f, horarioDeTermino: g};
-	});
-var _user$project$Palestra$decoderPalestra = A8(
-	_elm_lang$core$Json_Decode$object7,
-	_user$project$Palestra$Palestra,
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'semanaAno', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'titulo', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'palestrante', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'dia', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeInicio', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'horarioDeTermino', _elm_lang$core$Json_Decode$string));
-var _user$project$Palestra$decoderTodas = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['palestras']),
-	_elm_lang$core$Json_Decode$list(_user$project$Palestra$decoderPalestra));
-var _user$project$Palestra$A = {ctor: 'A'};
 
 var _user$project$Presenca$mostrarMensagem = function (maybeMensagem) {
 	var _p0 = maybeMensagem;
@@ -9978,17 +10078,148 @@ var _user$project$Presenca$view = function (model) {
 	}
 };
 
+var _user$project$Relatorios$Model = F4(
+	function (a, b, c, d) {
+		return {ativo: a, expirou: b, mbAviso: c, palestraEscolhida: d};
+	});
+var _user$project$Relatorios$init = A4(_user$project$Relatorios$Model, false, false, _elm_lang$core$Maybe$Nothing, _user$project$EscolherPalestra$init);
+var _user$project$Relatorios$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'MsgAviso':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Ativar':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_user$project$Relatorios$init,
+						{ativo: true}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						_user$project$Relatorios$init,
+						{ativo: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Relatorios$Desativar = {ctor: 'Desativar'};
+var _user$project$Relatorios$Ativar = {ctor: 'Ativar'};
+var _user$project$Relatorios$view2 = function (model) {
+	var _p1 = model.ativo;
+	if (_p1 === false) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tag is-primary'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Relatorios$Ativar)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Relatórios')
+						]))
+				]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('box')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tag is-info'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Relatorios$Desativar)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Fechar')
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('title')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Relatórios')
+						]))
+				]));
+	}
+};
+var _user$project$Relatorios$MsgAviso = function (a) {
+	return {ctor: 'MsgAviso', _0: a};
+};
+var _user$project$Relatorios$viewMostreAviso = function (mbAviso) {
+	var _p2 = mbAviso;
+	if (_p2.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html_App$map,
+			_user$project$Relatorios$MsgAviso,
+			_user$project$Aviso$view(_p2._0));
+	}
+};
+var _user$project$Relatorios$view = function (model) {
+	var _p3 = model.expirou;
+	if (_p3 === true) {
+		return _user$project$Relatorios$viewMostreAviso(model.mbAviso);
+	} else {
+		return _user$project$Relatorios$view2(model);
+	}
+};
+
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {login: a, presenca: b};
+var _user$project$Main$Model = F3(
+	function (a, b, c) {
+		return {login: a, presenca: b, relatorios: c};
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A2(_user$project$Main$Model, _user$project$Login$init, _user$project$Presenca$init),
+	_0: A3(_user$project$Main$Model, _user$project$Login$init, _user$project$Presenca$init, _user$project$Relatorios$init),
 	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Main$RelatoriosMsg = function (a) {
+	return {ctor: 'RelatoriosMsg', _0: a};
+};
+var _user$project$Main$mostrarRelatorios = function (relatoriosModel) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html_App$map,
+				_user$project$Main$RelatoriosMsg,
+				_user$project$Relatorios$view(relatoriosModel))
+			]));
 };
 var _user$project$Main$PresencaMsg = function (a) {
 	return {ctor: 'PresencaMsg', _0: a};
@@ -10014,35 +10245,52 @@ var _user$project$Main$LoginMsg = function (a) {
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'LoginMsg') {
-			var _p1 = _user$project$Main$init;
-			var novoModelo = _p1._0;
-			var _p2 = A2(_user$project$Login$update, _p0._0, model.login);
-			var loginAtualizado = _p2._0;
-			var loginCmd = _p2._1;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					novoModelo,
-					{login: loginAtualizado}),
-				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
-			};
-		} else {
-			var _p3 = _user$project$Login$estaLogado(model.login);
-			if (_p3 === false) {
-				return _user$project$Main$init;
-			} else {
-				var _p4 = A2(_user$project$Presenca$update, _p0._0, model.presenca);
-				var presencaAtualizada = _p4._0;
-				var presencaCmd = _p4._1;
+		switch (_p0.ctor) {
+			case 'LoginMsg':
+				var _p1 = _user$project$Main$init;
+				var novoModelo = _p1._0;
+				var _p2 = A2(_user$project$Login$update, _p0._0, model.login);
+				var loginAtualizado = _p2._0;
+				var loginCmd = _p2._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{presenca: presencaAtualizada}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PresencaMsg, presencaCmd)
+						novoModelo,
+						{login: loginAtualizado}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, loginCmd)
 				};
-			}
+			case 'PresencaMsg':
+				var _p3 = _user$project$Login$estaLogado(model.login);
+				if (_p3 === false) {
+					return _user$project$Main$init;
+				} else {
+					var _p4 = A2(_user$project$Presenca$update, _p0._0, model.presenca);
+					var presencaAtualizada = _p4._0;
+					var presencaCmd = _p4._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{presenca: presencaAtualizada}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$PresencaMsg, presencaCmd)
+					};
+				}
+			default:
+				var _p5 = _user$project$Login$estaLogado(model.login);
+				if (_p5 === false) {
+					return _user$project$Main$init;
+				} else {
+					var _p6 = A2(_user$project$Relatorios$update, _p0._0, model.relatorios);
+					var relatoriosAtualizado = _p6._0;
+					var relatoriosCmd = _p6._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{relatorios: relatoriosAtualizado}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$RelatoriosMsg, relatoriosCmd)
+					};
+				}
 		}
 	});
 var _user$project$Main$mostrarLogin = function (login) {
@@ -10071,8 +10319,8 @@ var _user$project$Main$mostrarLogin = function (login) {
 			]));
 };
 var _user$project$Main$view = function (model) {
-	var _p5 = _user$project$Login$estaLogado(model.login);
-	if (_p5 === false) {
+	var _p7 = _user$project$Login$estaLogado(model.login);
+	if (_p7 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10089,7 +10337,8 @@ var _user$project$Main$view = function (model) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_user$project$Main$mostrarLogin(model.login),
-					_user$project$Main$mostrarPresenca(model.presenca)
+					_user$project$Main$mostrarPresenca(model.presenca),
+					_user$project$Main$mostrarRelatorios(model.relatorios)
 				]));
 	}
 };

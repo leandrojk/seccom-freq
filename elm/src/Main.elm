@@ -4,6 +4,7 @@ import Html.App as App
 
 import Login
 import Presenca
+import Relatorios
 
 main =
   App.program {init = init, view = view, update = update, subscriptions = subscriptions}
@@ -13,7 +14,8 @@ main =
 type alias Model  =
   {
     login : Login.Model,
-    presenca : Presenca.Model
+    presenca : Presenca.Model,
+    relatorios : Relatorios.Model
   }
 
 --
@@ -21,7 +23,7 @@ type alias Model  =
 --
 init : (Model, Cmd Msg)
 init =
-  (Model Login.init Presenca.init, Cmd.none)
+  (Model Login.init Presenca.init Relatorios.init, Cmd.none)
 
 
 -- Subscriptions
@@ -38,6 +40,7 @@ subscriptions model =
 type Msg =
   LoginMsg Login.Msg
   | PresencaMsg Presenca.Msg
+  | RelatoriosMsg Relatorios.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -58,6 +61,16 @@ update msg model =
           in
             ({model | presenca = presencaAtualizada}, Cmd.map PresencaMsg presencaCmd)
 
+    RelatoriosMsg msg ->
+      case Login.estaLogado model.login of
+        False -> init
+        True ->
+          let
+            (relatoriosAtualizado, relatoriosCmd) = Relatorios.update msg model.relatorios
+          in
+            ({model | relatorios = relatoriosAtualizado}, Cmd.map RelatoriosMsg relatoriosCmd)
+
+
 -- View
 
 view : Model -> Html Msg
@@ -70,6 +83,7 @@ view model =
       div []
         [ mostrarLogin model.login
         , mostrarPresenca  model.presenca
+        , mostrarRelatorios model.relatorios
         ]
 
 
@@ -86,3 +100,10 @@ mostrarPresenca :  Presenca.Model -> Html Msg
 mostrarPresenca  presencaModel =
   div [class "box"]
     [App.map PresencaMsg (Presenca.view presencaModel)]
+
+
+mostrarRelatorios : Relatorios.Model -> Html Msg
+mostrarRelatorios relatoriosModel =
+  div [class "box"]
+    [App.map RelatoriosMsg (Relatorios.view relatoriosModel)]
+    
