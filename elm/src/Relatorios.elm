@@ -131,13 +131,13 @@ view2 model =
     False ->
       div []
           [ button [class "tag is-primary", onClick Ativar]
-                   [text "Relatórios"]
+                   [text "Presenças Já Registradas"]
           ]
 
     True ->
       div [class "box"]
           [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
-          , div [class "title"] [text "Relatórios"]
+          , div [class "title"] [text "Presenças Já Registradas"]
           , App.map MsgEscolherPalestra (EscolherPalestra.view model.palestraEscolhida)
           , mostrarBotaoLerPresencas (EscolherPalestra.palestraEscolhida model.palestraEscolhida) model.mbEstudantes
           , mostrarEstudantesPresentes (EscolherPalestra.palestraEscolhida model.palestraEscolhida) model.mbEstudantes
@@ -167,7 +167,7 @@ mostrarEstudantesPresentes mbPalestra mbEstudantes =
         Just palestra ->
           div
             [ class "box"]
-            [ h3 [class "subtitle"] [text "Resultado"]
+            [ h3 [class "notification is-success"] [text "Resultado"]
             , mostrarPalestra palestra
             , mostrarEstudantes estudantes
         ]
@@ -175,21 +175,35 @@ mostrarEstudantesPresentes mbPalestra mbEstudantes =
 mostrarPalestra : Palestra -> Html Msg
 mostrarPalestra palestra =
   div
-    []
-    [ h3 [] [text palestra.titulo]
+    [class "box"]
+    [ div [class "subtitle is-3"] [text "Palestra"]
+    , h3 [] [text palestra.titulo]
     , p [] [text palestra.palestrante]
     , div [] [text "Dia ", text palestra.dia]
+    , div []
+        [ text "Início : "
+        , text palestra.horarioDeInicio
+        , text " hs Término : "
+        , text palestra.horarioDeTermino
+        , text " hs"
+        ]
     ]
 
 mostrarEstudantes : List Estudante -> Html Msg
 mostrarEstudantes estudantes =
-  case List.isEmpty estudantes of
-    True ->
-      div [] [h3 [] [text "Nenhum Estudante Presente"]]
+  let
+    f = \estudante -> p [] [text estudante.nome, text " (", text (toString(estudante.matricula)), text ")"]
+    corpo = case List.isEmpty estudantes of
+            True ->
+              div [class "subtitle is-5"] [text "Nenhum Estudante Presente"]
 
-    False ->
-      div [] [h3 [] [text ("Há " ++ toString(List.length estudantes) ++ " estudantes presentes.")]]
-
+            False ->
+              div [] (List.map f estudantes)
+  in
+    div [class "box"]
+      [ div [class "subtitle is-3"] [text "Estudantes Presentes"]
+      , corpo
+      ]
 
 viewMostreAviso : Maybe Aviso.Model -> Html Msg
 viewMostreAviso mbAviso =

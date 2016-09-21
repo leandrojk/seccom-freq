@@ -257,7 +257,7 @@ view2 model =
     True ->
       div [class "box"]
         [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
-        , div [class "title"] [text "Registro de Presença"]
+        , div [class "title"] [text "Registrar Presença"]
         , span [] [text "Ano da Semana"]
         , input [type' "number", placeholder "ano", onInput Ano] []
         , mostrarBotaoBuscarPalestras model.ano

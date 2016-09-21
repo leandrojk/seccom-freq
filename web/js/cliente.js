@@ -10373,7 +10373,7 @@ var _user$project$Presenca$view2 = function (model) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Registro de Presença')
+							_elm_lang$html$Html$text('Registrar Presença')
 						])),
 					A2(
 					_elm_lang$html$Html$span,
@@ -10412,56 +10412,81 @@ var _user$project$Presenca$view = function (model) {
 };
 
 var _user$project$Relatorios$mostrarEstudantes = function (estudantes) {
-	var _p0 = _elm_lang$core$List$isEmpty(estudantes);
-	if (_p0 === true) {
+	var f = function (estudante) {
 		return A2(
-			_elm_lang$html$Html$div,
+			_elm_lang$html$Html$p,
 			_elm_lang$core$Native_List.fromArray(
 				[]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					A2(
-					_elm_lang$html$Html$h3,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text('Nenhum Estudante Presente')
-						]))
+					_elm_lang$html$Html$text(estudante.nome),
+					_elm_lang$html$Html$text('('),
+					_elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(estudante.matricula)),
+					_elm_lang$html$Html$text(')')
 				]));
-	} else {
-		return A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					A2(
-					_elm_lang$html$Html$h3,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'Há ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
-										_elm_lang$core$List$length(estudantes)),
-									' estudantes presentes.')))
-						]))
-				]));
-	}
+	};
+	var corpo = function () {
+		var _p0 = _elm_lang$core$List$isEmpty(estudantes);
+		if (_p0 === true) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('subtitle is-5')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Nenhum Estudante Presente')
+					]));
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				A2(_elm_lang$core$List$map, f, estudantes));
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('subtitle is-3')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Estudantes Presentes')
+					])),
+				corpo
+			]));
 };
 var _user$project$Relatorios$mostrarPalestra = function (palestra) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('box')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('subtitle is-3')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Palestra')
+					])),
 				A2(
 				_elm_lang$html$Html$h3,
 				_elm_lang$core$Native_List.fromArray(
@@ -10486,6 +10511,18 @@ var _user$project$Relatorios$mostrarPalestra = function (palestra) {
 					[
 						_elm_lang$html$Html$text('Dia '),
 						_elm_lang$html$Html$text(palestra.dia)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Início : '),
+						_elm_lang$html$Html$text(palestra.horarioDeInicio),
+						_elm_lang$html$Html$text(' hs Término : '),
+						_elm_lang$html$Html$text(palestra.horarioDeTermino),
+						_elm_lang$html$Html$text(' hs')
 					]))
 			]));
 };
@@ -10521,7 +10558,7 @@ var _user$project$Relatorios$mostrarEstudantesPresentes = F2(
 							_elm_lang$html$Html$h3,
 							_elm_lang$core$Native_List.fromArray(
 								[
-									_elm_lang$html$Html_Attributes$class('subtitle')
+									_elm_lang$html$Html_Attributes$class('notification is-success')
 								]),
 							_elm_lang$core$Native_List.fromArray(
 								[
@@ -10738,7 +10775,7 @@ var _user$project$Relatorios$view2 = function (model) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Relatórios')
+							_elm_lang$html$Html$text('Presenças Já Registradas')
 						]))
 				]));
 	} else {
@@ -10769,7 +10806,7 @@ var _user$project$Relatorios$view2 = function (model) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Relatórios')
+							_elm_lang$html$Html$text('Presenças Já Registradas')
 						])),
 					A2(
 					_elm_lang$html$Html_App$map,
