@@ -150,7 +150,7 @@ public class WSPresenca extends HttpServlet {
             ja.add(gson.toJsonTree(e));
         }
 
-        jo.addProperty("Msg", "MatriculasEncontradas");
+        jo.addProperty("Msg", "EstudantesEncontrados");
         jo.add("estudantes", ja);
         return jo;
     }

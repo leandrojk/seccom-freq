@@ -1,4 +1,4 @@
-module Estudante exposing (Estudante, decoderEstudante)
+module Estudante exposing (Estudante, decoderEstudante, decoderVerdadeiro)
 
 import Json.Decode as Json exposing((:=))
 
@@ -21,6 +21,12 @@ type alias Estudante =
 --
 -- Estudante 10102010 "Fulano de Tal"
 --
+
+--FIXME o decoder tem que atuar apenas no objeto {matricula ...  nome}
 decoderEstudante : Json.Decoder Estudante
 decoderEstudante =
   "estudante" := Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)
+
+decoderVerdadeiro : Json.Decoder Estudante
+decoderVerdadeiro =
+  Json.object2 Estudante ("matricula" := Json.int) ("nome" := Json.string)

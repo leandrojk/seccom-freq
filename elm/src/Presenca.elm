@@ -316,9 +316,7 @@ mostrarPalestras palestras =
     mostrarSeleciona =
       \palestra ->
           div [class "notification is-primary"]
-            [ (mostrarRadio palestra)
-            , text "  "
-            , label [for (toString palestra.id)] [text "Escolha" ]
+            [ label [] [(mostrarRadio palestra), text " ", text palestra.titulo ]
             ]
 
     montarLinha =
@@ -326,7 +324,7 @@ mostrarPalestras palestras =
         div
           [class "panel"]
           [ div [class "panel-block"] [(mostrarSeleciona palestra) ]
-          , div [class "panel-block"] [ text palestra.titulo ]
+--          , div [class "panel-block"] [ text palestra.titulo ]
           , div [class "panel-block"] [ text palestra.palestrante ]
           , div [class "panel-block"] [ (mostrarDiaEHorario palestra) ]
           ]

@@ -8847,17 +8847,14 @@ var _user$project$EscolherPalestra$mostrarPalestras = function (palestras) {
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					mostrarRadio(palestra),
-					_elm_lang$html$Html$text('  '),
 					A2(
 					_elm_lang$html$Html$label,
 					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$for(
-							_elm_lang$core$Basics$toString(palestra.id))
-						]),
+						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
+							mostrarRadio(palestra),
+							_elm_lang$html$Html$text(' '),
 							_elm_lang$html$Html$text(palestra.titulo)
 						]))
 				]));
@@ -9198,6 +9195,11 @@ var _user$project$Estudante$decoderEstudante = A2(
 		_user$project$Estudante$Estudante,
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'matricula', _elm_lang$core$Json_Decode$int),
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string)));
+var _user$project$Estudante$decoderVerdadeiro = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_user$project$Estudante$Estudante,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'matricula', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'nome', _elm_lang$core$Json_Decode$string));
 
 var _user$project$HttpUtil$post$ = F3(
 	function (dec, url, body) {
@@ -9824,18 +9826,15 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					mostrarRadio(palestra),
-					_elm_lang$html$Html$text('  '),
 					A2(
 					_elm_lang$html$Html$label,
 					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$for(
-							_elm_lang$core$Basics$toString(palestra.id))
-						]),
+						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Escolha')
+							mostrarRadio(palestra),
+							_elm_lang$html$Html$text(' '),
+							_elm_lang$html$Html$text(palestra.titulo)
 						]))
 				]));
 	};
@@ -9879,16 +9878,6 @@ var _user$project$Presenca$mostrarPalestras = function (palestras) {
 					_elm_lang$core$Native_List.fromArray(
 						[
 							mostrarSeleciona(palestra)
-						])),
-					A2(
-					_elm_lang$html$Html$div,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$class('panel-block')
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(palestra.titulo)
 						])),
 					A2(
 					_elm_lang$html$Html$div,
@@ -10422,35 +10411,221 @@ var _user$project$Presenca$view = function (model) {
 	}
 };
 
-var _user$project$Relatorios$Model = F4(
-	function (a, b, c, d) {
-		return {ativo: a, expirou: b, mbAviso: c, palestraEscolhida: d};
-	});
-var _user$project$Relatorios$init = A4(_user$project$Relatorios$Model, false, false, _elm_lang$core$Maybe$Nothing, _user$project$EscolherPalestra$init);
-var _user$project$Relatorios$BusquePresencas = {ctor: 'BusquePresencas'};
-var _user$project$Relatorios$mostrarBotaoLerPresencas = function (mbPalestra) {
-	var _p0 = mbPalestra;
-	if (_p0.ctor === 'Nothing') {
+var _user$project$Relatorios$mostrarEstudantes = function (estudantes) {
+	var _p0 = _elm_lang$core$List$isEmpty(estudantes);
+	if (_p0 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
 				[]),
 			_elm_lang$core$Native_List.fromArray(
-				[]));
+				[
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Nenhum Estudante Presente')
+						]))
+				]));
 	} else {
 		return A2(
-			_elm_lang$html$Html$button,
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html_Attributes$class('button is-primary'),
-					_elm_lang$html$Html_Events$onClick(_user$project$Relatorios$BusquePresencas)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text('Buscar Estudantes Presentes')
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Há ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										_elm_lang$core$List$length(estudantes)),
+									' estudantes presentes.')))
+						]))
 				]));
 	}
 };
+var _user$project$Relatorios$mostrarPalestra = function (palestra) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h3,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(palestra.titulo)
+					])),
+				A2(
+				_elm_lang$html$Html$p,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(palestra.palestrante)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Dia '),
+						_elm_lang$html$Html$text(palestra.dia)
+					]))
+			]));
+};
+var _user$project$Relatorios$mostrarEstudantesPresentes = F2(
+	function (mbPalestra, mbEstudantes) {
+		var _p1 = mbEstudantes;
+		if (_p1.ctor === 'Nothing') {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		} else {
+			var _p2 = mbPalestra;
+			if (_p2.ctor === 'Nothing') {
+				return A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			} else {
+				return A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('box')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$h3,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('subtitle')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text('Resultado')
+								])),
+							_user$project$Relatorios$mostrarPalestra(_p2._0),
+							_user$project$Relatorios$mostrarEstudantes(_p1._0)
+						]));
+			}
+		}
+	});
+var _user$project$Relatorios$dee = function (msg) {
+	var _p3 = msg;
+	switch (_p3) {
+		case 'EstudantesEncontrados':
+			return _elm_lang$core$Json_Decode$maybe(
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'estudantes',
+					_elm_lang$core$Json_Decode$list(_user$project$Estudante$decoderVerdadeiro)));
+		case 'UsuarioNaoLogado':
+			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
+		default:
+			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
+	}
+};
+var _user$project$Relatorios$decoderMsgEstudantesEncontrados = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'Msg', _elm_lang$core$Json_Decode$string),
+	_user$project$Relatorios$dee);
+var _user$project$Relatorios$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {ativo: a, expirou: b, mbAviso: c, palestraEscolhida: d, mbEstudantes: e, mbAviso: f};
+	});
+var _user$project$Relatorios$init = A6(_user$project$Relatorios$Model, false, false, _elm_lang$core$Maybe$Nothing, _user$project$EscolherPalestra$init, _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing);
+var _user$project$Relatorios$sessaoExpirou = function () {
+	var mbAviso = _elm_lang$core$Maybe$Just(
+		A2(_user$project$Aviso$init, 'Sua sessão expirou. Saia e faça login', 'is-danger'));
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_user$project$Relatorios$init,
+			{mbAviso: mbAviso, expirou: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+}();
+var _user$project$Relatorios$HttpRespostaEstudantes = function (a) {
+	return {ctor: 'HttpRespostaEstudantes', _0: a};
+};
+var _user$project$Relatorios$HttpErro = function (a) {
+	return {ctor: 'HttpErro', _0: a};
+};
+var _user$project$Relatorios$buscarPresencas = function (idPalestra) {
+	var url = A2(
+		_evancz$elm_http$Http$url,
+		'WSPresenca/encontrarEstudantesPorPalestra',
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: 'palestra',
+				_1: _elm_lang$core$Basics$toString(idPalestra)
+			}
+			]));
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Relatorios$HttpErro,
+		_user$project$Relatorios$HttpRespostaEstudantes,
+		A2(_evancz$elm_http$Http$get, _user$project$Relatorios$decoderMsgEstudantesEncontrados, url));
+};
+var _user$project$Relatorios$BusquePresencas = {ctor: 'BusquePresencas'};
+var _user$project$Relatorios$mostrarBotaoLerPresencas = F2(
+	function (mbPalestra, mbEstudantes) {
+		var _p4 = {ctor: '_Tuple2', _0: mbPalestra, _1: mbEstudantes};
+		if (_p4._0.ctor === 'Nothing') {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[]));
+		} else {
+			if (_p4._1.ctor === 'Just') {
+				return A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			} else {
+				return A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('button is-primary'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Relatorios$BusquePresencas)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Buscar Estudantes Presentes')
+						]));
+			}
+		}
+	});
 var _user$project$Relatorios$Desativar = {ctor: 'Desativar'};
 var _user$project$Relatorios$Ativar = {ctor: 'Ativar'};
 var _user$project$Relatorios$MsgEscolherPalestra = function (a) {
@@ -10458,27 +10633,65 @@ var _user$project$Relatorios$MsgEscolherPalestra = function (a) {
 };
 var _user$project$Relatorios$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
-			case 'BusquePresencas':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'MsgEscolherPalestra':
-				var _p2 = A2(_user$project$EscolherPalestra$update, _p1._0, model.palestraEscolhida);
-				var novoPalestra = _p2._0;
-				var comando = _p2._1;
+		var _p5 = msg;
+		switch (_p5.ctor) {
+			case 'HttpErro':
+				var aviso = A2(_user$project$Aviso$init, 'Erro na resposta enviada pelo servidor', 'is-danger');
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{palestraEscolhida: novoPalestra}),
+						{
+							mbAviso: _elm_lang$core$Maybe$Just(aviso)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'HttpRespostaEstudantes':
+				var _p7 = _p5._0;
+				var _p6 = _p7;
+				if (_p6.ctor === 'Nothing') {
+					return _user$project$Relatorios$sessaoExpirou;
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{mbEstudantes: _p7, mbAviso: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'BusquePresencas':
+				var _p8 = _user$project$EscolherPalestra$palestraEscolhida(model.palestraEscolhida);
+				if (_p8.ctor === 'Nothing') {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				} else {
+					var mbAviso = _elm_lang$core$Maybe$Just(
+						A2(_user$project$Aviso$init, 'Buscando estudantes...', 'is-info'));
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{mbEstudantes: _elm_lang$core$Maybe$Nothing, mbAviso: mbAviso}),
+						_1: _user$project$Relatorios$buscarPresencas(_p8._0.id)
+					};
+				}
+			case 'MsgEscolherPalestra':
+				var _p9 = A2(_user$project$EscolherPalestra$update, _p5._0, model.palestraEscolhida);
+				var novoPalestra = _p9._0;
+				var comando = _p9._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{palestraEscolhida: novoPalestra, mbEstudantes: _elm_lang$core$Maybe$Nothing}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Relatorios$MsgEscolherPalestra, comando)
 				};
 			case 'MsgAviso':
-				var _p3 = model.mbAviso;
-				if (_p3.ctor === 'Nothing') {
+				var _p10 = model.mbAviso;
+				if (_p10.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					var novoAviso = A2(_user$project$Aviso$update, _p1._0, _p3._0);
+					var novoAviso = A2(_user$project$Aviso$update, _p5._0, _p10._0);
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -10508,8 +10721,8 @@ var _user$project$Relatorios$update = F2(
 		}
 	});
 var _user$project$Relatorios$view2 = function (model) {
-	var _p4 = model.ativo;
-	if (_p4 === false) {
+	var _p11 = model.ativo;
+	if (_p11 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10562,8 +10775,14 @@ var _user$project$Relatorios$view2 = function (model) {
 					_elm_lang$html$Html_App$map,
 					_user$project$Relatorios$MsgEscolherPalestra,
 					_user$project$EscolherPalestra$view(model.palestraEscolhida)),
-					_user$project$Relatorios$mostrarBotaoLerPresencas(
-					_user$project$EscolherPalestra$palestraEscolhida(model.palestraEscolhida))
+					A2(
+					_user$project$Relatorios$mostrarBotaoLerPresencas,
+					_user$project$EscolherPalestra$palestraEscolhida(model.palestraEscolhida),
+					model.mbEstudantes),
+					A2(
+					_user$project$Relatorios$mostrarEstudantesPresentes,
+					_user$project$EscolherPalestra$palestraEscolhida(model.palestraEscolhida),
+					model.mbEstudantes)
 				]));
 	}
 };
@@ -10571,8 +10790,8 @@ var _user$project$Relatorios$MsgAviso = function (a) {
 	return {ctor: 'MsgAviso', _0: a};
 };
 var _user$project$Relatorios$viewMostreAviso = function (mbAviso) {
-	var _p5 = mbAviso;
-	if (_p5.ctor === 'Nothing') {
+	var _p12 = mbAviso;
+	if (_p12.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10583,12 +10802,12 @@ var _user$project$Relatorios$viewMostreAviso = function (mbAviso) {
 		return A2(
 			_elm_lang$html$Html_App$map,
 			_user$project$Relatorios$MsgAviso,
-			_user$project$Aviso$view(_p5._0));
+			_user$project$Aviso$view(_p12._0));
 	}
 };
 var _user$project$Relatorios$view = function (model) {
-	var _p6 = model.expirou;
-	if (_p6 === true) {
+	var _p13 = model.expirou;
+	if (_p13 === true) {
 		return _user$project$Relatorios$viewMostreAviso(model.mbAviso);
 	} else {
 		return _user$project$Relatorios$view2(model);
