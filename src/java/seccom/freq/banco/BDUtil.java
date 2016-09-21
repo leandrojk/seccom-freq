@@ -319,6 +319,45 @@ public class BDUtil {
         return estudante;
     }
 
+    public static List<Estudante> encontreEstudantesPorPalestra(DataSource ds, int idPalestra) {
+        String sql = "select ESTUDANTE.* from PRESENCA, ESTUDANTE where PRESENCA.palestra_id = ? and PRESENCA.estudante_matricula = ESTUDANTE.matricula order by ESTUDANTE.nome";
+        List<Estudante> estudantes = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ppstmt = null;
+        ResultSet rs = null;
+        try {
+            con = ds.getConnection();
+            ppstmt = con.prepareStatement(sql);
+            ppstmt.setInt(1, idPalestra);
+            rs = ppstmt.executeQuery();
+            while (rs.next()) {
+                estudantes.add(new Estudante(rs.getInt("MATRICULA"), rs.getString("NOME")));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WSSemana.class.getName()).log(Level.SEVERE, null, ex);
+            //TODO tratar erro;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ppstmt != null) {
+                    ppstmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BDUtil.class.getName()).log(Level.SEVERE, null, ex);
+                //TODO tratar erro
+            }
+
+        }
+
+        return estudantes;
+    }
+
+    
     public static boolean cadastrePresenca(DataSource ds, Presenca presenca) {
         String sql = "insert into PRESENCA (ESTUDANTE_MATRICULA, PALESTRA_ID) values (?,?)";
         boolean inseriu = true;

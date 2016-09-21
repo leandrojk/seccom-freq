@@ -21,14 +21,15 @@ import seccom.freq.modelo.Presenca;
  *
  * @author leandro
  */
-@WebServlet(name = "WSPresenca", urlPatterns = {"/WSPresenca/cadastrar", "/WSPresenca/encontrarPorPalestra"})
+@WebServlet(name = "WSPresenca", urlPatterns = {"/WSPresenca/cadastrar", "/WSPresenca/encontrarPorPalestra", "/WSPresenca/encontrarEstudantesPorPalestra"})
 public class WSPresenca extends HttpServlet {
 
     final int T = "/WSPresenca/".length();
 
     enum Servicos {
         cadastrar,
-        encontrarPorPalestra
+        encontrarPorPalestra,
+        encontrarEstudantesPorPalestra
     }
 
     @Resource(name = "jdbc/SECCOMDB")
@@ -92,6 +93,10 @@ public class WSPresenca extends HttpServlet {
                 resposta = encontrePorPalestra(request);
                 break;
             }
+            case encontrarEstudantesPorPalestra: {
+                resposta = encontreEstudantesPorPalestra(request);
+                break;
+            }
         }
         return resposta;
     }
@@ -103,10 +108,11 @@ public class WSPresenca extends HttpServlet {
 
         boolean cadastrou = BDUtil.cadastrePresenca(ds, presenca);
         JsonObject jo = new JsonObject();
-        if (cadastrou)
+        if (cadastrou) {
             jo.addProperty("Msg", "PresencaCadastrada");
-        else
+        } else {
             jo.addProperty("Msg", "PresencaJaCadastrada");
+        }
         return jo;
     }
 
@@ -131,6 +137,21 @@ public class WSPresenca extends HttpServlet {
         JsonObject jo = new JsonObject();
         jo.addProperty("Msg", "MatriculasEncontradas");
         jo.add("matriculas", gson.toJsonTree(matriculas));
+        return jo;
+    }
+
+    // retorna os estudantes presentes em uma palestra
+    private JsonObject encontreEstudantesPorPalestra(HttpServletRequest request) {
+        List<Estudante> estudantes = BDUtil.encontreEstudantesPorPalestra(ds, Integer.parseInt(request.getParameter("palestra")));
+        JsonObject jo = new JsonObject();
+        JsonArray ja = new JsonArray();
+
+        for (Estudante e : estudantes) {
+            ja.add(gson.toJsonTree(e));
+        }
+
+        jo.addProperty("Msg", "MatriculasEncontradas");
+        jo.add("estudantes", ja);
         return jo;
     }
 }

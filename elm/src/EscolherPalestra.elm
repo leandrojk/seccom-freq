@@ -1,4 +1,4 @@
-module EscolherPalestra exposing (Model, Msg, init, update, view)
+module EscolherPalestra exposing (Model, Msg, init, update, view, palestraEscolhida)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -31,6 +31,11 @@ init : Model
 init =
   Model False Nothing Nothing [] Nothing
 
+palestraEscolhida : Model -> Maybe Palestra
+palestraEscolhida model =
+  model.mbPalestra
+
+
 -- UPDATE
 
 type Msg =
@@ -40,7 +45,6 @@ type Msg =
   | HttpErro Http.Error
   | HttpRespostaEncontrarPalestras (Maybe (List Palestra))
   | PalestraEscolhida Int
-  | BusquePresencas
 
 
 update: Msg -> Model -> (Model, Cmd Msg)
@@ -90,8 +94,6 @@ update msg model =
       in
         ({model | mbPalestra = maybePalestra, mbAviso = Nothing}, Cmd.none)
 
-    BusquePresencas ->
-      (model, Cmd.none)
 
 
 anoInvalido : Maybe Aviso.Model
@@ -144,19 +146,10 @@ view2 model =
       , input [type' "number", placeholder "ano", onInput DefinaAno] []
       , mostrarBotaoBuscarPalestras model.mbAno
       , escolherPalestra model.palestras
-      , mostrarBotaoLerPresencas model.mbPalestra
       , mostrarAviso model.mbAviso
       ]
 
 
-mostrarBotaoLerPresencas : Maybe Palestra -> Html Msg
-mostrarBotaoLerPresencas mbPalestra =
-  case mbPalestra of
-    Nothing -> div [] []
-    Just _ ->
-      button
-       [ class "button is-primary", onClick BusquePresencas]
-       [ text "Buscar Estudantes Presentes" ]
 
 mostrarBotaoBuscarPalestras : Maybe Int -> Html Msg
 mostrarBotaoBuscarPalestras mbAno =
@@ -209,7 +202,7 @@ mostrarPalestras palestras =
           div [class "notification is-primary"]
             [ (mostrarRadio palestra)
             , text "  "
-            , label [for (toString palestra.id)] [text "Escolha" ]
+            , label [for (toString palestra.id)] [text palestra.titulo ]
             ]
 
     montarLinha =
@@ -217,7 +210,7 @@ mostrarPalestras palestras =
         div
           [class "panel"]
           [ div [class "panel-block"] [(mostrarSeleciona palestra) ]
-          , div [class "panel-block"] [ text palestra.titulo ]
+--          , div [class "panel-block"] [ text palestra.titulo ]
           , div [class "panel-block"] [ text palestra.palestrante ]
           , div [class "panel-block"] [ (mostrarDiaEHorario palestra) ]
           ]

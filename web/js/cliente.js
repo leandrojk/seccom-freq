@@ -8791,6 +8791,9 @@ var _user$project$EscolherPalestra$decoderMsgPalestrasEncontradas = A2(
 	_user$project$EscolherPalestra$dmpe);
 var _user$project$EscolherPalestra$anoInvalido = _elm_lang$core$Maybe$Just(
 	A2(_user$project$Aviso$init, 'Digite apenas números', 'is-danger'));
+var _user$project$EscolherPalestra$palestraEscolhida = function (model) {
+	return model.mbPalestra;
+};
 var _user$project$EscolherPalestra$Model = F5(
 	function (a, b, c, d, e) {
 		return {expirou: a, mbAno: b, mbPalestra: c, palestras: d, mbAviso: e};
@@ -8814,30 +8817,6 @@ var _user$project$EscolherPalestra$sessaoExpirada = function () {
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 }();
-var _user$project$EscolherPalestra$BusquePresencas = {ctor: 'BusquePresencas'};
-var _user$project$EscolherPalestra$mostrarBotaoLerPresencas = function (mbPalestra) {
-	var _p1 = mbPalestra;
-	if (_p1.ctor === 'Nothing') {
-		return A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	} else {
-		return A2(
-			_elm_lang$html$Html$button,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$class('button is-primary'),
-					_elm_lang$html$Html_Events$onClick(_user$project$EscolherPalestra$BusquePresencas)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text('Buscar Estudantes Presentes')
-				]));
-	}
-};
 var _user$project$EscolherPalestra$PalestraEscolhida = function (a) {
 	return {ctor: 'PalestraEscolhida', _0: a};
 };
@@ -8879,7 +8858,7 @@ var _user$project$EscolherPalestra$mostrarPalestras = function (palestras) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text('Escolha')
+							_elm_lang$html$Html$text(palestra.titulo)
 						]))
 				]));
 	};
@@ -8932,16 +8911,6 @@ var _user$project$EscolherPalestra$mostrarPalestras = function (palestras) {
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html$text(palestra.titulo)
-						])),
-					A2(
-					_elm_lang$html$Html$div,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$class('panel-block')
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
 							_elm_lang$html$Html$text(palestra.palestrante)
 						])),
 					A2(
@@ -8983,8 +8952,8 @@ var _user$project$EscolherPalestra$mostrarPalestras = function (palestras) {
 			]));
 };
 var _user$project$EscolherPalestra$escolherPalestra = function (palestras) {
-	var _p2 = _elm_lang$core$List$isEmpty(palestras);
-	if (_p2 === true) {
+	var _p1 = _elm_lang$core$List$isEmpty(palestras);
+	if (_p1 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9028,19 +8997,19 @@ var _user$project$EscolherPalestra$buscarPalestras = function (ano) {
 };
 var _user$project$EscolherPalestra$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
 			case 'MsgAviso':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DefinaAno':
-				var _p4 = _elm_lang$core$String$toInt(_p3._0);
-				if (_p4.ctor === 'Ok') {
+				var _p3 = _elm_lang$core$String$toInt(_p2._0);
+				if (_p3.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							_user$project$EscolherPalestra$init,
 							{
-								mbAno: _elm_lang$core$Maybe$Just(_p4._0)
+								mbAno: _elm_lang$core$Maybe$Just(_p3._0)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -9054,8 +9023,8 @@ var _user$project$EscolherPalestra$update = F2(
 					};
 				}
 			case 'BusquePalestrasDoAno':
-				var _p5 = model.mbAno;
-				if (_p5.ctor === 'Nothing') {
+				var _p4 = model.mbAno;
+				if (_p4.ctor === 'Nothing') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -9078,14 +9047,14 @@ var _user$project$EscolherPalestra$update = F2(
 									[]),
 								mbAviso: mbAviso
 							}),
-						_1: _user$project$EscolherPalestra$buscarPalestras(_p5._0)
+						_1: _user$project$EscolherPalestra$buscarPalestras(_p4._0)
 					};
 				}
 			case 'HttpErro':
 				var mbAviso = _elm_lang$core$Maybe$Just(
 					A2(
 						_user$project$Aviso$init,
-						_elm_lang$core$Basics$toString(_p3._0),
+						_elm_lang$core$Basics$toString(_p2._0),
 						'is-danger'));
 				return {
 					ctor: '_Tuple2',
@@ -9095,14 +9064,14 @@ var _user$project$EscolherPalestra$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HttpRespostaEncontrarPalestras':
-				var _p6 = _p3._0;
-				if (_p6.ctor === 'Nothing') {
+				var _p5 = _p2._0;
+				if (_p5.ctor === 'Nothing') {
 					return _user$project$EscolherPalestra$sessaoExpirada;
 				} else {
-					var _p8 = _p6._0;
+					var _p7 = _p5._0;
 					var mbAviso = function () {
-						var _p7 = _elm_lang$core$List$isEmpty(_p8);
-						if (_p7 === true) {
+						var _p6 = _elm_lang$core$List$isEmpty(_p7);
+						if (_p6 === true) {
 							return _elm_lang$core$Maybe$Just(
 								A2(_user$project$Aviso$init, 'Não há palestras cadastradas', 'is-warning'));
 						} else {
@@ -9113,13 +9082,13 @@ var _user$project$EscolherPalestra$update = F2(
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{palestras: _p8, mbAviso: mbAviso}),
+							{palestras: _p7, mbAviso: mbAviso}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
-			case 'PalestraEscolhida':
+			default:
 				var f = function (palestra) {
-					return _elm_lang$core$Native_Utils.eq(palestra.id, _p3._0);
+					return _elm_lang$core$Native_Utils.eq(palestra.id, _p2._0);
 				};
 				var maybePalestra = _elm_lang$core$List$head(
 					A2(_elm_lang$core$List$filter, f, model.palestras));
@@ -9130,14 +9099,12 @@ var _user$project$EscolherPalestra$update = F2(
 						{mbPalestra: maybePalestra, mbAviso: _elm_lang$core$Maybe$Nothing}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$EscolherPalestra$BusquePalestrasDoAno = {ctor: 'BusquePalestrasDoAno'};
 var _user$project$EscolherPalestra$mostrarBotaoBuscarPalestras = function (mbAno) {
-	var _p9 = mbAno;
-	if (_p9.ctor === 'Nothing') {
+	var _p8 = mbAno;
+	if (_p8.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9165,8 +9132,8 @@ var _user$project$EscolherPalestra$MsgAviso = function (a) {
 	return {ctor: 'MsgAviso', _0: a};
 };
 var _user$project$EscolherPalestra$mostrarAviso = function (mbAviso) {
-	var _p10 = mbAviso;
-	if (_p10.ctor === 'Nothing') {
+	var _p9 = mbAviso;
+	if (_p9.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -9177,7 +9144,7 @@ var _user$project$EscolherPalestra$mostrarAviso = function (mbAviso) {
 		return A2(
 			_elm_lang$html$Html_App$map,
 			_user$project$EscolherPalestra$MsgAviso,
-			_user$project$Aviso$view(_p10._0));
+			_user$project$Aviso$view(_p9._0));
 	}
 };
 var _user$project$EscolherPalestra$view2 = function (model) {
@@ -9207,13 +9174,12 @@ var _user$project$EscolherPalestra$view2 = function (model) {
 					[])),
 				_user$project$EscolherPalestra$mostrarBotaoBuscarPalestras(model.mbAno),
 				_user$project$EscolherPalestra$escolherPalestra(model.palestras),
-				_user$project$EscolherPalestra$mostrarBotaoLerPresencas(model.mbPalestra),
 				_user$project$EscolherPalestra$mostrarAviso(model.mbAviso)
 			]));
 };
 var _user$project$EscolherPalestra$view = function (model) {
-	var _p11 = model.expirou;
-	if (_p11 === true) {
+	var _p10 = model.expirou;
+	if (_p10 === true) {
 		return _user$project$EscolherPalestra$mostrarAviso(model.mbAviso);
 	} else {
 		return _user$project$EscolherPalestra$view2(model);
@@ -10461,6 +10427,30 @@ var _user$project$Relatorios$Model = F4(
 		return {ativo: a, expirou: b, mbAviso: c, palestraEscolhida: d};
 	});
 var _user$project$Relatorios$init = A4(_user$project$Relatorios$Model, false, false, _elm_lang$core$Maybe$Nothing, _user$project$EscolherPalestra$init);
+var _user$project$Relatorios$BusquePresencas = {ctor: 'BusquePresencas'};
+var _user$project$Relatorios$mostrarBotaoLerPresencas = function (mbPalestra) {
+	var _p0 = mbPalestra;
+	if (_p0.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$button,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('button is-primary'),
+					_elm_lang$html$Html_Events$onClick(_user$project$Relatorios$BusquePresencas)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('Buscar Estudantes Presentes')
+				]));
+	}
+};
 var _user$project$Relatorios$Desativar = {ctor: 'Desativar'};
 var _user$project$Relatorios$Ativar = {ctor: 'Ativar'};
 var _user$project$Relatorios$MsgEscolherPalestra = function (a) {
@@ -10468,12 +10458,14 @@ var _user$project$Relatorios$MsgEscolherPalestra = function (a) {
 };
 var _user$project$Relatorios$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'BusquePresencas':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'MsgEscolherPalestra':
-				var _p1 = A2(_user$project$EscolherPalestra$update, _p0._0, model.palestraEscolhida);
-				var novoPalestra = _p1._0;
-				var comando = _p1._1;
+				var _p2 = A2(_user$project$EscolherPalestra$update, _p1._0, model.palestraEscolhida);
+				var novoPalestra = _p2._0;
+				var comando = _p2._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10482,11 +10474,11 @@ var _user$project$Relatorios$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Relatorios$MsgEscolherPalestra, comando)
 				};
 			case 'MsgAviso':
-				var _p2 = model.mbAviso;
-				if (_p2.ctor === 'Nothing') {
+				var _p3 = model.mbAviso;
+				if (_p3.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					var novoAviso = A2(_user$project$Aviso$update, _p0._0, _p2._0);
+					var novoAviso = A2(_user$project$Aviso$update, _p1._0, _p3._0);
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -10516,8 +10508,8 @@ var _user$project$Relatorios$update = F2(
 		}
 	});
 var _user$project$Relatorios$view2 = function (model) {
-	var _p3 = model.ativo;
-	if (_p3 === false) {
+	var _p4 = model.ativo;
+	if (_p4 === false) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10569,7 +10561,9 @@ var _user$project$Relatorios$view2 = function (model) {
 					A2(
 					_elm_lang$html$Html_App$map,
 					_user$project$Relatorios$MsgEscolherPalestra,
-					_user$project$EscolherPalestra$view(model.palestraEscolhida))
+					_user$project$EscolherPalestra$view(model.palestraEscolhida)),
+					_user$project$Relatorios$mostrarBotaoLerPresencas(
+					_user$project$EscolherPalestra$palestraEscolhida(model.palestraEscolhida))
 				]));
 	}
 };
@@ -10577,8 +10571,8 @@ var _user$project$Relatorios$MsgAviso = function (a) {
 	return {ctor: 'MsgAviso', _0: a};
 };
 var _user$project$Relatorios$viewMostreAviso = function (mbAviso) {
-	var _p4 = mbAviso;
-	if (_p4.ctor === 'Nothing') {
+	var _p5 = mbAviso;
+	if (_p5.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -10589,12 +10583,12 @@ var _user$project$Relatorios$viewMostreAviso = function (mbAviso) {
 		return A2(
 			_elm_lang$html$Html_App$map,
 			_user$project$Relatorios$MsgAviso,
-			_user$project$Aviso$view(_p4._0));
+			_user$project$Aviso$view(_p5._0));
 	}
 };
 var _user$project$Relatorios$view = function (model) {
-	var _p5 = model.expirou;
-	if (_p5 === true) {
+	var _p6 = model.expirou;
+	if (_p6 === true) {
 		return _user$project$Relatorios$viewMostreAviso(model.mbAviso);
 	} else {
 		return _user$project$Relatorios$view2(model);

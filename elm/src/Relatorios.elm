@@ -8,6 +8,7 @@ import Html.App as App
 
 import EscolherPalestra
 import Aviso
+import Palestra exposing (Palestra)
 
 -- MODEL
 
@@ -29,10 +30,14 @@ type Msg =
   | MsgEscolherPalestra EscolherPalestra.Msg
   | Ativar
   | Desativar
+  | BusquePresencas
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    BusquePresencas ->
+      (model, Cmd.none)
+
     MsgEscolherPalestra msg ->
       let
         (novoPalestra, comando) = EscolherPalestra.update msg model.palestraEscolhida
@@ -77,9 +82,18 @@ view2 model =
           [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
           , div [class "title"] [text "Relatórios"]
           , App.map MsgEscolherPalestra (EscolherPalestra.view model.palestraEscolhida)
+          , mostrarBotaoLerPresencas (EscolherPalestra.palestraEscolhida model.palestraEscolhida)
           ]
 
 
+mostrarBotaoLerPresencas : Maybe Palestra -> Html Msg
+mostrarBotaoLerPresencas mbPalestra =
+  case mbPalestra of
+    Nothing -> div [] []
+    Just _ ->
+      button
+       [ class "button is-primary", onClick BusquePresencas]
+       [ text "Buscar Estudantes Presentes" ]
 
 viewMostreAviso : Maybe Aviso.Model -> Html Msg
 viewMostreAviso mbAviso =
