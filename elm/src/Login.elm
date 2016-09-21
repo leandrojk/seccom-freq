@@ -2,7 +2,7 @@ module Login exposing (Model, Msg, init, update, view, estaLogado)
 
 import Html exposing (..)
 import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (placeholder, type', class)
+import Html.Attributes exposing (placeholder, type', class, autofocus)
 
 import Http
 import Task
@@ -162,7 +162,7 @@ view model =
     Nothing -> div []
         [ h3 [class "title"] [text "Login"]
         , span [] [text "Login : "]
-        , input [type' "text", placeholder "login", onInput ArmazeneLogin ] []
+        , input [type' "text", placeholder "login", autofocus True, onInput ArmazeneLogin ] []
         , br [] []
         , span [] [text "Senha : "]
         , input [ type' "password", placeholder "senha", onInput ArmazeneSenha ] []

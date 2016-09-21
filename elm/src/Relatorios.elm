@@ -14,7 +14,7 @@ import Aviso
 type alias Model = {
   ativo : Bool,
   expirou : Bool,
-  mbAviso : Maybe Aviso.Aviso,
+  mbAviso : Maybe Aviso.Model,
   palestraEscolhida : EscolherPalestra.Model
 }
 
@@ -24,14 +24,29 @@ init =
 
 -- UPDATE
 
-type Msg =  MsgAviso Aviso.Msg
+type Msg =
+  MsgAviso Aviso.Msg
+  | MsgEscolherPalestra EscolherPalestra.Msg
   | Ativar
   | Desativar
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    MsgAviso _ -> (model, Cmd.none)
+    MsgEscolherPalestra msg ->
+      let
+        (novoPalestra, comando) = EscolherPalestra.update msg model.palestraEscolhida
+      in
+       ({model | palestraEscolhida = novoPalestra}, Cmd.map MsgEscolherPalestra comando)
+
+    MsgAviso msg ->
+      case model.mbAviso of
+        Nothing -> (model, Cmd.none)
+        Just aviso ->
+          let
+            novoAviso = Aviso.update msg aviso
+          in
+            ({model | mbAviso = Just novoAviso}, Cmd.none)
 
     Ativar -> ({init | ativo = True}, Cmd.none)
 
@@ -61,11 +76,12 @@ view2 model =
       div [class "box"]
           [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
           , div [class "title"] [text "Relatórios"]
+          , App.map MsgEscolherPalestra (EscolherPalestra.view model.palestraEscolhida)
           ]
 
 
 
-viewMostreAviso : Maybe Aviso.Aviso -> Html Msg
+viewMostreAviso : Maybe Aviso.Model -> Html Msg
 viewMostreAviso mbAviso =
   case mbAviso of
     Nothing -> div [] []
