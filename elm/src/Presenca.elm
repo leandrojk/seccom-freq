@@ -4,6 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 
+import Html.App as App
+
 import Http
 import Task
 import Json.Decode as Json exposing((:=))
@@ -19,7 +21,7 @@ import HttpUtil
 
 type alias Model =
   {
-    palestra : EscolherPalestra.Model
+    palestra : EscolherPalestra.Model,
     estudante : Maybe Estudante,
     matricula : Maybe Int,
     mensagem : Maybe Mensagem,
@@ -64,10 +66,10 @@ update msg model =
         (palestra, comando) = EscolherPalestra.update msg model.palestra
       in
         case palestra.expirou of
-          True -> sessaoExpirou
+          True -> sessaoExpirada
 
           False ->
-            ({model | palestra = palestra}, comando)
+            ({model | palestra = palestra, mensagem = Nothing}, Cmd.map MsgEscolherPalestra comando)
 
 
     Matricula sMatricula ->
@@ -210,92 +212,19 @@ view2 model =
       div [class "box"]
         [ button [class "tag is-info", onClick Desativar] [text "Fechar"]
         , div [class "title"] [text "Registrar Presença"]
-        , span [] [text "Ano da Semana"]
-        , input [type' "number", placeholder "ano", onInput Ano] []
-        , mostrarBotaoBuscarPalestras model.ano
-        , escolherPalestra model.palestras
-        , escolherAluno model.idPalestra model.matricula
-        , registrarPresenca (model.palestra, model.estudante)
+        , App.map MsgEscolherPalestra (EscolherPalestra.view model.palestra)
+        , escolherAluno (EscolherPalestra.palestraEscolhida model.palestra) model.matricula
+        , registrarPresenca (EscolherPalestra.palestraEscolhida model.palestra, model.estudante)
         , mostrarMensagem model.mensagem
         ]
 
-mostrarBotaoBuscarPalestras : Maybe Int -> Html Msg
-mostrarBotaoBuscarPalestras mbAno =
-  case mbAno of
-    Nothing  -> div [] []
-    Just _ ->
-      button
-        [ class "button is-primary", onClick BusquePalestrasDoAno ]
-        [ text "Buscar Palestras" ]
 
-
-escolherPalestra : List Palestra -> Html Msg
-escolherPalestra palestras =
-  case List.isEmpty palestras of
-    True -> div [] []
-
-    False ->
-      div [] [ mostrarPalestras palestras ]
-
-
-mostrarPalestras : List Palestra -> Html Msg
-mostrarPalestras palestras =
-  let
-    mostrarDiaEHorario =
-      \palestra ->
-        div
-          []
-          [ text "Dia : "
-          , text palestra.dia
-          , br [] []
-          , text "Horário : "
-          , text palestra.horarioDeInicio
-          , text " -- "
-          , text palestra.horarioDeTermino
-          , text " hs"]
-
-    mostrarRadio =
-      \palestra ->
-        input
-          [ type' "radio"
-          , name "idPalestra"
-          , id (toString palestra.id)
-          , value (toString palestra.id)
-          , onClick  (PalestraEscolhida palestra.id)
-          ]
-          []
-
-    mostrarSeleciona =
-      \palestra ->
-          div [class "notification is-primary"]
-            [ label [] [(mostrarRadio palestra), text " ", text palestra.titulo ]
-            ]
-
-    montarLinha =
-      \palestra ->
-        div
-          [class "panel"]
-          [ div [class "panel-block"] [(mostrarSeleciona palestra) ]
---          , div [class "panel-block"] [ text palestra.titulo ]
-          , div [class "panel-block"] [ text palestra.palestrante ]
-          , div [class "panel-block"] [ (mostrarDiaEHorario palestra) ]
-          ]
-
-    linhas = List.map montarLinha palestras
-
-  in
-  div
-    [ class "box" ]
-    [ div [class "title"] [text "Escolher Palestra"]
-    , div [] linhas
-    ]
-
-escolherAluno : Maybe Int -> Maybe Int -> Html Msg
-escolherAluno mbIdPalestra mbMatricula =
-  case mbIdPalestra of
+escolherAluno : Maybe Palestra -> Maybe Int -> Html Msg
+escolherAluno mbPalestra mbMatricula =
+  case mbPalestra of
     Nothing -> div [] []
 
-    Just idPalestra ->
+    Just _ ->
       div
        [ class "box" ]
        [ div [class "title"] [text "Definir Estudante"]
