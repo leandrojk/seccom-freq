@@ -12,18 +12,16 @@ import String
 
 import Estudante exposing (Estudante)
 import Palestra exposing (Palestra)
+import EscolherPalestra
 import HttpUtil
 
 -- MODEL
 
 type alias Model =
   {
-    ano : Maybe Int,
-    palestras : List Palestra,
-    palestra : Maybe Palestra,
+    palestra : EscolherPalestra.Model
     estudante : Maybe Estudante,
     matricula : Maybe Int,
-    idPalestra : Maybe Int,
     mensagem : Maybe Mensagem,
     ativo : Bool,
     expirou : Bool -- só será True quando sessão expirar no servidor
@@ -36,7 +34,7 @@ type alias Mensagem =
 
 init : Model
 init =
-  Model Nothing [] Nothing Nothing Nothing Nothing Nothing True False
+  Model EscolherPalestra.init Nothing Nothing Nothing True False
 
 
 -- UPDATE
@@ -44,12 +42,9 @@ init =
 type Msg =
   Ativar
   | Desativar
-  | Ano String
+  | MsgEscolherPalestra EscolherPalestra.Msg
   | Matricula String
-  | BusquePalestrasDoAno
   | HttpErro Http.Error
-  | HttpRespostaEncontrarPalestras (Maybe (List Palestra))
-  | PalestraEscolhida Int
   | PesquiseEstudante
   | HttpRespostaPesquisarEstudante (Maybe (Maybe Estudante))
   | RegistrePresenca Int Int
@@ -64,13 +59,16 @@ update msg model =
     Desativar ->
       ({init | ativo = False}, Cmd.none)
 
-    Ano sAno ->
-      case String.toInt sAno of
-        Ok ano ->
-          ({init | ano = Just ano}, Cmd.none)
+    MsgEscolherPalestra msg ->
+      let
+        (palestra, comando) = EscolherPalestra.update msg model.palestra
+      in
+        case palestra.expirou of
+          True -> sessaoExpirou
 
-        Err _ ->
-          ({init | mensagem = Just (Mensagem "Digite apenas números" "is-danger")}, Cmd.none)
+          False ->
+            ({model | palestra = palestra}, comando)
+
 
     Matricula sMatricula ->
       case String.toInt sMatricula of
@@ -83,22 +81,7 @@ update msg model =
           in
             ({model | matricula = Nothing, estudante = Nothing, mensagem = mensagem}, Cmd.none)
 
-    PalestraEscolhida idPalestra ->
-      let
-        f = \palestra -> palestra.id == idPalestra
-        maybePalestra = List.head (List.filter f model.palestras)
-      in
-      ({model | idPalestra = Just idPalestra, palestra = maybePalestra, mensagem = Nothing}, Cmd.none)
 
-    BusquePalestrasDoAno ->
-      case model.ano of
-        Nothing -> ({model | mensagem = Just (Mensagem "Ano não definido!" "is-warning")}, Cmd.none)
-
-        Just ano ->
-          let
-            msg = Just (Mensagem "Buscando palestras..." "is-info")
-          in
-            ({model | palestras = [], mensagem = msg}, buscarPalestras ano)
 
     PesquiseEstudante ->
       case model.matricula of
@@ -115,18 +98,6 @@ update msg model =
         msg = Just (Mensagem (toString erro) "is-danger")
       in
        ({model | mensagem = msg}, Cmd.none)
-
-    HttpRespostaEncontrarPalestras mbPalestras ->
-      case mbPalestras of
-        Nothing -> sessaoExpirada
-
-        Just palestras ->
-          let
-            msg = case List.isEmpty palestras of
-              True -> Just (Mensagem "Não há palestras cadastradas" "is-warning")
-              False -> Nothing
-          in
-            ({model | palestras = palestras, mensagem = msg}, Cmd.none)
 
 
     HttpRespostaPesquisarEstudante maybeMaybeEstudante ->
@@ -174,25 +145,6 @@ sessaoExpirada =
 
 --
 --
-
-buscarPalestras : Int -> Cmd Msg
-buscarPalestras ano =
-  let
-    url = Http.url "WSPalestra/encontrarPorAno" [("ano", toString(ano))]
-  in
-    Task.perform HttpErro HttpRespostaEncontrarPalestras (Http.get decoderMsgPalestrasEncontradas url)
-
-
-decoderMsgPalestrasEncontradas : Json.Decoder (Maybe (List Palestra))
-decoderMsgPalestrasEncontradas =
-  ("Msg" := Json.string) `Json.andThen` dmpe
-
-dmpe : String -> Json.Decoder (Maybe (List Palestra))
-dmpe msg =
-  case msg of
-    "PalestrasEncontradas" -> Json.maybe (Palestra.decoderTodas)
-    "UsuarioNaoLogado" -> Json.succeed Nothing
-    _ -> Json.succeed  Nothing
 
 
 
