@@ -10106,7 +10106,7 @@ var _user$project$Presenca$view = function (model) {
 var _user$project$Relatorios$mostrarEstudantes = function (estudantes) {
 	var f = function (estudante) {
 		return A2(
-			_elm_lang$html$Html$p,
+			_elm_lang$html$Html$li,
 			_elm_lang$core$Native_List.fromArray(
 				[]),
 			_elm_lang$core$Native_List.fromArray(
@@ -10133,7 +10133,7 @@ var _user$project$Relatorios$mostrarEstudantes = function (estudantes) {
 					]));
 		} else {
 			return A2(
-				_elm_lang$html$Html$div,
+				_elm_lang$html$Html$ol,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
 				A2(_elm_lang$core$List$map, f, estudantes));

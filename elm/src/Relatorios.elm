@@ -192,13 +192,13 @@ mostrarPalestra palestra =
 mostrarEstudantes : List Estudante -> Html Msg
 mostrarEstudantes estudantes =
   let
-    f = \estudante -> p [] [text estudante.nome, text " (", text (toString(estudante.matricula)), text ")"]
+    f = \estudante -> li [] [text estudante.nome, text " (", text (toString(estudante.matricula)), text ")"]
     corpo = case List.isEmpty estudantes of
             True ->
               div [class "subtitle is-5"] [text "Nenhum Estudante Presente"]
 
             False ->
-              div [] (List.map f estudantes)
+              ol [] (List.map f estudantes)
   in
     div [class "box"]
       [ div [class "subtitle is-3"] [text "Estudantes Presentes"]
