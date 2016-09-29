@@ -93,6 +93,26 @@ Criadas as tabelas, é preciso povoar o banco com os dados da semana, das palest
 
 **NÃO EXECUTE O cria_dados.sql EM PRODUÇÃO POIS TODOS OS DADOS SERÃO APAGADOS!!!!**
 
+### Atenção
+Se o arquivo que contém os dados (estudantes e palestras) estiver codificado com UTF8 então é preciso criar o arquivo **ij.properties** com o seguinte conteúdo:
+
+```
+derby.ui.codeset=UTF8
+```
+
+O uso do programa **ij** também muda:
+
+```
+java -jar ~/apps/derby/lib/derbyrun.jar ij -p ij.properties 
+```
+
+Para executar o script SQL:
+
+```
+run `cria_dados.sql`;
+```
+
+
 Terminada esta etapa de configuração temos:
 * o SGBD Derby no ar
 * a base de dados SECCOM_FREQ criada e povoada com dados
