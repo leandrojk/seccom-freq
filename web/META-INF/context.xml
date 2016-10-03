@@ -7,5 +7,5 @@
   
 <!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
          addConnectorPort="true"
-         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1;\d*|150\.\d+\.\d+\.\d+;8443" />-->
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1;\d*|150\.\d+\.\d+\.\d+;8443|200\.\d+\.\d+\.\d+;8443" />-->
 </Context>
